@@ -74,7 +74,6 @@ export default function Authenticated({ user, header, children, props }) {
   };
 
   const subMenuHandler = (show, subData = []) => {
-    console.log('button type: ' + show, subData);
     setSubMenus(subData);
     setIsOpenSubMenu(show);
   }

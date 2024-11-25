@@ -14,6 +14,7 @@ use App\Http\Controllers\Inventory\InventoryController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Setting\EmailController;
 Route::get('/email', [EmailController::class, 'emailSetup']);
@@ -21,7 +22,20 @@ Route::post('/store-email', [EmailController::class,'storeEmail']);
 Route::post('/send-email', [EmailController::class, 'sendEmail']);
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    $products = $products = DB::table('products as p')
+    ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
+    ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
+    ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+    ->select(
+        'p.*',
+        'a.name as author_name',
+        'pb.name as publisher_name',
+        'c.name as category_name'
+    )
+    ->get();
+
+    return Inertia::render('Website/Index', [
+        'products' => $products,
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
