@@ -1,0 +1,266 @@
+.sidebar {
+  /* height: 100vh; */
+  max-width: 105px;
+  /* background: #ffffff; */
+  /* z-index: 1022; */
+  transition: all 0.5s ease;
+  box-shadow: 0 0 15px 0px rgb(0 0 0 / 25%);
+  /* position: fixed; */
+  /* overflow: scroll; */
+}
+
+.sidebar .nav-links {
+  height: 100%;
+  overflow: auto;
+  padding-left: 0;
+}
+
+.sidebar .nav-links {
+  overflow: visible;
+}
+
+.sidebar .nav-links::-webkit-scrollbar {
+  display: none;
+}
+
+.sidebar .nav-links li {
+  position: relative;
+  list-style: none;
+  transition: all 0.4s ease;
+}
+
+/* .sidebar .nav-links li .icon-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebar .nav-links li .icon-link {
+  display: block;
+} */
+
+.sidebar .nav-links li i {
+  min-width: 100px;
+  text-align: center;
+  line-height: 35px;
+  /* color: #1e1e1e; */
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sidebar .nav-links li a {
+  display: flex;
+  text-decoration: none;
+  text-align: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding: 0px 0;
+  border-top: 1px solid white;
+}
+
+.sidebar .nav-links li a .link_name {
+  font-size: 15px;
+  font-weight: 500;
+  color: #1e1e1e;
+  transition: all 0.4s ease;
+  /* text-shadow: none; */
+}
+
+.sidebar .nav-links li.active a i,
+.sidebar .nav-links li.active a .link_name {
+  color: #fff;
+}
+
+.sidebar .nav-links li.active,
+.sidebar .nav-links li:focus,
+.sidebar .nav-links li:hover {
+  /* background: #1e1e1e; */
+  color: red;
+}
+
+.sidebar .nav-links li:hover .link_name,
+.sidebar .nav-links li:hover i {
+  color: #fff;
+}
+
+.sub_menu {
+  height: 100vh;
+  width: 200px;
+  background: #ffffff;
+  transition: all 0.9s ease;
+  transition: all linear 0.9s;
+  box-shadow: 0 0 15px 0px rgb(0 0 0 / 25%);
+  position: fixed;
+  left: -310px;
+  z-index: 99;
+  padding: 50px 0 25px;
+  overflow-y: auto;
+  transform-origin: 0% 0%;
+  transform: scale(1, 1);
+  transition: margin-bottom 1s ease-in-out, transform 1s ease-in-out;
+}
+
+.sub_menu::-webkit-scrollbar {
+  width: 3px;
+}
+
+.sub_menu::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 5px;
+}
+
+.sub_menu::-webkit-scrollbar-thumb {
+  background-color: #1e1e1e;
+  border-radius: 4px;
+}
+
+.sub_menu::-webkit-scrollbar-thumb:hover {
+  background-color: #1e1e1e;
+}
+
+.sub_menu.show {
+  left: 100px;
+  transition-duration: 0.4s;
+}
+
+.d-box {
+  min-height: 165px;
+}
+
+/* close btn start */
+.btn-closes {
+  top: 0;
+  right: 0;
+  font-size: 13px;
+  content: "X";
+  color: white;
+}
+
+.btn-closes i {
+  transition-duration: 0.4s;
+}
+
+.btn-closes::before {
+  content: "\00d7";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 37px;
+  height: 32px;
+  background: #1e1e1e;
+  border-radius: 0 0 0 55px;
+}
+
+
+.btn-closes:hover i {
+  transform: rotate(90deg);
+}
+
+.btn.focus,
+.btn:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+.d-flex .d-block.fas:hover,
+.d-flex .d-block.far:hover {
+  font-size: 5em;
+  transition: 1s ease-out;
+}
+
+/* close btn end */
+.sub_link_name {
+  font-size: 15px;
+  line-height: 33px;
+  font-weight: 600;
+  color: #1e1e1e;
+  position: relative;
+  padding: 3px 28px;
+  background: rgb(255 255 255 / 25%);
+  display: block;
+}
+
+.sub_link_name.sub_child {
+  padding-left: 35px;
+}
+
+.sub_link_name.active {
+  color: #1e1e1e;
+  background: rgb(30 30 30 / 18%);
+}
+
+.fixed .sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.sub_link_name.has-dropdown .rotator {
+  transform: rotate(90deg);
+}
+
+.sub_link_name.has-dropdown.collapsed .rotator {
+  transform: rotate(0);
+}
+
+.sub-menu li {
+  width: 100%;
+}
+
+.sub_link_name.active,
+.sub_link_name:focus,
+.sub_link_name:hover {
+  color: #1e1e1e;
+}
+
+.sub_link_name.squared span {
+  padding-left: 20px;
+}
+
+.sub_link_name.dotted span {
+  padding-left: 8px;
+}
+
+.sub_link_name.squared::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  display: block;
+  background: #1e1e1e;
+  position: absolute;
+  left: 32px;
+  top: 14px;
+}
+
+.sub_link_name.dotted::before {
+  content: "\e6e1";
+  font-family: themify;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 400;
+  font-variant: normal;
+  text-transform: none;
+}
+
+.close {
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.7em;
+}
+
+.close:hover {
+  background: darkred;
+}
