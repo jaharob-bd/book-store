@@ -149,7 +149,7 @@ export default function Index({ auth, products }) {
                                             <div className="flex items-center mb-4">
                                                 <span className="text-lg font-bold text-gray-900">{product.sale_price}</span>
                                             </div>
-                                            <button className="bg-primary border border-transparent hover:bg-transparent hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full">Add to Cart</button>
+                                            <button className="bg-indigo-500 border border-indigo-500 hover:bg-red-500 hover:border-primary text-white  hover:text-primary font-semibold py-2 px-4 rounded-full w-full">Add to Cart</button>
                                         </div>
                                     ))}
                                 </div>
