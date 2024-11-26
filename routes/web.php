@@ -42,6 +42,41 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+Route::get('/shop/{slug}', function () {
+    // get slug from url
+    // segment by url
+    $slug = request()->segments()[1];
+    // $slug = 'bangladesher-itihash';
+    $product = $products = DB::table('products as p')
+    ->where('p.url_key', $slug)
+    ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
+    ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
+    ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+    ->select(
+        'p.*',
+        'a.name as author_name',
+        'pb.name as publisher_name',
+        'c.name as category_name'
+    )
+    ->first();
+
+    return Inertia::render('Website/SingleProduct', [
+        'product' => $product,
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+});
+
+Route::get('/checkout', function () {
+    return Inertia::render('Website/Checkout', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+})->name('checkout');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

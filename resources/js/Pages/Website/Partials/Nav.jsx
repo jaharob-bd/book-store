@@ -49,7 +49,7 @@ export default function Nav({isMobileMenuOpen, isMenDropdownOpen, toggleMenDropd
 
                             </span>
                         </a>
-                        <ul className="mobile-dropdown-menu" x-show="open" x-transition>
+                        <ul className="mobile-dropdown-menu" x-show="open">
                             <li><a href="shop.html" className="hover:text-secondary font-bold block py-2">Shop Women</a></li>
                             <li><a href="single-product-page.html" className="hover:text-secondary font-bold block py-2">Women item 1</a></li>
                             <li><a href="single-product-page.html" className="hover:text-secondary font-bold block py-2">Women item 2</a></li>

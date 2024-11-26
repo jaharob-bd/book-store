@@ -105,7 +105,7 @@ export default function Header({ auth, toggleMobileMenu }) {
                                 <a href="/cart.html" className="block text-center mt-4 border border-primary bg-primary hover:bg-transparent text-white hover:text-primary py-2 rounded-full font-semibold">Go to Cart</a>
                             </div>
                         </div>
-                        <a id="search-icon" href="javascript:void(0);" className="text-white hover:text-secondary group">
+                        <a id="search-icon" className="text-white hover:text-secondary group">
                             <img src="assets/images/search-icon.svg" alt="Search" className="h-6 w-6 transition-transform transform group-hover:scale-120" />
                         </a>
                         {/* Search field */}

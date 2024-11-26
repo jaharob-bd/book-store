@@ -1,155 +1,99 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import WebLayout from './Layout/WebLayout';
+import { Link } from '@inertiajs/react';
+import Filter from './Partials/Filter';
+import TopFilter from './Partials/TopFilter';
+import secureLocalStorage from "react-secure-storage";
 
 export default function Index({ auth, products }) {
-    // console.log(products);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isMenDropdownOpen, setIsMenDropdownOpen] = useState(false);
+    // const [cart, setCart] = useState([]);
+    // Initialize cart state with data from secureLocalStorage
+    const [cart, setCart] = useState(() => {
+        const storedCart = secureLocalStorage.getItem("cart");
+        return storedCart ? storedCart : [];
+    });
 
-    const toggleMobileMenu = () => {
-        setIsMobileMenuOpen(!isMobileMenuOpen);
+    // Save cart to local storage whenever it changes
+    useEffect(() => {
+        secureLocalStorage.setItem("cart", cart);
+    }, [cart]);
+
+    // Function to handle adding products to the cart
+    const addToCart = (product) => {
+        setCart((prevCart) => {
+            const existingProduct = prevCart.find((item) => item.id === product.id);
+
+            if (existingProduct) {
+                // If product exists, update its quantity
+                return prevCart.map((item) =>
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + 1 }
+                        : item
+                );
+            } else {
+                // If product doesn't exist, add it to the cart
+                return [...prevCart, { ...product, quantity: 1 }];
+            }
+        });
     };
 
-    const toggleMenDropdown = () => {
-        setIsMenDropdownOpen(!isMenDropdownOpen);
+    const removeCart = (product_id) => {
+        // remove from cart
+        const prevCart = [...cart];
+        // const product = prevCart.find(item => item.id === product_id);
+        // // Remove from cart
+        const newCart = prevCart.filter(item => item.id !== product_id);
+        setCart(newCart);
+        // setCart(prevCart => prevCart.map(item => item.id === product_id ? { ...item, quantity: item.quantity - 1 } : item));
     };
 
     return (
         <div>
             <WebLayout auth={auth}>
                 <section id="shop">
+                    <div className="card-header cart justify-center p-4 bg-slate-300">
+                        <h2>Cart: <span className="bg-red-500 bg-rounded p-1 rounded-full">{cart.length}</span></h2>
+                        {cart.length === 0 ? (
+                            <p>Your cart is empty.</p>
+                        ) : (
+                            <ul>
+                                {cart.map((item, i) => (
+                                    <li className="p-1" key={item.id}>
+                                        {i + 1}. {item.name} -  ৳ {item.sale_price} x {item.quantity}
+                                        <button onClick={() => removeCart(item.id)} className="rounded-full bg-red-700 px-1"> x </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                    <Link href={route('checkout')}>
+                        checkout
+                    </Link>
                     <div className="container mx-auto">
-                        {/* Top Filter */}
-                        <div className="flex flex-col md:flex-row justify-between items-center py-4">
-                            <div className="flex items-center space-x-2">
-                                <button className="bg-primary text-dark hover:bg-transparent hover:text-primary border hover:border-primary px-4 rounded-full focus:outline-none">Show On Sale</button>
-                                <button className="bg-primary text-dark hover:bg-transparent hover:text-primary border hover:border-primary px-4 rounded-full focus:outline-none">List View</button>
-                                <button className="bg-primary text-dark hover:bg-transparent hover:text-primary border hover:border-primary px-4 rounded-full focus:outline-none">Grid View</button>
-                            </div>
-                            <div className="flex mt-2 md:mt-0 space-x-4">
-                                <div className="relative">
-                                    <select className="block appearance-none w-full bg-white border  hover:border-primary px-4 py-1 pr-8 rounded-full shadow leading-tight focus:outline-none focus:shadow-outline">
-                                        <option>Sort by Latest</option>
-                                        <option>Sort by Popularity</option>
-                                        <option>Sort by A-Z</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        {/* Filter Toggle Button for Mobile */}
-                        <div className="block md:hidden text-center mb-4">
-                            <button id="products-toggle-filters" className="bg-primary text-white py-2 px-4 rounded-full focus:outline-none">Show Filters</button>
-                        </div>
+                        {/* <TopFilter /> */}
                         <div className="flex flex-col md:flex-row">
-                            {/* Filters */}
-                            <div id="filters" className="w-full md:w-1/4 p-4 hidden md:block">
-                                {/* Category Filter */}
-                                <div className="mb-6 pb-8 border-b border-gray-line">
-                                    <h3 className="text-lg font-semibold mb-6">Category</h3>
-                                    <div className="space-y-2">
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">T-Shirts</span>
-                                        </label>
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">Hoodies</span>
-                                        </label>
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">Accessories</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                {/* Size Filter */}
-                                <div className="mb-6 pb-8 border-b border-gray-line">
-                                    <h3 className="text-lg font-semibold mb-6">Size</h3>
-                                    <div className="space-y-2">
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">S (30)</span>
-                                        </label>
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">M (44)</span>
-                                        </label>
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">L (22)</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                {/* Color Filter */}
-                                <div className="mb-6 pb-8 border-b border-gray-line">
-                                    <h3 className="text-lg font-semibold mb-6">Color</h3>
-                                    <div className="space-y-2">
-                                        <label className="flex items-center custom-color-checkbox" data-color="#ff0000">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">Red</span>
-                                        </label>
-                                        <label className="flex items-center custom-color-checkbox" data-color="#0000ff">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">Blue</span>
-                                        </label>
-                                        <label className="flex items-center custom-color-checkbox" data-color="#00ff00">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">Green</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                {/* Brand Filter */}
-                                <div className="mb-6 pb-8 border-b border-gray-line">
-                                    <h3 className="text-lg font-semibold mb-6">Brand</h3>
-                                    <div className="space-y-2">
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">Nike</span>
-                                        </label>
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">Adidas</span>
-                                        </label>
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">Puma</span>
-                                        </label>
-                                    </div>
-                                </div>
-                                {/* Rating Filter */}
-                                <div className="mb-6">
-                                    <h3 className="text-lg font-semibold mb-6">Rating</h3>
-                                    <div className="space-y-2">
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">★★★★★</span>
-                                        </label>
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">★★★★☆</span>
-                                        </label>
-                                        <label className="flex items-center">
-                                            <input type="checkbox" className="form-checkbox custom-checkbox" />
-                                            <span className="ml-2">★★★☆☆</span>
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
+                            {/* <Filter /> */}
                             {/* Products List */}
                             <div className="w-full md:w-3/4 p-4">
                                 {/* Products grid */}
                                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
-                                    {/* Product 1 */}
-
                                     {/* products map */}
                                     {products.map((product, index) => (
                                         <div key={index} className="bg-white p-2 rounded-lg shadow">
-                                            <img src="assets/images/products/7.jpg" alt="Product 1" className="w-full object-cover mb-4 rounded-lg" />
-                                            <a href="#" className="text-lg font-semibold mb-2">{product.name}</a>
-                                            <p className="my-2">{product.category_name}</p>
-                                            <div className="flex items-center mb-4">
-                                                <span className="text-lg font-bold text-gray-900">{product.sale_price}</span>
-                                            </div>
-                                            <button className="bg-indigo-500 border border-indigo-500 hover:bg-red-500 hover:border-primary text-white  hover:text-primary font-semibold py-2 px-4 rounded-full w-full">Add to Cart</button>
+                                            <Link href={`shop/${product.url_key}`}>
+                                                <img src="assets/images/default.png" alt="Product 1" className="w-full object-cover mb-4 rounded-lg" />
+                                                <a href="#" className="text-lg font-semibold mb-2">{product.name}</a>
+                                                <p className="my-2">{product.category_name}</p>
+                                                <div className="flex items-center mb-4">
+                                                    <span className="text-lg font-bold text-gray-900">{product.sale_price}</span>
+                                                </div>
+                                            </Link>
+                                            <button
+                                                onClick={() => addToCart(product)} // Corrected the function call
+                                                className="bg-indigo-500 border border-indigo-500 hover:bg-red-500 hover:border-primary text-white hover:text-primary font-semibold py-2 px-4 rounded-full w-full"
+                                            >
+                                                Add to Cart
+                                            </button>
                                         </div>
                                     ))}
                                 </div>
@@ -177,6 +121,6 @@ export default function Index({ auth, products }) {
                     </div>
                 </section>
             </WebLayout>
-        </div>
+        </div >
     );
 }
