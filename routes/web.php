@@ -42,6 +42,49 @@ Route::get('/', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
+Route::get('/shop', function () {
+    $products = $products = DB::table('products as p')
+    ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
+    ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
+    ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+    ->select(
+        'p.*',
+        'a.name as author_name',
+        'pb.name as publisher_name',
+        'c.name as category_name'
+    )
+    ->get();
+
+    return Inertia::render('Website/Shop', [
+        'products' => $products,
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+})->name('shop');
+Route::get('/Wishlist', function () {
+    $products = $products = DB::table('products as p')
+    ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
+    ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
+    ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+    ->select(
+        'p.*',
+        'a.name as author_name',
+        'pb.name as publisher_name',
+        'c.name as category_name'
+    )
+    ->get();
+
+    return Inertia::render('Website/Wishlist', [
+        'products' => $products,
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+})->name('Wishlist');
+
 Route::get('/shop/{slug}', function () {
     // get slug from url
     // segment by url
@@ -77,6 +120,37 @@ Route::get('/checkout', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 })->name('checkout');
+
+Route::get('/cart', function () {
+    $products = $products = DB::table('products as p')
+    ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
+    ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
+    ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+    ->select(
+        'p.*',
+        'a.name as author_name',
+        'pb.name as publisher_name',
+        'c.name as category_name'
+    )
+    ->limit(5)
+    ->get();
+    return Inertia::render('Website/Cart', [
+        'products' => $products,
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+})->name('cart');
+
+Route::get('/gift', function () {
+    return Inertia::render('Website/Gift', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
+})->name('gift');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

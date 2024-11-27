@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Header from '../Partials/Header';
 import Footer from '../Partials/Footer';
 import Nav from '../Partials/Nav';
+import '../../../../css/main.css'
 
 export default function WebLayout({ auth, children }) {
     // console.log(auth);
@@ -19,15 +20,15 @@ export default function WebLayout({ auth, children }) {
     return (
         <div>
             {/* Header */}
-            {/* <Header auth={auth} toggleMobileMenu={toggleMobileMenu} /> */}
+            <Header auth={auth} toggleMobileMenu={toggleMobileMenu} />
             {/* Mobile Menu */}
-            {/* <Nav isMobileMenuOpen={isMobileMenuOpen} isMenDropdownOpen = {isMenDropdownOpen} toggleMenDropdown = {toggleMenDropdown}/> */}
+            <Nav isMobileMenuOpen={isMobileMenuOpen} isMenDropdownOpen = {isMenDropdownOpen} toggleMenDropdown = {toggleMenDropdown}/>
             {/* Shop */}
             <main>
                 {children}
             </main>
             {/* Footer */}
-            {/* <Footer /> */}
+            <Footer />
         </div>
     );
 }

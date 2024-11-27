@@ -1,74 +1,53 @@
 import { useState } from 'react';
-export default function Nav({isMobileMenuOpen, isMenDropdownOpen, toggleMenDropdown}) {
+import { Link } from '@inertiajs/react';
 
-    // const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    // const [isMenDropdownOpen, setIsMenDropdownOpen] = useState(false);
-
-    // const toggleMobileMenu = () => {
-    //     setIsMobileMenuOpen(!isMobileMenuOpen);
-    // };
-
-    // const toggleMenDropdown = () => {
-    //     setIsMenDropdownOpen(!isMenDropdownOpen);
-    // };
-
-    // console.log(isMobileMenuOpen + ' menu open');
-    // console.log(toggleMenDropdown + ' toggle open');
-    // console.log(isMenDropdownOpen + ' drop down open');
+export default function Nav({ isMobileMenuOpen, isMenDropdownOpen, toggleMenDropdown }) {
     return (
         <div>
-            <nav
-                id="mobile-menu"
-                className={`lg:hidden flex flex-col items-center space-y-8 ${isMobileMenuOpen ? 'block' : 'hidden'
-                    }`}
-            >
-                <ul className="w-full text-center">
-                    <li><a href="index.html" className="hover:text-secondary font-bold block py-2">Home</a></li>
-                    {/* Men Dropdown */}
-                    <li className="relative group" x-data="{ open: false }">
-                        <button
-                            onClick={toggleMenDropdown}
-                            className="hover:text-secondary font-bold flex justify-center items-center w-full"
-                        >
-                            <span>Men</span>
-                            <span>
-                            </span>
-                        </button>
-                        <ul className={`pl-4 ${isMenDropdownOpen ? 'block' : 'hidden'}`}>
-                            <li><a href="shop.html" className="hover:text-secondary font-bold block pt-2 pb-3">Shop Men</a></li>
-                            <li><a href="single-product-page.html" className="hover:text-secondary font-bold block py-2">Men item 1</a></li>
-                            <li><a href="single-product-page.html" className="hover:text-secondary font-bold block py-2">Men item 2</a></li>
-                            <li><a href="single-product-page.html" className="hover:text-secondary font-bold block py-2">Men item 3</a></li>
-                        </ul>
-                    </li>
-                    {/* Women Dropdown */}
-                    <li className="relative group" x-data="{ open: false }">
-                        <a className="hover:text-secondary font-bold block py-2 justify-center items-center cursor-pointer">
-                            <span>Women</span>
-                            <span >
-
-                            </span>
-                        </a>
-                        <ul className="mobile-dropdown-menu" x-show="open">
-                            <li><a href="shop.html" className="hover:text-secondary font-bold block py-2">Shop Women</a></li>
-                            <li><a href="single-product-page.html" className="hover:text-secondary font-bold block py-2">Women item 1</a></li>
-                            <li><a href="single-product-page.html" className="hover:text-secondary font-bold block py-2">Women item 2</a></li>
-                            <li><a href="single-product-page.html" className="hover:text-secondary font-bold block py-2">Women item 3</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="shop.html" className="hover:text-secondary font-bold block py-2">Shop</a></li>
-                    <li><a href="single-product-page.html" className="hover:text-secondary font-bold block py-2">Product</a></li>
-                    <li><a href="404.html" className="hover:text-secondary font-bold block py-2">404 page</a></li>
-                    <li><a href="checkout.html" className="hover:text-secondary font-bold block py-2">Checkout</a></li>
-                </ul>
-                <div className="flex flex-col mt-6 space-y-2 items-center">
-                    <a href="register.html" className="bg-primary hover:bg-transparent text-white hover:text-primary border border-primary font-semibold px-4 py-2 rounded-full flex items-center justify-center min-w-[110px]">Register</a>
-                    <a href="register.html" className="bg-primary hover:bg-transparent text-white hover:text-primary border border-primary font-semibold px-4 py-2 rounded-full flex items-center justify-center min-w-[110px]">Login</a>
-                    <a href="register.html" className="bg-primary hover:bg-transparent text-white hover:text-primary border border-primary font-semibold px-4 py-2 rounded-full flex items-center justify-center min-w-[110px]">Cart -&nbsp;<span>5</span>&nbsp;items</a>
-                </div>
-                {/* Search field */}
-                <div className="  top-full right-0 mt-2 w-full bg-white shadow-lg p-2 rounded">
-                    <input type="text" className="w-full p-2 border border-gray-300 rounded" placeholder="Search for products..." />
+            <nav className="bg-gray-800">
+                <div className="container flex">
+                    <div className="px-8 py-4 bg-primary md:flex items-center cursor-pointer relative group hidden">
+                        <span className="text-white">
+                            <i className="fa-solid fa-bars" />
+                        </span>
+                        <span className="capitalize ml-2 text-white hidden">All Categories</span>
+                        {/* dropdown */}
+                        <div className="absolute w-full left-0 top-full bg-white shadow-md py-3 divide-y divide-gray-300 divide-dashed opacity-0 group-hover:opacity-100 transition duration-300 invisible group-hover:visible">
+                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
+                                <img src="assets/images/icons/sofa.svg" alt="sofa" className="w-5 h-5 object-contain" />
+                                <span className="ml-6 text-gray-600 text-sm">Sofa</span>
+                            </a>
+                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
+                                <img src="assets/images/icons/terrace.svg" alt="terrace" className="w-5 h-5 object-contain" />
+                                <span className="ml-6 text-gray-600 text-sm">Terarce</span>
+                            </a>
+                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
+                                <img src="assets/images/icons/bed.svg" alt="bed" className="w-5 h-5 object-contain" />
+                                <span className="ml-6 text-gray-600 text-sm">Bed</span>
+                            </a>
+                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
+                                <img src="assets/images/icons/office.svg" alt="office" className="w-5 h-5 object-contain" />
+                                <span className="ml-6 text-gray-600 text-sm">office</span>
+                            </a>
+                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
+                                <img src="assets/images/icons/outdoor-cafe.svg" alt="outdoor" className="w-5 h-5 object-contain" />
+                                <span className="ml-6 text-gray-600 text-sm">Outdoor</span>
+                            </a>
+                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
+                                <img src="assets/images/icons/bed-2.svg" alt="Mattress" className="w-5 h-5 object-contain" />
+                                <span className="ml-6 text-gray-600 text-sm">Mattress</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div className="flex items-center justify-between flex-grow md:pl-12 py-5">
+                        <div className="flex items-center space-x-6 capitalize">
+                            <Link href="/" className="text-gray-200 hover:text-white transition">Home</Link>
+                            <Link href={route('shop')} className="text-gray-200 hover:text-white transition">Shop</Link>
+                            <a href="#" className="text-gray-200 hover:text-white transition">About us</a>
+                            <a href="#" className="text-gray-200 hover:text-white transition">Contact us</a>
+                        </div>
+                        <a href="pages/login.html" className="text-gray-200 hover:text-white transition">Login</a>
+                    </div>
                 </div>
             </nav>
         </div>
