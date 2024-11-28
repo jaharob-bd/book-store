@@ -26,18 +26,15 @@ export default function Header({ auth, toggleMobileMenu }) {
                     <button className="bg-primary border border-primary text-white px-8 rounded-r-md hover:bg-transparent hover:text-primary transition hidden md:flex">Search</button>
                 </div>
                 <div className="flex items-center space-x-4">
-                    <Link href={route('Wishlist')}>
-                        <a href="#" className="text-center text-gray-700 hover:text-primary transition relative">
+                    <Link href={route('Wishlist')} className="text-center text-gray-700 hover:text-primary transition relative">
                             <div className="text-2xl">
                                 <i className="fa-regular fa-heart" />
                             </div>
                             <div className="text-xs leading-3">Wishlist</div>
                             <div className="absolute right-0 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
                                 8</div>
-                        </a>
                     </Link>
-                    <Link href={route('cart')}>
-                        <a href="#" className="text-center text-gray-700 hover:text-primary transition relative">
+                    <Link href={route('cart')} className="text-center text-gray-700 hover:text-primary transition relative">
                             <div className="text-2xl">
                                 <i className="fa-solid fa-bag-shopping" />
                             </div>
@@ -46,7 +43,6 @@ export default function Header({ auth, toggleMobileMenu }) {
                             <div className="absolute -right-3 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
                                 {cart.length}
                             </div>
-                        </a>
                     </Link>
                     <a href="#" className="text-center text-gray-700 hover:text-primary transition relative">
                         <div className="text-2xl">
