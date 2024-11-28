@@ -8,8 +8,7 @@ import { modules } from '@/Api/Module'
 import Swal from 'sweetalert2'
 
 export default function Authenticated({ user, header, children, props }) {
-  const { flash } = usePage().props;
-  const { errors } = usePage().props;
+  const { flash, errors } = usePage().props;
   const [isOpen, setIsOpen] = useState(true);
   const [isOpenSubMenu, setIsOpenSubMenu] = useState('hide');
   const [subMenus, setSubMenus] = useState([]);
