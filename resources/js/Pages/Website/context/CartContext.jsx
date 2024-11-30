@@ -1,12 +1,24 @@
-import React, { createContext, useContext, useState } from 'react';
+// context/CartContext.js
+import React, { createContext, useState, useEffect } from 'react';
+import secureLocalStorage from 'react-secure-storage';
 
-// Create the context
-const CartContext = createContext();
+// Create Cart Context
+export const CartContext = createContext();
 
-// Provider component
+// Create the CartProvider
 export const CartProvider = ({ children }) => {
-    const [cart, setCart] = useState([]);
+    const [cart, setCart] = useState(() => {
+        const storedCart = secureLocalStorage.getItem("cart");
+        return storedCart ? storedCart : [];
+    });
 
+    // Sync cart to localStorage
+    useEffect(() => {
+        secureLocalStorage.setItem("cart", cart);
+    }, [cart]);
+    console.log('cart loaded', cart);
+
+    // Function to add items to the cart
     const addToCart = (product) => {
         setCart((prevCart) => {
             const existingProduct = prevCart.find((item) => item.id === product.id);
@@ -16,27 +28,15 @@ export const CartProvider = ({ children }) => {
                         ? { ...item, quantity: item.quantity + 1 }
                         : item
                 );
+            } else {
+                return [...prevCart, { ...product, quantity: 1 }];
             }
-            return [...prevCart, { ...product, quantity: 1 }];
         });
     };
 
-    const removeFromCart = (productId) => {
-        setCart((prevCart) => prevCart.filter((item) => item.id !== productId));
-    };
-
     return (
-        <CartContext.Provider value={{ cart, setCart }}>
+        <CartContext.Provider value={{ cart, addToCart }}>
             {children}
         </CartContext.Provider>
     );
-};
-
-// Custom hook
-export const useCart = () => {
-    const context = useContext(CartContext);
-    if (!context) {
-        throw new Error('useCart must be used within a CartProvider');
-    }
-    return context;
 };
