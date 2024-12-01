@@ -1,22 +1,17 @@
-import { useState, useEffect } from 'react';
+// partials/Header.js
+import { useState, useEffect, useContext } from 'react';
 import { Link } from '@inertiajs/react';
-import secureLocalStorage from "react-secure-storage";
+import { CartContext } from '../context/CartContext';
 
-export default function Header({ auth, toggleMobileMenu }) {
-    const [cart, setCart] = useState(() => {
-        const storedCart = secureLocalStorage.getItem("cart");
-        return storedCart ? storedCart : [];
-    });
-
-    useEffect(() => {
-        secureLocalStorage.setItem("cart", cart);
-    }, [cart]);
+export default function Header({ auth }) {
+    const { cart } = useContext(CartContext);
+    // console.log('header cart', cart);
 
     return (
         <header className="py-4 shadow-sm bg-white">
             <div className="container flex items-center justify-between">
                 <a href="index.html">
-                    <img src="assets/images/logo.svg" alt="Logo" className="w-32" />
+                    {/* <img src="assets/images/logo.svg" alt="Logo" className="w-32" /> */}
                 </a>
                 <div className="w-full max-w-xl relative flex">
                     <span className="absolute left-4 top-3 text-lg text-gray-400">
@@ -27,22 +22,22 @@ export default function Header({ auth, toggleMobileMenu }) {
                 </div>
                 <div className="flex items-center space-x-4">
                     <Link href={route('Wishlist')} className="text-center text-gray-700 hover:text-primary transition relative">
-                            <div className="text-2xl">
-                                <i className="fa-regular fa-heart" />
-                            </div>
-                            <div className="text-xs leading-3">Wishlist</div>
-                            <div className="absolute right-0 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
-                                8</div>
+                        <div className="text-2xl">
+                            <i className="fa-regular fa-heart" />
+                        </div>
+                        <div className="text-xs leading-3">Wishlist</div>
+                        <div className="absolute right-0 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
+                            8</div>
                     </Link>
                     <Link href={route('cart')} className="text-center text-gray-700 hover:text-primary transition relative">
-                            <div className="text-2xl">
-                                <i className="fa-solid fa-bag-shopping" />
-                            </div>
+                        <div className="text-2xl">
+                            <i className="fa-solid fa-bag-shopping" />
+                        </div>
 
-                            <div className="text-xs leading-3">Cart</div>
-                            <div className="absolute -right-3 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
-                                {cart.length}
-                            </div>
+                        <div className="text-xs leading-3">Cart</div>
+                        <div className="absolute -right-3 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
+                            {cart.length}
+                        </div>
                     </Link>
                     <a href="#" className="text-center text-gray-700 hover:text-primary transition relative">
                         <div className="text-2xl">

@@ -1,43 +1,11 @@
 import { Link } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
 import WebLayout from './Layout/WebLayout';
-import secureLocalStorage from "react-secure-storage";
+import { CartContext } from './context/CartContext';
+import { useContext } from 'react';
 
 export default function Cart({ auth, products }) {
-    const [cart, setCart] = useState(() => {
-        const storedCart = secureLocalStorage.getItem("cart");
-        return storedCart ? storedCart : [];
-    });
-
-    // Save cart to local storage whenever it changes
-    useEffect(() => {
-        secureLocalStorage.setItem("cart", cart);
-    }, [cart]);
-
-    const addToCart = (product) => {
-        setCart((prevCart) => {
-            const existingProduct = prevCart.find((item) => item.id === product.id);
-
-            if (existingProduct) {
-                // If product exists, update its quantity
-                return prevCart.map((item) =>
-                    item.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                );
-            } else {
-                // If product doesn't exist, add it to the cart
-                return [...prevCart, { ...product, quantity: 1 }];
-            }
-        });
-    };
-
-    const removeCart = (product_id) => {
-        const prevCart = [...cart];
-        const newCart = prevCart.filter(item => item.id !== product_id);
-        setCart(newCart);
-    };
-
+    const { cart, addToCart, removeCart } = useContext(CartContext);
+   
     return (
         <WebLayout auth={auth}>
             <section id="shop">

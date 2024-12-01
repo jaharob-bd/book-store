@@ -1,52 +1,15 @@
-import { useState, useEffect } from 'react';
+// root
+import { useState, useEffect, useContext } from 'react';
 import WebLayout from './Layout/WebLayout';
-import { Link } from '@inertiajs/react';
-import Filter from './Partials/Filter';
-import TopFilter from './Partials/TopFilter';
-import secureLocalStorage from "react-secure-storage";
 import Banner from './Home/Banner';
 import Features from './Home/Features';
 import Categories from './Home/Categories';
 import NewArrival from './Home/NewArrival';
 import Ads from './Home/Ads';
+import { CartContext } from './context/CartContext';
 
 export default function Index({ auth, products }) {
-    // Initialize cart state with data from secureLocalStorage
-    const [cart, setCart] = useState(() => {
-        const storedCart = secureLocalStorage.getItem("cart");
-        return storedCart ? storedCart : [];
-    });
-
-    // Save cart to local storage whenever it changes
-    useEffect(() => {
-        secureLocalStorage.setItem("cart", cart);
-    }, [cart]);
-
-    // Function to handle adding products to the cart
-    const addToCart = (product) => {
-        setCart((prevCart) => {
-            const existingProduct = prevCart.find((item) => item.id === product.id);
-            if (existingProduct) {
-                // If product exists, update its quantity
-                return prevCart.map((item) =>
-                    item.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                );
-            } else {
-                // If product doesn't exist, add it to the cart
-                return [...prevCart, { ...product, quantity: 1 }];
-            }
-        });
-    };
-
-    const removeCart = (product_id) => {
-        // remove from cart
-        const prevCart = [...cart];
-        const newCart = prevCart.filter(item => item.id !== product_id);
-        setCart(newCart);
-    };
-
+    const { addToCart } = useContext(CartContext);
     return (
         <WebLayout auth={auth}>
             <Banner />
@@ -60,7 +23,7 @@ export default function Index({ auth, products }) {
                     {products.map((product, index) => (
                         <div key={index} className="bg-white shadow rounded overflow-hidden group">
                             <div className="relative">
-                                <img src="assets/images/products/product1.jpg" alt="product 1" className="w-full" />
+                                <img src="" alt="product 1" className="w-full" />
                                 <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
                                     <a href="#" className="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition" title="view product">
                                         <i className="fa-solid fa-magnifying-glass" />
