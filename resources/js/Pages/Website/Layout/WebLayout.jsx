@@ -3,17 +3,16 @@ import React from 'react';
 import Header from '../Partials/Header';
 import Footer from '../Partials/Footer';
 import Nav from '../Partials/Nav';
-import { CartProvider } from '../context/CartContext';  // Adjust the path as needed
 import '../../../../css/main.css'
+import ActionButton from '../Partials/ActionButton';
 
 export default function WebLayout({ auth, children }) {
     return (
         <div>
             <Header />
             <Nav />
-            <main>
-                {children}
-            </main>
+            <ActionButton />
+            <main>{children}</main>
             <Footer />
         </div>
     );

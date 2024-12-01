@@ -1,51 +1,12 @@
-import { useState, useEffect } from 'react';
 import WebLayout from './Layout/WebLayout';
 import { Link } from '@inertiajs/react';
 import Filter from './Partials/Filter';
 import TopFilter from './Partials/TopFilter';
-import secureLocalStorage from "react-secure-storage";
+import { useContext } from 'react';
+import { CartContext } from './context/CartContext';
 
 export default function Shop({ auth, products }) {
-    // const [cart, setCart] = useState([]);
-    // Initialize cart state with data from secureLocalStorage
-    const [cart, setCart] = useState(() => {
-        const storedCart = secureLocalStorage.getItem("cart");
-        return storedCart ? storedCart : [];
-    });
-
-    // Save cart to local storage whenever it changes
-    useEffect(() => {
-        secureLocalStorage.setItem("cart", cart);
-    }, [cart]);
-
-    // Function to handle adding products to the cart
-    const addToCart = (product) => {
-        setCart((prevCart) => {
-            const existingProduct = prevCart.find((item) => item.id === product.id);
-
-            if (existingProduct) {
-                // If product exists, update its quantity
-                return prevCart.map((item) =>
-                    item.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                );
-            } else {
-                // If product doesn't exist, add it to the cart
-                return [...prevCart, { ...product, quantity: 1 }];
-            }
-        });
-    };
-
-    const removeCart = (product_id) => {
-        // remove from cart
-        const prevCart = [...cart];
-        // const product = prevCart.find(item => item.id === product_id);
-        // // Remove from cart
-        const newCart = prevCart.filter(item => item.id !== product_id);
-        setCart(newCart);
-        // setCart(prevCart => prevCart.map(item => item.id === product_id ? { ...item, quantity: item.quantity - 1 } : item));
-    };
+    const { addToCart } = useContext(CartContext);
 
     return (
         <div>
@@ -358,7 +319,6 @@ export default function Shop({ auth, products }) {
                             ))}
                         </div>
                     </div>
-                    {/* ./products */}
                 </div>
             </WebLayout>
         </div >
