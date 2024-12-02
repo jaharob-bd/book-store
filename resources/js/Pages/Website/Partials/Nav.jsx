@@ -46,7 +46,7 @@ export default function Nav({ isMobileMenuOpen, isMenDropdownOpen, toggleMenDrop
                             <a href="#" className="text-gray-200 hover:text-white transition">About us</a>
                             <a href="#" className="text-gray-200 hover:text-white transition">Contact us</a>
                         </div>
-                        <a href="pages/login.html" className="text-gray-200 hover:text-white transition">Login</a>
+                        <Link href={route('login')} className="text-gray-200 hover:text-white transition">Login</Link>
                     </div>
                 </div>
             </nav>
