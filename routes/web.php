@@ -1,16 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Website\CheckoutController;
 use App\Http\Controllers\Website\HomeController;
 use App\Http\Controllers\Website\ShopController;
 use App\Http\Controllers\Website\CartController;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
