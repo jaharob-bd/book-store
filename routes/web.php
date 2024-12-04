@@ -7,7 +7,6 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 use App\Http\Controllers\Setting\EmailController;
 
 Route::get('/email', [EmailController::class, 'emailSetup']);
@@ -179,14 +178,14 @@ Route::post('/customer-login', function (Request $request) {
 })->name('customer-login');
 
 
-Route::get('/register44', function () {
+Route::get('/register', function () {
     return Inertia::render('Website/Register', [
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-})->name('register44');
+})->name('register');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -198,26 +197,11 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-
-// Admin Panel Routes
-// Route::middleware('admin')->group(function () {
-
-// });
-
-// // Web Panel Routes
-Route::middleware(['auth', 'user'])->group(function () {
-    Route::get('/register', function () {
-        return Inertia::render('Website/Register', [
-            'canLogin' => Route::has('login'),
-            'canRegister' => Route::has('register'),
-            'laravelVersion' => Application::VERSION,
-            'phpVersion' => PHP_VERSION,
-        ]);
-    })->name('register');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/ab', function () {
+        echo 'Welcome';
+    });
 });
-
-
-
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/admin.php';
