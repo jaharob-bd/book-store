@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import WebLayout from './Layout/WebLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 const Login = ({ auth }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: 'admin@gmail.com',
@@ -16,7 +16,17 @@ const Login = ({ auth }) => {
 
     const submit = (e) => {
         e.preventDefault();
-        post(route('customer-login'));
+        // post(route('loginw'));
+        router.post('loginw', data, {
+            preserveScroll: true,
+            onSuccess: () => { // successfully msg
+                // setData(data);
+                reset('password');
+            },
+            onError: (errors) => { // error msg
+
+            },
+        });
     };
     return (
         <WebLayout auth={auth}>
@@ -45,17 +55,17 @@ const Login = ({ auth }) => {
                         </div>
                         <div className="flex items-center justify-between mt-6">
                             <div className="flex items-center">
-                                <input type="checkbox" 
-                                name="remember" id="remember" 
-                                className="text-primary focus:ring-0 rounded-sm cursor-pointer" 
-                                onChange={(e) => setData('remember', e.target.checked)}
+                                <input type="checkbox"
+                                    name="remember" id="remember"
+                                    className="text-primary focus:ring-0 rounded-sm cursor-pointer"
+                                    onChange={(e) => setData('remember', e.target.checked)}
                                 />
                                 <label htmlFor="remember" className="text-gray-600 ml-3 cursor-pointer">Remember me</label>
                             </div>
                             <a href="#" className="text-primary">Forgot password</a>
                         </div>
                         <div className="mt-4">
-                            <button type="submit" className="block w-full py-2 text-center text-white bg-primary border border-primary rounded hover:bg-transparent hover:text-primary transition uppercase font-roboto font-medium">Login</button>
+                            <button className="block w-full py-2 text-center text-white bg-primary border border-primary rounded hover:bg-transparent hover:text-primary transition uppercase font-roboto font-medium">Login</button>
                         </div>
                     </form>
                     {/* login with */}

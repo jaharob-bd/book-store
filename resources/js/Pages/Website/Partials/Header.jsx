@@ -17,7 +17,7 @@ export default function Header({ auth }) {
                 </a>
                 <div className="w-full max-w-xl relative flex">
                     <span className="absolute left-4 top-3 text-lg text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M11 4a7 7 0 105.29 12.29l4.71 4.71a1 1 0 001.42-1.42l-4.71-4.71A7 7 0 0011 4zm0 2a5 5 0 110 10A5 5 0 0111 6z" />
                         </svg>
                     </span>
@@ -73,8 +73,8 @@ export default function Header({ auth }) {
                     </Link>
                     <a href="#" className="text-center text-gray-700 hover:text-primary transition relative">
                         <div className="text-2xl">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A8.966 8.966 0 0012 20a8.966 8.966 0 006.879-2.196M12 12a4 4 0 100-8 4 4 0 000 8zm0 0c-2.5 0-4.5 2-4.5 4.5S9.5 21 12 21s4.5-2 4.5-4.5S14.5 12 12 12z" />
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A8.966 8.966 0 0012 20a8.966 8.966 0 006.879-2.196M12 12a4 4 0 100-8 4 4 0 000 8zm0 0c-2.5 0-4.5 2-4.5 4.5S9.5 21 12 21s4.5-2 4.5-4.5S14.5 12 12 12z" />
                             </svg>
                         </div>
                         <div className="text-xs leading-3">Account</div>

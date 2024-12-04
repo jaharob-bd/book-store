@@ -10,9 +10,22 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Supplier\SupplierController;
 use App\Http\Controllers\Inventory\StockController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Setting\EmailController;
+use Inertia\Inertia;
 
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    Route::get('/dashboard', function () {
+        return Inertia::render('Dashboard');
+    })->middleware(['auth', 'verified', 'admin'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
+    Route::get('/email', [EmailController::class, 'emailSetup']);
+    Route::post('/store-email', [EmailController::class, 'storeEmail']);
+    Route::post('/send-email', [EmailController::class, 'sendEmail']);
+
     // catalog module
     Route::get('/products', [ProductController::class, 'index'])->name('products');
     Route::post('/product-store', [ProductController::class, 'store'])->name('product-store');
