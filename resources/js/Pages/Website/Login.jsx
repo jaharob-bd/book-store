@@ -5,6 +5,7 @@ const Login = ({ auth }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: 'admin@gmail.com',
         password: '12345678',
+        flag: 'web',
         remember: false,
     });
 
@@ -16,18 +17,9 @@ const Login = ({ auth }) => {
 
     const submit = (e) => {
         e.preventDefault();
-        // post(route('loginw'));
-        router.post('loginw', data, {
-            preserveScroll: true,
-            onSuccess: () => { // successfully msg
-                // setData(data);
-                reset('password');
-            },
-            onError: (errors) => { // error msg
-
-            },
-        });
+        post(route('login'));
     };
+
     return (
         <WebLayout auth={auth}>
             <div className="contain py-16">
@@ -40,17 +32,24 @@ const Login = ({ auth }) => {
                         <div className="space-y-2">
                             <div>
                                 <label htmlFor="email"
-                                    className="text-gray-600 mb-2 block"
+                                    className="text-gray-600 mb-2 block">Email address</label>
+                                <input
                                     onChange={(e) => setData('email', e.target.value)}
-                                >Email address</label>
-                                <input type="email" name="email" id="email" className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400" placeholder="youremail.@domain.com" />
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
+                                    placeholder="youremail.@domain.com" />
                             </div>
                             <div>
-                                <label htmlFor="password"
-                                    className="text-gray-600 mb-2 block"
+                                <label htmlFor="password" className="text-gray-600 mb-2 block" >Password</label>
+                                <input
                                     onChange={(e) => setData('password', e.target.value)}
-                                >Password</label>
-                                <input type="password" name="password" id="password" className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400" placeholder="*******" />
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
+                                    placeholder="*******" />
                             </div>
                         </div>
                         <div className="flex items-center justify-between mt-6">

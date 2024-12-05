@@ -29,10 +29,21 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+        $data = $request->all(); // Use validated data for security
+        $isWeb = $data['flag'] === 'web';
+
+        // Determine authentication method based on flag
+        $isWeb ? $request->authenticateForWeb() : $request->authenticate();
+
+        // Regenerate the session to prevent session fixation attacks
         $request->session()->regenerate();
-        return redirect()->intended(route('dashboard', absolute: false));
+
+        // Determine the redirection route dynamically
+        $redirectRoute = $isWeb ? route('home', absolute: false) : route('dashboard', absolute: false);
+
+        return redirect()->intended($redirectRoute);
     }
+
     public function storeForWeb(LoginRequest $request): RedirectResponse
     {
         $request->authenticateForWeb();
