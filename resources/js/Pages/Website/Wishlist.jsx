@@ -116,7 +116,7 @@ export default function Wishlist({ auth, products }) {
                                     <p className="text-gray-500 text-sm">Availability: <span className="text-green-600">In Stock</span></p>
                                 </div>
                                 <div className="text-primary text-lg font-semibold">${item.sale_price}</div>
-                                <AddToCartLink className="px-6 py-2 text-center text-sm text-white bg-indigo-600 border border-indigo-600 rounded hover:bg-transparent hover:text-primary transition uppercase font-roboto font-medium" />
+                                <AddToCartLink product={item} className="px-6 py-2 text-center text-sm text-white bg-indigo-600 border border-indigo-600 rounded hover:bg-transparent hover:text-primary transition uppercase font-roboto font-medium" />
                                 <div className="text-gray-600 cursor-pointer hover:text-primary">
                                     <i className="fa-solid fa-trash" />
                                 </div>
