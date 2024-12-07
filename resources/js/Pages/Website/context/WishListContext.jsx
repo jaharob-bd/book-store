@@ -7,14 +7,14 @@ export const WishListContext = createContext([]);
 
 // Create the WishListProvider
 export const WishListProvider = ({ children }) => {
-    const [WishList, setWishList] = useState(() => {
+    const [wishList, setWishList] = useState(() => {
         const storedWishList = secureLocalStorage.getItem("wishList");
         return storedWishList ? storedWishList : [];
     });
     // Sync WishList to localStorage
     useEffect(() => {
-        secureLocalStorage.setItem("wishList", WishList);
-    }, [WishList]);
+        secureLocalStorage.setItem("wishList", wishList);
+    }, [wishList]);
 
 
     const addToWishList = (product) => {
@@ -35,13 +35,13 @@ export const WishListProvider = ({ children }) => {
     };
 
     const removeWishList = (product_id) => {
-        const prevWishList = [...WishList];
+        const prevWishList = [...wishList];
         const newWishList = prevWishList.filter(item => item.id !== product_id);
         setWishList(newWishList);
     };
 
     return (
-        <WishListContext.Provider value={{ WishList, setWishList, addToWishList, removeWishList }}>
+        <WishListContext.Provider value={{ wishList, setWishList, addToWishList, removeWishList }}>
             {children}
         </WishListContext.Provider>
     );

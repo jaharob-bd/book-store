@@ -1,55 +1,15 @@
-import { useState, useEffect } from 'react';
 import WebLayout from './Layout/WebLayout';
+import { useContext } from 'react';
+import { WishListContext } from './context/WishListContext';
 import { Link } from '@inertiajs/react';
-import Filter from './Partials/Filter';
-import TopFilter from './Partials/TopFilter';
-import secureLocalStorage from "react-secure-storage";
+import AddToCartLink from './Components/AddToCartLink';
 
 export default function Wishlist({ auth, products }) {
-    // const [cart, setCart] = useState([]);
-    // Initialize cart state with data from secureLocalStorage
-    const [cart, setCart] = useState(() => {
-        const storedCart = secureLocalStorage.getItem("cart");
-        return storedCart ? storedCart : [];
-    });
-
-    // Save cart to local storage whenever it changes
-    useEffect(() => {
-        secureLocalStorage.setItem("cart", cart);
-    }, [cart]);
-
-    // Function to handle adding products to the cart
-    const addToCart = (product) => {
-        setCart((prevCart) => {
-            const existingProduct = prevCart.find((item) => item.id === product.id);
-
-            if (existingProduct) {
-                // If product exists, update its quantity
-                return prevCart.map((item) =>
-                    item.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                );
-            } else {
-                // If product doesn't exist, add it to the cart
-                return [...prevCart, { ...product, quantity: 1 }];
-            }
-        });
-    };
-
-    const removeCart = (product_id) => {
-        // remove from cart
-        const prevCart = [...cart];
-        // const product = prevCart.find(item => item.id === product_id);
-        // // Remove from cart
-        const newCart = prevCart.filter(item => item.id !== product_id);
-        setCart(newCart);
-        // setCart(prevCart => prevCart.map(item => item.id === product_id ? { ...item, quantity: item.quantity - 1 } : item));
-    };
+    const { wishList } = useContext(WishListContext);
 
     return (
         <div>
-            <WebLayout auth="{auth}">
+            <WebLayout auth={auth}>
                 {/* breadcrumb */}
                 <div className="container py-4 flex items-center gap-3">
                     <a href="../index.html" className="text-primary text-base">
@@ -71,7 +31,10 @@ export default function Wishlist({ auth, products }) {
                             </div>
                             <div className="flex-grow">
                                 <p className="text-gray-600">Hello,</p>
-                                <h4 className="text-gray-800 font-medium">John Doe</h4>
+                                <h4
+                                    className="text-gray-800 font-medium">
+                                    {auth?.user?.name}
+                                </h4>
                             </div>
                         </div>
                         <div className="mt-6 bg-white shadow rounded p-4 divide-y divide-gray-200 space-y-4 text-gray-600">
@@ -129,63 +92,36 @@ export default function Wishlist({ auth, products }) {
                                 </a>
                             </div>
                             <div className="space-y-1 pl-8 pt-4">
-                                <a href="#" className="relative hover:text-primary block font-medium capitalize transition">
+                                <Link href={route('logout')}
+                                    method="post"
+                                    as="button" className="relative hover:text-primary block font-medium capitalize transition">
                                     <span className="absolute -left-8 top-0 text-base">
                                         <i className="fa-solid fa-right-from-bracket" />
                                     </span>
                                     Logout
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </div>
                     {/* ./sidebar */}
                     {/* wishlist */}
                     <div className="col-span-9 space-y-4">
-                        <div className="flex items-center justify-between border gap-6 p-4 border-gray-200 rounded">
-                            <div className="w-28">
-                                <img src="../assets/images/products/product6.jpg" alt="product 6" className="w-full" />
+                        {wishList.map((item, index) => (
+                            <div key={index} className="flex items-center justify-between border gap-6 p-4 border-gray-200 rounded">
+                                <div className="w-28">
+                                    <img src="image.png" alt={`product ${item.id}`} className="w-full" />
+                                </div>
+                                <div className="w-1/3">
+                                    <h2 className="text-gray-800 text-xl font-medium uppercase">{item.name}</h2>
+                                    <p className="text-gray-500 text-sm">Availability: <span className="text-green-600">In Stock</span></p>
+                                </div>
+                                <div className="text-primary text-lg font-semibold">${item.sale_price}</div>
+                                <AddToCartLink className="px-6 py-2 text-center text-sm text-white bg-indigo-600 border border-indigo-600 rounded hover:bg-transparent hover:text-primary transition uppercase font-roboto font-medium" />
+                                <div className="text-gray-600 cursor-pointer hover:text-primary">
+                                    <i className="fa-solid fa-trash" />
+                                </div>
                             </div>
-                            <div className="w-1/3">
-                                <h2 className="text-gray-800 text-xl font-medium uppercase">Italian L shape</h2>
-                                <p className="text-gray-500 text-sm">Availability: <span className="text-green-600">In Stock</span></p>
-                            </div>
-                            <div className="text-primary text-lg font-semibold">$320.00</div>
-                            <a href="#" className="px-6 py-2 text-center text-sm text-white bg-primary border border-primary rounded hover:bg-transparent hover:text-primary transition uppercase font-roboto font-medium">add
-                                to cart</a>
-                            <div className="text-gray-600 cursor-pointer hover:text-primary">
-                                <i className="fa-solid fa-trash" />
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between border gap-6 p-4 border-gray-200 rounded">
-                            <div className="w-28">
-                                <img src="../assets/images/products/product5.jpg" alt="product 6" className="w-full" />
-                            </div>
-                            <div className="w-1/3">
-                                <h2 className="text-gray-800 text-xl font-medium uppercase">Dining Table</h2>
-                                <p className="text-gray-500 text-sm">Availability: <span className="text-green-600">In Stock</span></p>
-                            </div>
-                            <div className="text-primary text-lg font-semibold">$320.00</div>
-                            <a href="#" className="px-6 py-2 text-center text-sm text-white bg-primary border border-primary rounded hover:bg-transparent hover:text-primary transition uppercase font-roboto font-medium">add
-                                to cart</a>
-                            <div className="text-gray-600 cursor-pointer hover:text-primary">
-                                <i className="fa-solid fa-trash" />
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between border gap-6 p-4 border-gray-200 rounded">
-                            <div className="w-28">
-                                <img src="../assets/images/products/product10.jpg" alt="product 6" className="w-full" />
-                            </div>
-                            <div className="w-1/3">
-                                <h2 className="text-gray-800 text-xl font-medium uppercase">Sofa</h2>
-                                <p className="text-gray-500 text-sm">Availability: <span className="text-red-600">Out of Stock</span></p>
-                            </div>
-                            <div className="text-primary text-lg font-semibold">$320.00</div>
-                            <a href="#" className="cursor-not-allowed px-6 py-2 text-center text-sm text-white bg-red-400 border border-red-400 rounded transition uppercase font-roboto font-medium">add
-                                to cart</a>
-                            <div className="text-gray-600 cursor-pointer hover:text-primary">
-                                <i className="fa-solid fa-trash" />
-                            </div>
-                        </div>
+                        ))}
                     </div>
                     {/* ./wishlist */}
                 </div>

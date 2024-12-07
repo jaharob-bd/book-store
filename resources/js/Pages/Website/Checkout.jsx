@@ -50,8 +50,8 @@ export default function Checkout({ auth }) {
                                     className="mr-3"
                                 />
                                 <label htmlFor="cod" className="flex items-center gap-3 text-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h11M9 21V3m-6 4h6M15 9h5m0 0l-3 3m3-3l-3-3" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 8h6M9 12h6m-3-9a9 9 0 11-9 9 9 9 0 019-9zM16 16v2a2 2 0 01-2 2H8a2 2 0 01-2-2v-2a2 2 0 012-2h6a2 2 0 012 2zm3-1l1.5-1.5M19 15l1.5 1.5" />
                                     </svg>
                                     Cash on Delivery
                                 </label>
@@ -68,8 +68,10 @@ export default function Checkout({ auth }) {
                                     className="mr-3"
                                 />
                                 <label htmlFor="bikash" className="flex items-center gap-3 text-lg">
-                                    <img src="/icons/bikash-logo.svg" alt="Bikash" className="w-6 h-6" />
-                                    Mobile Payment (Bikash)
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 2h10a2 2 0 012 2v16a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2zm7 14h3m-1-1v2m-5-4a2 2 0 100-4 2 2 0 000 4zm1-4V7m0 6h3" />
+                                    </svg>
+                                    Mobile Payment (Bkash)
                                 </label>
                             </div>
                         </div>
@@ -84,7 +86,9 @@ export default function Checkout({ auth }) {
                                     className="mr-3"
                                 />
                                 <label htmlFor="nagad" className="flex items-center gap-3 text-lg">
-                                    <img src="/icons/nagad-logo.svg" alt="Nagad" className="w-6 h-6" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 2h10a2 2 0 012 2v16a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2zm5 9h3l-4 4-4-4h3V7h2v4z" />
+                                    </svg>
                                     Mobile Payment (Nagad)
                                 </label>
                             </div>
@@ -101,8 +105,8 @@ export default function Checkout({ auth }) {
                                     className="mr-3"
                                 />
                                 <label htmlFor="card" className="flex items-center gap-3 text-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 10h11M9 21V3m-6 4h6M15 9h5m0 0l-3 3m3-3l-3-3" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h18a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2zm0 4h18M7 15h2m4 0h2" />
                                     </svg>
                                     Credit/Debit Card
                                 </label>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from '@inertiajs/react';
 
 export default function Nav({ auth }) {
-    console.log('auth', auth);
+    // console.log('auth', auth);
     return (
         <div>
             <nav className="bg-gray-800">

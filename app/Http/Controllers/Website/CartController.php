@@ -53,7 +53,7 @@ class CartController extends Controller
             )
             ->get();
 
-        return Inertia::render('Website/Shop', [
+        return Inertia::render('Website/Wishlist', [
             'products' => $products
         ]);
     }

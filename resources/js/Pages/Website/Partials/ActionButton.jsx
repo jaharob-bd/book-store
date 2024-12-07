@@ -6,9 +6,9 @@ import { WishListContext } from '../context/WishListContext';
 
 const ActionButton = () => {
     const { cart } = useContext(CartContext);
-    const { WishList } = useContext(WishListContext);
+    const { wishList } = useContext(WishListContext);
     const cartCount = cart.length;
-    const wishlistCount = WishList.length;
+    const wishlistCount = wishList.length;
     const loveCount = 0;
 
     return (

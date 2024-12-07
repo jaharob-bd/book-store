@@ -4,7 +4,7 @@ import { priceFormat, numberFormat } from '../Utils/helper'
 const RightSidebar = (props) => {
   const { cartItems, addToCart, clearCart, removeFromCart, getTotalPrice, addCash, cash, change, submit } = props;
   const moneys = [2000, 5000, 10000, 20000, 50000, 100000]
-  console.log(cartItems.length);
+  // console.log(cartItems.length);
 
   return (
     <div className="w-3/12 flex flex-col bg-blue-gray-50 h-6 bg-white pr-4 pl-2 py-1">
