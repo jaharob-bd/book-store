@@ -55,7 +55,8 @@ const Login = ({ auth }) => {
                         <div className="flex items-center justify-between mt-6">
                             <div className="flex items-center">
                                 <input type="checkbox"
-                                    name="remember" id="remember"
+                                    name="remember" 
+                                    id="remember"
                                     className="text-primary focus:ring-0 rounded-sm cursor-pointer"
                                     onChange={(e) => setData('remember', e.target.checked)}
                                 />

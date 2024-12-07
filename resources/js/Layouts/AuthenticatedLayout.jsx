@@ -88,7 +88,7 @@ export default function Authenticated({ user, header, children, props }) {
       /> */}
       {/* <SidebarOverlay isOpen={isOpen} handleOverlayClick={handleOverlayClick} /> */}
       <main className={`flex flex-col pl-2 ${isOpen ? 'ml-20' : 'w-full'}`}>
-        {/* <Header handleToggle={handleToggle} /> */}
+        <Header handleToggle={handleToggle} />
         <div className="p-6">
           {children}
         </div>

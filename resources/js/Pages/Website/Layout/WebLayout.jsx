@@ -9,8 +9,8 @@ import ActionButton from '../Partials/ActionButton';
 export default function WebLayout({ auth, children }) {
     return (
         <div>
-            <Header />
-            <Nav />
+            <Header auth={auth.user}/>
+            <Nav auth={auth.user} />
             <ActionButton />
             <main>{children}</main>
             <Footer />

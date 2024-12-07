@@ -42,9 +42,8 @@ class ShopController extends Controller
 
     function singleProductView($slug)
     {
-        $slug = request()->segments()[1];
         // $slug = 'bangladesher-itihash';
-        $product = $products = DB::table('products as p')
+        $product = DB::table('products as p')
             ->where('p.url_key', $slug)
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
             ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
@@ -56,9 +55,12 @@ class ShopController extends Controller
                 'c.name as category_name'
             )
             ->first();
-
+            if (!$product) {
+                abort(404, 'Product not found');
+            }
         return Inertia::render('Website/SingleProduct', [
             'product' => $product,
         ]);
     }
+
 }

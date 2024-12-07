@@ -20,7 +20,14 @@ Route::fallback(function () {
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
-Route::get('/shop/${slug}', [ShopController::class, 'singleProductView']);
+Route::get('/shop/{slug}', [ShopController::class, 'singleProductView']);
+
+// shop slug route
+// Route::get('/shop/{slug}', function ($slug) {
+//     return "Shop page for: {$slug}";
+// });
+
+
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::get('/Wishlist', [CartController::class, 'wishList'])->name('Wishlist');
 Route::get('/checkout', [CheckoutController::class, 'index'])->middleware('auth')->name('checkout');

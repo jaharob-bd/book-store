@@ -7,6 +7,9 @@ import Categories from './Home/Categories';
 import NewArrival from './Home/NewArrival';
 import Ads from './Home/Ads';
 import { CartContext } from './context/CartContext';
+import ProductLink from './Components/ProductLink';
+import WishLink from './Components/WishLink';
+import AddToCartLink from './Components/AddToCartLink';
 
 export default function Index({ auth, products }) {
     const { addToCart } = useContext(CartContext);
@@ -23,14 +26,10 @@ export default function Index({ auth, products }) {
                     {products.map((product, index) => (
                         <div key={index} className="bg-white shadow rounded overflow-hidden group">
                             <div className="relative">
-                                <img src="" alt="product 1" className="w-full" />
+                                <img src="image.png" alt="product 1" className="w-full" />
                                 <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                                    <a href="#" className="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition" title="view product">
-                                        <i className="fa-solid fa-magnifying-glass" />
-                                    </a>
-                                    <a href="#" className="text-white text-lg w-9 h-8 rounded-full bg-primary flex items-center justify-center hover:bg-gray-800 transition" title="add to wishlist">
-                                        <i className="fa-solid fa-heart" />
-                                    </a>
+                                    <ProductLink slug={product.url_key} />
+                                    <WishLink product={product} />
                                 </div>
                             </div>
                             <div className="pt-4 pb-3 px-4">
@@ -52,9 +51,7 @@ export default function Index({ auth, products }) {
                                     <div className="text-xs text-gray-500 ml-3">(150)</div>
                                 </div>
                             </div>
-                            <button onClick={() => addToCart(product)} href="#" className="block w-full py-1 text-center text-white bg-primary border border-primary rounded-b hover:bg-transparent hover:text-primary transition">
-                                Add to cart
-                            </button>
+                            <AddToCartLink product={product} />
                         </div>
                     ))}
                 </div>

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Link } from '@inertiajs/react';
 
-export default function Nav({ isMobileMenuOpen, isMenDropdownOpen, toggleMenDropdown }) {
+export default function Nav({ auth }) {
+    console.log('auth', auth);
     return (
         <div>
             <nav className="bg-gray-800">
@@ -46,10 +47,20 @@ export default function Nav({ isMobileMenuOpen, isMenDropdownOpen, toggleMenDrop
                             <a href="#" className="text-gray-200 hover:text-white transition">About us</a>
                             <a href="#" className="text-gray-200 hover:text-white transition">Contact us</a>
                         </div>
-                        <Link href={route('login')} className="text-gray-200 hover:text-white transition">Login</Link>
+                        {auth ? (
+                            <>  </>
+                            // <Link href={route('logout')} className="text-gray-200 hover:text-white transition">Logout</Link>
+                        ) : (
+                            <Link href={route('register')} className="flex items-center space-x-2 text-gray-200 hover:text-white transition">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c2.28 0 4-1.72 4-4s-1.72-4-4-4-4 1.72-4 4 1.72 4 4 4zm0 2c-3.18 0-6 1.64-6 4v2h12v-2c0-2.36-2.82-4-6-4zm8-2v2m0 0h2m-2 0h-2" />
+                                </svg>
+                                <span>Sign Up</span>
+                            </Link>
+                        )}
                     </div>
                 </div>
-            </nav>
-        </div>
+            </nav >
+        </div >
     )
 }

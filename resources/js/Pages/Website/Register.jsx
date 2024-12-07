@@ -1,7 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import WebLayout from './Layout/WebLayout';
-
+import { Head, Link, useForm } from '@inertiajs/react';
 const Register = ({ auth }) => {
+
+    const { data, setData, post, processing, errors, reset } = useForm({
+        name: '',
+        email: '',
+        password: '',
+        password_confirmation: '',
+        aggrement: false,
+        flag: 'web',
+    });
+
+    useEffect(() => {
+        return () => {
+            reset('password', 'password_confirmation');
+        };
+    }, []);
+
+    const submit = (e) => {
+        e.preventDefault();
+
+        post(route('register'));
+    };
+
+
     return (
         <WebLayout auth={auth}>
             <div className="contain py-16">
@@ -10,28 +33,74 @@ const Register = ({ auth }) => {
                     <p className="text-gray-600 mb-6 text-sm">
                         Register for new cosutumer
                     </p>
-                    <form action="#" method="post" autoComplete="off">
+                    <form onSubmit={submit} autoComplete="off">
                         <div className="space-y-2">
                             <div>
                                 <label htmlFor="name" className="text-gray-600 mb-2 block">Full Name</label>
-                                <input type="text" name="name" id="name" className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400" placeholder="fulan fulana" />
+                                <input
+                                    type="text"
+                                    value={data.name}
+                                    onChange={(e) => setData('name', e.target.value)}
+                                    name="name"
+                                    id="name"
+                                    className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
+                                    placeholder="Full Name"
+                                    required
+                                />
                             </div>
                             <div>
                                 <label htmlFor="email" className="text-gray-600 mb-2 block">Email address</label>
-                                <input type="email" name="email" id="email" className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400" placeholder="youremail.@domain.com" />
+                                <input
+                                    id="email"
+                                    type="email"
+                                    name="email"
+                                    value={data.email}
+                                    autoComplete="username"
+                                    onChange={(e) => setData('email', e.target.value)}
+                                    className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400" placeholder="youremail.@domain.com"
+                                    required
+                                />
                             </div>
                             <div>
                                 <label htmlFor="password" className="text-gray-600 mb-2 block">Password</label>
-                                <input type="password" name="password" id="password" className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400" placeholder="*******" />
+                                <input
+                                    id="password"
+                                    type="password"
+                                    name="password"
+                                    value={data.password}
+                                    className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
+                                    autoComplete="new-password"
+                                    onChange={(e) => setData('password', e.target.value)}
+                                    placeholder="*******"
+                                    required
+                                />
                             </div>
                             <div>
                                 <label htmlFor="confirm" className="text-gray-600 mb-2 block">Confirm password</label>
-                                <input type="password" name="confirm" id="confirm" className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400" placeholder="*******" />
+                                <input
+                                    id="password_confirmation"
+                                    type="password"
+                                    name="password_confirmation"
+                                    value={data.password_confirmation}
+                                    className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
+                                    autoComplete="new-password"
+                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                    placeholder="*******"
+                                    required
+                                />
                             </div>
                         </div>
                         <div className="mt-6">
                             <div className="flex items-center">
-                                <input type="checkbox" name="aggrement" id="aggrement" className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
+                                <input
+                                    type="checkbox"
+                                    name="aggrement"
+                                    id="aggrement"
+                                    value={data.aggrement}
+                                    onChange={(e) => setData('aggrement', e.target.checked)}
+                                    className="text-primary focus:ring-0 rounded-sm cursor-pointer"
+                                    required
+                                />
                                 <label htmlFor="aggrement" className="text-gray-600 ml-3 cursor-pointer">I have read and agree to the <a href="#" className="text-primary">terms &amp; conditions</a></label>
                             </div>
                         </div>
@@ -50,7 +119,10 @@ const Register = ({ auth }) => {
                         <a href="#" className="w-1/2 py-2 text-center text-white bg-red-600 rounded uppercase font-roboto font-medium text-sm hover:bg-red-500">google</a>
                     </div>
                     {/* ./login with */}
-                    <p className="mt-4 text-center text-gray-600">Already have account? <a href="login.html" className="text-primary">Login now</a></p>
+                    <p className="mt-4 text-center text-gray-600">
+                        Already have account?
+                        <Link href={route('login')} className="text-primary">Login now</Link>
+                    </p>
                 </div>
             </div>
         </WebLayout>
