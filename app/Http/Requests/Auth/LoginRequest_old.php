@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
-class LoginRequest extends FormRequest
+class LoginRequest_old extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -27,7 +27,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'identifier' => ['required', 'string'], // Accept email or phone
+            'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
         ];
     }
@@ -41,53 +41,30 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        $credentials = $this->getCredentials();
-
-        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
+        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'identifier' => trans('auth.failed'),
+                'email' => trans('auth.failed'),
             ]);
         }
 
         RateLimiter::clear($this->throttleKey());
     }
 
-    /**
-     * Attempt to authenticate the request's credentials for web with user_type.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function authenticateForWeb(): void
     {
         $this->ensureIsNotRateLimited();
 
-        $credentials = array_merge($this->getCredentials(), ['user_type' => 2]);
-
-        if (! Auth::attempt($credentials, $this->boolean('remember'))) {
+        if (! Auth::attempt(array_merge($this->only('email', 'password'),['user_type' => 2]), $this->boolean('remember'))) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'identifier' => trans('auth.failed'),
+                'email' => trans('auth.failed'),
             ]);
         }
 
         RateLimiter::clear($this->throttleKey());
-    }
-
-    /**
-     * Determine the credentials for authentication.
-     */
-    protected function getCredentials(): array
-    {
-        $identifier = $this->input('identifier');
-
-        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
-            return ['email' => $identifier, 'password' => $this->input('password')];
-        }
-
-        return ['phone' => $identifier, 'password' => $this->input('password')];
     }
 
     /**
@@ -106,7 +83,7 @@ class LoginRequest extends FormRequest
         $seconds = RateLimiter::availableIn($this->throttleKey());
 
         throw ValidationException::withMessages([
-            'identifier' => trans('auth.throttle', [
+            'email' => trans('auth.throttle', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ]),
@@ -118,6 +95,6 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('identifier')) . '|' . $this->ip());
+        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
     }
 }

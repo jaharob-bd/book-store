@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
 import WebLayout from './Layout/WebLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
+import InputError from '@/Components/InputError';
+
 const Login = ({ auth }) => {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: 'admin@gmail.com',
-        password: '12345678',
+        identifier: '', // Email or mobile
+        password: '',
         flag: 'web',
         remember: false,
     });
@@ -31,15 +33,15 @@ const Login = ({ auth }) => {
                     <form onSubmit={submit}>
                         <div className="space-y-2">
                             <div>
-                                <label htmlFor="email"
-                                    className="text-gray-600 mb-2 block">Email address</label>
+                                <label htmlFor="email" className="text-gray-600 mb-2 block">Email or Mobile</label>
                                 <input
-                                    onChange={(e) => setData('email', e.target.value)}
-                                    type="email"
-                                    name="email"
-                                    id="email"
+                                    onChange={(e) => setData('identifier', e.target.value)}
+                                    type="text"
+                                    name="identifier"
+                                    id="identifier"
                                     className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
-                                    placeholder="youremail.@domain.com" />
+                                    placeholder="Email or Mobile" />
+                                <InputError message={errors.identifier} className="mt-2" />
                             </div>
                             <div>
                                 <label htmlFor="password" className="text-gray-600 mb-2 block" >Password</label>
@@ -50,12 +52,13 @@ const Login = ({ auth }) => {
                                     id="password"
                                     className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400"
                                     placeholder="*******" />
+                                <InputError message={errors.password} className="mt-2" />
                             </div>
                         </div>
                         <div className="flex items-center justify-between mt-6">
                             <div className="flex items-center">
                                 <input type="checkbox"
-                                    name="remember" 
+                                    name="remember"
                                     id="remember"
                                     className="text-primary focus:ring-0 rounded-sm cursor-pointer"
                                     onChange={(e) => setData('remember', e.target.checked)}

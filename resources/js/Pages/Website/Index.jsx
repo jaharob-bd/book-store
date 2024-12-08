@@ -18,7 +18,7 @@ export default function Index({ auth, products }) {
             <Banner />
             <Features />
             <Categories />
-            <NewArrival />
+            <NewArrival products={products} />
             <Ads />
             <div className="container pb-16">
                 <h2 className="text-2xl font-medium text-gray-800 uppercase mb-6">recomended for you</h2>

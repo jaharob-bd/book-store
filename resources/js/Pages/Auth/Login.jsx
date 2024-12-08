@@ -9,7 +9,7 @@ const bgImg = 'assets/images/login/background.svg'
 
 export default function Login({ status, canResetPassword }) {
     const { data, setData, post, processing, errors, reset } = useForm({
-        email: 'admin@gmail.com',
+        identifier: 'admin@gmail.com',
         password: '12345678',
         flag: 'admin',
         remember: false,
@@ -68,13 +68,13 @@ export default function Login({ status, canResetPassword }) {
                                             className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                                             type="email"
                                             placeholder="Email"
-                                            id="email"
-                                            name="email"
-                                            value={data.email ? data.email : 'admin@gmail.com'}
-                                            autoComplete="username"
+                                            id="identifier"
+                                            name="identifier"
+                                            value={data.identifier ? data.identifier : 'admin@gmail.com'}
+                                            autoComplete="identifier"
                                             isFocused={true}
-                                            onChange={(e) => setData('email', e.target.value)} />
-                                        <InputError message={errors.email} className="mt-2" />
+                                            onChange={(e) => setData('identifier', e.target.value)} />
+                                        <InputError message={errors.identifier} className="mt-2" />
                                         <input
                                             className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                                             type="password"

@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import WebLayout from './Layout/WebLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
+import InputError from '@/Components/InputError';
 const Register = ({ auth }) => {
 
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
+        phone: '',
         password: '',
         password_confirmation: '',
         aggrement: false,
@@ -24,7 +26,6 @@ const Register = ({ auth }) => {
         post(route('register'));
     };
 
-
     return (
         <WebLayout auth={auth}>
             <div className="contain py-16">
@@ -36,7 +37,7 @@ const Register = ({ auth }) => {
                     <form onSubmit={submit} autoComplete="off">
                         <div className="space-y-2">
                             <div>
-                                <label htmlFor="name" className="text-gray-600 mb-2 block">Full Name</label>
+                                <label htmlFor="name" className="text-gray-600 mb-2 block">Full Name <span className="text-red-600">*</span></label>
                                 <input
                                     type="text"
                                     value={data.name}
@@ -47,22 +48,39 @@ const Register = ({ auth }) => {
                                     placeholder="Full Name"
                                     required
                                 />
+                                <InputError message={errors.name} className="mt-2" />
+                            </div>
+                            <div className="mt-4">
+                                <label htmlFor="email" className="text-gray-600 mb-2 block">Phone <span className="text-red-600">*</span></label>
+                                <input
+                                    id="phone"
+                                    type="number"
+                                    name="phone"
+                                    value={data.phone}
+                                    className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                    autoComplete="phone"
+                                    onChange={(e) => setData('phone', e.target.value)}
+                                    placeholder="018XXXXXXXXX"
+                                    required
+                                />
+
+                                <InputError message={errors.phone} className="mt-2" />
                             </div>
                             <div>
-                                <label htmlFor="email" className="text-gray-600 mb-2 block">Email address</label>
+                                <label htmlFor="email" className="text-gray-600 mb-2 block">Email</label>
                                 <input
                                     id="email"
                                     type="email"
                                     name="email"
                                     value={data.email}
-                                    autoComplete="username"
+                                    autoComplete="email"
                                     onChange={(e) => setData('email', e.target.value)}
                                     className="block w-full border border-gray-300 px-4 py-3 text-gray-600 text-sm rounded focus:ring-0 focus:border-primary placeholder-gray-400" placeholder="youremail.@domain.com"
-                                    required
                                 />
+                                <InputError message={errors.email} className="mt-2" />
                             </div>
                             <div>
-                                <label htmlFor="password" className="text-gray-600 mb-2 block">Password</label>
+                                <label htmlFor="password" className="text-gray-600 mb-2 block">Password <span className="text-red-600">*</span></label>
                                 <input
                                     id="password"
                                     type="password"
@@ -74,9 +92,10 @@ const Register = ({ auth }) => {
                                     placeholder="*******"
                                     required
                                 />
+                                <InputError message={errors.password} className="mt-2" />
                             </div>
                             <div>
-                                <label htmlFor="confirm" className="text-gray-600 mb-2 block">Confirm password</label>
+                                <label htmlFor="confirm" className="text-gray-600 mb-2 block">Confirm password <span className="text-red-600">*</span></label>
                                 <input
                                     id="password_confirmation"
                                     type="password"
