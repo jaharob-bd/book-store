@@ -1,12 +1,13 @@
 import React, { useContext } from 'react';
 import { WishListContext } from '../context/WishListContext';
 
-const WishLink = ({ product }) => {
+const WishLink = ({ product, className = '' }) => {
     const { addToWishList } = useContext(WishListContext);
     return (
         <button
             onClick={() => addToWishList(product)}
-            className="text-white text-lg w-9 h-8 rounded-full bg-indigo-600 flex items-center justify-center hover:bg-gray-800 transition" title="add to wishlist">
+            className={className ? className : `text-white text-lg w-9 h-8 rounded-full bg-indigo-600 flex items-center justify-center hover:bg-gray-800 transition" title="add to wishlist`}
+        >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6"

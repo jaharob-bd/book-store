@@ -2,6 +2,7 @@ import { Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import WebLayout from './Layout/WebLayout';
 import secureLocalStorage from "react-secure-storage";
+import Breadcrumb from './Components/Breadcrumb';
 
 export default function Checkout({ auth }) {
     const [cart, setCart] = useState(() => {
@@ -22,18 +23,7 @@ export default function Checkout({ auth }) {
 
     return (
         <WebLayout auth={auth}>
-
-            {/* breadcrumb */}
-            <div className="container py-4 flex items-center gap-3">
-                <a href="../index.html" className="text-primary text-base">
-                    <i className="fa-solid fa-house" />
-                </a>
-                <span className="text-sm text-gray-400">
-                    <i className="fa-solid fa-chevron-right" />
-                </span>
-                <p className="text-gray-600 font-medium">Checkout</p>
-            </div>
-            {/* ./breadcrumb */}
+            <Breadcrumb title="Checkout" />
             {/* wrapper */}
             <div className="container grid grid-cols-12 items-start pb-16 pt-4 gap-6">
                 <div className="col-span-8 border border-gray-200 p-4 rounded">
