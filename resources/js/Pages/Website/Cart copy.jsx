@@ -85,7 +85,7 @@ export default function Cart({ auth, products }) {
                     <div className="mt-12">
                         <h2 className="text-2xl font-bold text-center mb-6">Products for you</h2>
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                            {products.slice(0,4).map((product, index) => (
+                            {products.map((product, index) => (
                                 <div key={index} className="bg-white shadow rounded overflow-hidden group">
                                     <div className="relative">
                                         <img src="image.png" alt="product 1" className="w-full" />
