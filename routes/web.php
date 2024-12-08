@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Website\AccountController;
 use App\Http\Controllers\Website\CheckoutController;
 use App\Http\Controllers\Website\HomeController;
 use App\Http\Controllers\Website\ShopController;
@@ -21,17 +22,19 @@ Route::fallback(function () {
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
 Route::get('/shop/{slug}', [ShopController::class, 'singleProductView']);
-
-// shop slug route
-// Route::get('/shop/{slug}', function ($slug) {
-//     return "Shop page for: {$slug}";
-// });
-
-
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::get('/Wishlist', [CartController::class, 'wishList'])->name('Wishlist');
 Route::get('/checkout', [CheckoutController::class, 'index'])->middleware('auth')->name('checkout');
 Route::get('/gift', [CheckoutController::class, 'gift'])->middleware('auth')->name('gift');
+
+// my account controller
+Route::middleware('auth')->group(function () {
+    Route::get('/my-account', [AccountController::class, 'index'])->name('my-account');
+    Route::get('/edit-account', [AccountController::class, 'editAccount'])->name('edit-account');
+    Route::post('/update-account', [AccountController::class, 'updateAccount'])->name('update-account');
+    Route::get('/my-orders', [AccountController::class, 'myOrders'])->name('my-orders');
+    Route::get('/order-detail/{id}', [AccountController::class, 'orderDetail'])->name('order-detail');
+});
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/admin.php';

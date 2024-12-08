@@ -8,7 +8,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Application;
 
-class HomeController extends Controller
+class AccountController extends Controller
 {
     function index()
     {
@@ -24,7 +24,7 @@ class HomeController extends Controller
             )
             ->get();
 
-        return Inertia::render('Website/Index', [
+        return Inertia::render('Website/MyProfile', [
             'products' => $products,
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),

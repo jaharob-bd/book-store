@@ -1,66 +1,181 @@
-import { useState } from 'react';
 import { Link } from '@inertiajs/react';
+import { useState } from 'react';
 
 export default function Nav({ auth }) {
-    // console.log('auth', auth);
+    const [desktopMenuOpen, setDesktopMenuOpen] = useState(false);
+
+    const toggleMenu = () => {
+        setDesktopMenuOpen((prev) => !prev);
+    };
+
     return (
         <div>
-            <nav className="bg-gray-800">
-                <div className="container flex">
-                    <div className="px-8 py-4 bg-primary md:flex items-center cursor-pointer relative group hidden">
-                        <span className="text-white">
-                            <i className="fa-solid fa-bars" />
-                        </span>
-                        <span className="capitalize ml-2 text-white hidden">All Categories</span>
-                        {/* dropdown */}
-                        <div className="absolute w-full left-0 top-full bg-white shadow-md py-3 divide-y divide-gray-300 divide-dashed opacity-0 group-hover:opacity-100 transition duration-300 invisible group-hover:visible">
-                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
-                                <img src="assets/images/icons/sofa.svg" alt="sofa" className="w-5 h-5 object-contain" />
-                                <span className="ml-6 text-gray-600 text-sm">Sofa</span>
-                            </a>
-                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
-                                <img src="assets/images/icons/terrace.svg" alt="terrace" className="w-5 h-5 object-contain" />
-                                <span className="ml-6 text-gray-600 text-sm">Terarce</span>
-                            </a>
-                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
-                                <img src="assets/images/icons/bed.svg" alt="bed" className="w-5 h-5 object-contain" />
-                                <span className="ml-6 text-gray-600 text-sm">Bed</span>
-                            </a>
-                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
-                                <img src="assets/images/icons/office.svg" alt="office" className="w-5 h-5 object-contain" />
-                                <span className="ml-6 text-gray-600 text-sm">office</span>
-                            </a>
-                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
-                                <img src="assets/images/icons/outdoor-cafe.svg" alt="outdoor" className="w-5 h-5 object-contain" />
-                                <span className="ml-6 text-gray-600 text-sm">Outdoor</span>
-                            </a>
-                            <a href="#" className="flex items-center px-6 py-3 hover:bg-gray-100 transition">
-                                <img src="assets/images/icons/bed-2.svg" alt="Mattress" className="w-5 h-5 object-contain" />
-                                <span className="ml-6 text-gray-600 text-sm">Mattress</span>
-                            </a>
+            <nav className="relative bg-violet-900">
+                <div className="mx-auto hidden h-12 w-full max-w-[1200px] items-center md:flex">
+                    <button
+                        className="ml-5 flex h-full w-40 cursor-pointer items-center justify-center bg-amber-400"
+                        onClick={toggleMenu}
+                    >
+                        <div className="flex justify-around">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth="1.5"
+                                stroke="currentColor"
+                                className="mx-1 h-6 w-6"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                                />
+                            </svg>
+                            All categories
                         </div>
+                    </button>
+                    <div className="mx-7 flex gap-8">
+                        <Link href="/" className="font-light text-white duration-100 hover:text-yellow-400 hover:underline">Home</Link>
+                        <Link href={route('shop')} className="font-light text-white duration-100 hover:text-yellow-400 hover:underline">Shop</Link>
+                        <a className="font-light text-white duration-100 hover:text-yellow-400 hover:underline" href="about-us.html">About Us</a>
+                        <a className="font-light text-white duration-100 hover:text-yellow-400 hover:underline" href="contact-us.html">Contact Us</a>
                     </div>
-                    <div className="flex items-center justify-between flex-grow md:pl-12 py-5">
-                        <div className="flex items-center space-x-6 capitalize">
-                            <Link href="/" className="text-gray-200 hover:text-white transition">Home</Link>
-                            <Link href={route('shop')} className="text-gray-200 hover:text-white transition">Shop</Link>
-                            <a href="#" className="text-gray-200 hover:text-white transition">About us</a>
-                            <a href="#" className="text-gray-200 hover:text-white transition">Contact us</a>
-                        </div>
+                    <div className="ml-auto flex gap-4 px-5">
+
                         {auth ? (
-                            <>  </>
-                            // <Link href={route('logout')} className="text-gray-200 hover:text-white transition">Logout</Link>
-                        ) : (
-                            <Link href={route('register')} className="flex items-center space-x-2 text-gray-200 hover:text-white transition">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c2.28 0 4-1.72 4-4s-1.72-4-4-4-4 1.72-4 4 1.72 4 4 4zm0 2c-3.18 0-6 1.64-6 4v2h12v-2c0-2.36-2.82-4-6-4zm8-2v2m0 0h2m-2 0h-2" />
-                                </svg>
-                                <span>Sign Up</span>
+                            <Link
+                                href={route('logout')}
+                                method="post"
+                                as="button"
+                                className="font-light text-white duration-100 hover:text-yellow-400 hover:underline"
+                            >
+                                Logout
                             </Link>
+                        ) : (
+                            <>
+                                <Link
+                                    href={route('login')}
+                                    className="font-light text-white duration-100 hover:text-yellow-400 hover:underline">
+                                    Login
+                                </Link>
+                                <span className="text-white">|</span>
+                                <Link
+                                    href={route('register')} className="font-light text-white duration-100 hover:text-yellow-400 hover:underline">
+                                    Sign Up
+                                </Link>
+                            </>
                         )}
                     </div>
                 </div>
-            </nav >
-        </div >
-    )
+            </nav>
+            {/* Menu */}
+            {desktopMenuOpen && (
+                <section className="absolute left-0 right-0 z-10 w-full border-b border-r border-l bg-white">
+                    <div className="mx-auto flex max-w-[1200px] py-10">
+                        <div className="w-[300px] border-r">
+                            <ul className="px-5">
+                                <li className="active:blue-900 flex items-center gap-2 bg-amber-400 py-2 px-3 active:bg-amber-400">
+                                    {/* <img width="15px" height="15px" src="./assets/images/bed.svg" alt="Bedroom icon" /> */}
+                                    Bedroom
+                                    <span className="ml-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                    </span>
+                                </li>
+                                <li className="active:blue-900 flex items-center gap-2 py-2 px-3 hover:bg-neutral-100 active:bg-amber-400">
+                                    {/* <img width="15px" height="15px" src="./assets/images/sleep.svg" alt="bedroom icon" /> */}
+                                    Matrass
+                                    <span className="ml-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                    </span>
+                                </li>
+                                <li className="active:blue-900 flex items-center gap-2 py-2 px-3 hover:bg-neutral-100 active:bg-amber-400">
+                                    {/* <img width="15px" height="15px" src="./assets/images/outdoor.svg" alt="bedroom icon" /> */}
+                                    Outdoor
+                                    <span className="ml-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                    </span>
+                                </li>
+                                <li className="active:blue-900 flex items-center gap-2 py-2 px-3 hover:bg-neutral-100 active:bg-amber-400">
+                                    {/* <img width="15px" height="15px" src="./assets/images/sofa.svg" alt="bedroom icon" /> */}
+                                    Sofa
+                                    <span className="ml-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                    </span>
+                                </li>
+                                <li className="active:blue-900 flex items-center gap-2 py-2 px-3 hover:bg-neutral-100 active:bg-amber-400">
+                                    {/* <img width="15px" height="15px" src="./assets/images/kitchen.svg" alt="bedroom icon" /> */}
+                                    Kitchen
+                                    <span className="ml-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                    </span>
+                                </li>
+                                <li className="active:blue-900 flex items-center gap-2 py-2 px-3 hover:bg-neutral-100 active:bg-amber-400">
+                                    {/* <img width="15px" height="15px" src="./assets/images/food.svg" alt="Food icon" /> */}
+                                    Living room
+                                    <span className="ml-auto"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-4 w-4">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                    </svg>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                        {/* Menu content */}
+                        <div className="flex w-full justify-between">
+                            <div className="flex gap-6">
+                                <div className="mx-5">
+                                    <p className="font-medium text-gray-500">BEDS</p>
+                                    <ul className="text-sm leading-8">
+                                        <li><a href="product-overview.html">Italian bed</a></li>
+                                        <li><a href="product-overview.html">Queen-size bed</a></li>
+                                        <li><a href="product-overview.html">Wooden craft bed</a></li>
+                                        <li><a href="product-overview.html">King-size bed</a></li>
+                                    </ul>
+                                </div>
+                                <div className="mx-5">
+                                    <p className="font-medium text-gray-500">LAMPS</p>
+                                    <ul className="leading-8 text-sm">
+                                        <li>
+                                            <a href="/product-overview.html">Italian Purple Lamp</a>
+                                        </li>
+                                        <li>
+                                            <a href="/product-overview.html">APEX Lamp</a>
+                                        </li>
+                                        <li>
+                                            <a href="/product-overview.html">PIXAR lamp</a>
+                                        </li>
+                                        <li>
+                                            <a href="/product-overview.html">Ambient Nightlamp</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div className="mx-5">
+                                    <p className="font-medium text-gray-500">BEDSIDE TABLES</p>
+                                    <ul className="text-sm leading-8">
+                                        <li><a href="product-overview.html">Purple Table</a></li>
+                                        <li><a href="product-overview.html">Easy Bedside</a></li>
+                                        <li><a href="product-overview.html">Soft Table</a></li>
+                                        <li><a href="product-overview.html">Craft Table</a></li>
+                                    </ul>
+                                </div>
+                                <div className="mx-5">
+                                    <p className="font-medium text-gray-500">SPECIAL</p>
+                                    <ul className="text-sm leading-8">
+                                        <li><a href="product-overview.html">Humidifier</a></li>
+                                        <li><a href="product-overview.html">Bed Cleaner</a></li>
+                                        <li><a href="product-overview.html">Vacuum Cleaner</a></li>
+                                        <li><a href="product-overview.html">Pillow</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            )}
+        </div>
+    );
 }

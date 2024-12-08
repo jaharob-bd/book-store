@@ -4,20 +4,12 @@ import Drawer from './Shop/Drawer';
 import ProductLink from './Components/ProductLink';
 import WishLink from './Components/WishLink';
 import AddToCartLink from './Components/AddToCartLink';
+import Breadcrumb from './Components/Breadcrumb';
 
 export default function Shop({ auth, products }) {
     return (
         <WebLayout auth={auth}>
-            {/* breadcrumb */}
-            <div className="container py-4 flex items-center gap-3">
-                <a href="/" className="text-primary text-base">
-                    <i className="fa-solid fa-house" />
-                </a>
-                <span className="text-sm text-gray-400">
-                    <i className="fa-solid fa-chevron-right" />
-                </span>
-                <p className="text-gray-600 font-medium">Shop</p>
-            </div>
+            <Breadcrumb title="Shop" />
             {/* ./breadcrumb */}
             {/* shop wrapper */}
             <div className="container grid md:grid-cols-4 grid-cols-2 gap-6 pt-4 pb-16 items-start">

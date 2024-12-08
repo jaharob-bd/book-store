@@ -56,10 +56,10 @@ class RegisteredUserController extends Controller
                 'status' => 1,
                 'created_by' => $user->id,
             ]);
-            if ($customer) {
-                $user->sendEmailVerificationNotification();
-                return redirect()->route('verification.notice')->with(['email' => $user->email]);
-            }
+            // if ($customer) {
+            //     $user->sendEmailVerificationNotification();
+            //     return redirect()->route('verification.notice')->with(['email' => $user->email]);
+            // }
         }
 
         event(new Registered($user));

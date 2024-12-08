@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { WishListContext } from './context/WishListContext';
 import { Link } from '@inertiajs/react';
 import AddToCartLink from './Components/AddToCartLink';
+import Breadcrumb from './Components/Breadcrumb';
 
 export default function Wishlist({ auth, products }) {
     const { wishList } = useContext(WishListContext);
@@ -11,15 +12,7 @@ export default function Wishlist({ auth, products }) {
         <div>
             <WebLayout auth={auth}>
                 {/* breadcrumb */}
-                <div className="container py-4 flex items-center gap-3">
-                    <a href="../index.html" className="text-primary text-base">
-                        <i className="fa-solid fa-house" />
-                    </a>
-                    <span className="text-sm text-gray-400">
-                        <i className="fa-solid fa-chevron-right" />
-                    </span>
-                    <p className="text-gray-600 font-medium">Profile</p>
-                </div>
+                <Breadcrumb title="Wish List" />
                 {/* ./breadcrumb */}
                 {/* wrapper */}
                 <div className="container grid grid-cols-12 items-start gap-6 pt-4 pb-16">
@@ -27,7 +20,7 @@ export default function Wishlist({ auth, products }) {
                     <div className="col-span-3">
                         <div className="px-4 py-3 shadow flex items-center gap-4">
                             <div className="flex-shrink-0">
-                                <img src="../assets/images/avatar.png" alt="profile" className="rounded-full w-14 h-14 border border-gray-200 p-1 object-cover" />
+                                <img src="image.png" alt="profile" className="rounded-full w-14 h-14 border border-gray-200 p-1 object-cover" />
                             </div>
                             <div className="flex-grow">
                                 <p className="text-gray-600">Hello,</p>

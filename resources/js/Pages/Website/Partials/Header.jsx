@@ -9,108 +9,61 @@ export default function Header({ auth }) {
     const { wishList } = useContext(WishListContext);
 
     return (
-        <header className="py-4 shadow-sm bg-white">
-            <div className="container flex items-center justify-between">
-                <a href="index.html">
-                    {/* <img src="assets/images/logo.svg" alt="Logo" className="w-32" /> */}
-                </a>
-                <div className="w-full max-w-xl relative flex">
-                    <span className="absolute left-4 top-3 text-lg text-gray-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M11 4a7 7 0 105.29 12.29l4.71 4.71a1 1 0 001.42-1.42l-4.71-4.71A7 7 0 0011 4zm0 2a5 5 0 110 10A5 5 0 0111 6z" />
-                        </svg>
-                    </span>
-                    <input type="text" name="search" id="search" className="w-full border border-indigo-600 border-r-0 pl-12 py-3 pr-3 rounded-l-md focus:outline-none hidden md:flex" placeholder="search" />
-                    <button className="bg-indigo-600 border border-indigo-600 text-white px-8 pt-3 rounded-r-md hover:bg-transparent hover:text-primary transition hidden md:flex">
-                        Search
-                    </button>
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Link href={route('Wishlist')} className="text-center text-gray-700 hover:text-primary transition relative">
-                        <div className="text-2xl">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M3.172 3.172a4 4 0 015.656 0l.172.172.172-.172a4 4 0 115.656 5.656L12 12.172l-3.828-3.828a4 4 0 00-5.656 0 4 4 0 000 5.656L12 21.828l9.172-9.172a4 4 0 00-5.656-5.656L12 3.172"
-                                />
-                            </svg>
-                        </div>
-                        <div className="text-xs leading-3">Wishlist</div>
-                        <div className="absolute right-0 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
-                            {wishList.length}
-                        </div>
-                    </Link>
-                    <Link href={route('cart')} className="text-center text-gray-700 hover:text-primary transition relative">
-                        <div className="text-2xl">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-6 w-6"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M3 3h2l.4 2M7 13h10l1.35-7H5.65M7 13l-.35 2M17 13l.35 2m-10.7 0h10.7m-6 4h2m-2-4a4 4 0 100 8h-2a4 4 0 100-8h2z"
-                                />
-                            </svg>
-                        </div>
-                        <div className="text-xs leading-3">Cart</div>
-                        <div className="absolute -right-3 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
-                            {cart.length}
-                        </div>
-                    </Link>
-                    {/* if logdin then else login */}
-                    {auth ? (
-                        // If authenticated
-                        <div className="flex items-center space-x-4">
-                            {/* Profile Link */}
-                            <Link href="" className="text-center text-gray-700 hover:text-primary transition relative">
-                                <div className="text-2xl">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A8.966 8.966 0 0012 20a8.966 8.966 0 006.879-2.196M12 12a4 4 0 100-8 4 4 0 000 8zm0 0c-2.5 0-4.5 2-4.5 4.5S9.5 21 12 21s4.5-2 4.5-4.5S14.5 12 12 12z" />
-                                    </svg>
-                                </div>
-                                <div className="text-xs leading-3">{auth.name}</div>
-                            </Link>
-                            {/* Logout Link */}
-                            <Link href={route('logout')}
-                                method="post"
-                                as="button"
-                                className="text-center text-gray-700 hover:text-primary transition relative"
-                            >
-                                <div className="text-2xl">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H9m-6 4V8a2 2 0 012-2h4" />
-                                    </svg>
-                                </div>
-                                <div className="text-xs leading-3">Logout</div>
-                            </Link>
-                        </div>
-                    ) : (
-                        // If not authenticated
-                        <Link href={route('login')} className="text-center text-gray-700 hover:text-primary transition relative">
-                            <div className="text-2xl">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5.121 17.804A8.966 8.966 0 0012 20a8.966 8.966 0 006.879-2.196M12 12a4 4 0 100-8 4 4 0 000 8zm0 0c-2.5 0-4.5 2-4.5 4.5S9.5 21 12 21s4.5-2 4.5-4.5S14.5 12 12 12z" />
-                                </svg>
-                            </div>
-                            <div className="text-xs leading-3">Login</div>
-                        </Link>
-                        
-                    )}
-                </div>
+        <header className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5">
+            <a href="index.html">
+                <img className="cursor-pointer sm:h-auto sm:w-auto" src="company-logo.svg" alt="company logo" />
+            </a>
+            <div className="md:hidden">
+                <button click="mobileMenuOpen = ! mobileMenuOpen">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-8 w-8">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </svg>
+                </button>
             </div>
-        </header>
+
+            {/* search filter */}
+
+            <div className="w-full max-w-xl relative flex">
+                <span className="absolute left-4 top-3 text-lg text-gray-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M11 4a7 7 0 105.29 12.29l4.71 4.71a1 1 0 001.42-1.42l-4.71-4.71A7 7 0 0011 4zm0 2a5 5 0 110 10A5 5 0 0111 6z" />
+                    </svg>
+                </span>
+                <input type="text" name="search" id="search" className="w-full border border-indigo-600 border-r-0 pl-12 py-3 pr-3 rounded-l-md focus:outline-none hidden md:flex" placeholder="search" />
+                <button className="bg-indigo-600 border border-indigo-600 text-white px-8 pt-3 rounded-r-md hover:bg-transparent hover:text-primary transition hidden md:flex">
+                    Search
+                </button>
+            </div>
+            <div className="hidden gap-3 md:!flex">
+                <Link href={route('Wishlist')} className="relative flex cursor-pointer flex-col items-center justify-center">
+                    <div className="absolute right-0 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
+                        {wishList.length}
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-6 w-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                    </svg>
+                    <p className="text-xs">Wishlist</p>
+                </Link>
+                <Link href={route('cart')} className="relative flex cursor-pointer flex-col items-center justify-center">
+                    <div className="absolute -right-3 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
+                        {cart.length}
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6">
+                        <path fillRule="evenodd" d="M7.5 6v.75H5.513c-.96 0-1.764.724-1.865 1.679l-1.263 12A1.875 1.875 0 004.25 22.5h15.5a1.875 1.875 0 001.865-2.071l-1.263-12a1.875 1.875 0 00-1.865-1.679H16.5V6a4.5 4.5 0 10-9 0zM12 3a3 3 0 00-3 3v.75h6V6a3 3 0 00-3-3zm-3 8.25a3 3 0 106 0v-.75a.75.75 0 011.5 0v.75a4.5 4.5 0 11-9 0v-.75a.75.75 0 011.5 0v.75z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-xs">Cart</p>
+                </Link>
+                <Link href={route('my-account')} className="relative flex cursor-pointer flex-col items-center justify-center">
+                    <span className="absolute bottom-[33px] right-1 flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-red-500" />
+                    </span>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="h-6 w-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                    <p className="text-xs">{auth ? auth.name : 'Account'}</p>
+                </Link>
+            </div>
+        </header >
     )
 }
