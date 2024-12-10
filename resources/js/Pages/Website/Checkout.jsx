@@ -1,25 +1,57 @@
 import { Link } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import WebLayout from './Layout/WebLayout';
-import secureLocalStorage from "react-secure-storage";
 import Breadcrumb from './Components/Breadcrumb';
+import { Head, router, useForm } from '@inertiajs/react';
+import SwalAlert from '@/Components/Alert/SwalAlert';
+import { useContext } from 'react';
+import { CartContext } from './context/CartContext';
+
 
 export default function Checkout({ auth }) {
-    const [cart, setCart] = useState(() => {
-        const storedCart = secureLocalStorage.getItem("cart");
-        return storedCart ? storedCart : [];
-    });
+    const { cart } = useContext(CartContext);
+    const [paymentMethod, setPaymentMethod] = useState();
+    const data = {
+        subAmount: cart.reduce((total, item) => total + item.sale_price * item.quantity, 0),
+        discountAmount: 0,
+        taxAmount: 0,
+        shippingFee: 50,
+        totalAmount: cart.reduce((total, item) => total + item.sale_price * item.quantity, 0) + 50,
+        paymentMehtod: paymentMethod,
+        orderDetails: cart,
+    }
 
-    // Save cart to local storage whenever it changes
-    useEffect(() => {
-        secureLocalStorage.setItem("cart", cart);
-    }, [cart]);
+    console.log(data)
 
-    const removeCart = (product_id) => {
-        const prevCart = [...cart];
-        const newCart = prevCart.filter(item => item.id !== product_id);
-        setCart(newCart);
+    // submit the checkout
+    const submit = () => {
+        try {
+            router.post('/order-store', data, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    // SwalAlert('success', 'Add Successfully!!', 'center');
+                },
+                onError: (errors) => {
+                    // Handle error response
+                    // if (props.errors && Object.keys(props.errors).length > 0) {
+                    //     const errorMessages = '<ul>' + Object.values(props.errors).map(err => `<li>${err}</li>`).join('') + '</ul>';
+                    //     Swal.fire({
+                    //         title: 'Error!',
+                    //         html: errorMessages,
+                    //         icon: 'error',
+                    //         confirmButtonText: 'Cool'
+                    //     });
+                    // }
+                    console.error('Failed price insert:', props.errors);
+                },
+            });
+        } catch (error) {
+            console.error('Failed :', error);
+        }
     };
+
+
+
 
     return (
         <WebLayout auth={auth}>
@@ -36,6 +68,7 @@ export default function Checkout({ auth }) {
                                     type="radio"
                                     id="cod"
                                     name="paymentMethod"
+                                    onChange={(e) => setPaymentMethod('Cash on Delivery')}
                                     value="cash"
                                     className="mr-3"
                                 />
@@ -55,6 +88,7 @@ export default function Checkout({ auth }) {
                                     id="bikash"
                                     name="paymentMethod"
                                     value="bikash"
+                                    onChange={(e) => setPaymentMethod('PayPal')}
                                     className="mr-3"
                                 />
                                 <label htmlFor="bikash" className="flex items-center gap-3 text-lg">
@@ -72,6 +106,7 @@ export default function Checkout({ auth }) {
                                     type="radio"
                                     id="nagad"
                                     name="paymentMethod"
+                                    onChange={(e) => setPaymentMethod('PayPal')}
                                     value="nagad"
                                     className="mr-3"
                                 />
@@ -92,6 +127,7 @@ export default function Checkout({ auth }) {
                                     id="card"
                                     name="paymentMethod"
                                     value="card"
+                                    onChange={(e) => setPaymentMethod('Credit Card')}
                                     className="mr-3"
                                 />
                                 <label htmlFor="card" className="flex items-center gap-3 text-lg">
@@ -120,7 +156,7 @@ export default function Checkout({ auth }) {
                     </div>
                     <div className="flex justify-between text-gray-800 font-medium py-3 uppercas">
                         <p className="font-semibold">Total</p>
-                        <p>৳ {cart.reduce((total, item) => total + item.sale_price * item.quantity, 0) + 50 + 10}</p>
+                        <p>৳ {cart.reduce((total, item) => total + item.sale_price * item.quantity, 0) + 50}</p>
                     </div>
                     <div className="flex items-center mb-4 mt-2">
                         <input type="checkbox" name="aggrement" id="aggrement" className="text-primary focus:ring-0 rounded-sm cursor-pointer w-3 h-3" />
@@ -128,11 +164,9 @@ export default function Checkout({ auth }) {
                     </div>
 
                     <div className="mt-6">
-                        <Link href={route('checkout')}>
-                            <button className="block w-full py-3 px-4 text-center text-white bg-indigo-500 border border-primary rounded-md hover:bg-transparent hover:text-primary transition font-medium mb-4">
-                                Process to Checkout
-                            </button>
-                        </Link>
+                        <button onClick={() => submit()} className="block w-full py-3 px-4 text-center text-white bg-indigo-500 border border-primary rounded-md hover:bg-transparent hover:text-primary transition font-medium mb-4">
+                            Order Placed
+                        </button>
                         <Link href={route('gift')}>
                             <button className="block w-full py-3 px-4 text-center text-white bg-primary border border-primary rounded-md hover:bg-transparent hover:text-primary transition font-medium">
                                 Order as Gift

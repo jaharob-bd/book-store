@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Order\OrderController;
 use App\Http\Controllers\Website\AccountController;
 use App\Http\Controllers\Website\CheckoutController;
 use App\Http\Controllers\Website\HomeController;
@@ -26,6 +27,14 @@ Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::get('/Wishlist', [CartController::class, 'wishList'])->name('Wishlist');
 Route::get('/checkout', [CheckoutController::class, 'index'])->middleware('auth')->name('checkout');
 Route::get('/gift', [CheckoutController::class, 'gift'])->middleware('auth')->name('gift');
+
+// order routes
+Route::post('/order-store', [OrderController::class, 'store'])->name('order-store');
+Route::post('/order-cancel', [OrderController::class, 'cancel'])->name('order-cancel');
+Route::post('/order-complete', [OrderController::class, 'complete'])->name('order-complete');
+Route::post('/order-return', [OrderController::class, 'return'])->name('order-return');
+Route::post('/order-review', [OrderController::class, 'review'])->name('order-review');
+// end routes
 
 // my account controller
 Route::middleware('auth')->group(function () {

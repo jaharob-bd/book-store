@@ -2,6 +2,7 @@
 
 namespace App\Models\Catalog;
 
+use App\Models\Inventory\Stock\Stock;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -9,6 +10,11 @@ class Product extends Model
 {
     use HasFactory;
     protected $fillable = ['name', 'url_key', 'sku', 'product_code', 'short_description', 'description', 'brand_id', 'status', 'released_on'];
+
+    public function stock()
+    {
+        return $this->hasOne(Stock::class, 'product_id');
+    }
 
     public function brand()
     {

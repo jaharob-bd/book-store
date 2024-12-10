@@ -17,7 +17,7 @@ export const CartProvider = ({ children }) => {
     }, [cart]);
 
 
-    const addToCart = (product) => {
+    const addToCart1 = (product) => {
         setCart((prevCart) => {
             const existingProduct = prevCart.find((item) => item.id === product.id);
             if (existingProduct) {
@@ -30,6 +30,35 @@ export const CartProvider = ({ children }) => {
             } else {
                 // If product doesn't exist, add it to the cart
                 return [...prevCart, { ...product, quantity: 1 }];
+            }
+        });
+    };
+
+
+    const addToCart = (product) => {
+        setCart((prevCart) => {
+            const existingProduct = prevCart.find((item) => item.id === product.id);
+
+            if (existingProduct) {
+                // Update only the `quantity` column
+                return prevCart.map((item) =>
+                    item.id === product.id
+                        ? { ...item, quantity: item.quantity + 1 } // Only `quantity` is updated
+                        : item
+                );
+            } else {
+                // Add new product with specific columns
+                return [
+                    ...prevCart,
+                    {
+                        id: product.id,
+                        name: product.name,
+                        salePrice: product.sale_price,
+                        mrpPrice: product.mrp_price,
+                        categoryName: product.category_name,
+                        quantity: 1, // Set initial quantity
+                    },
+                ];
             }
         });
     };

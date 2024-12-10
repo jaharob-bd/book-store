@@ -98,3 +98,35 @@ BEGIN
   SELECT sub_amount INTO order_sub_amount FROM orders WHERE id = NEW.order_id;
   SET NEW.tax_amount = (NEW.tax_rate / 100) * order_sub_amount;
 END;
+
+CREATE TABLE `stock_movements` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(11) unsigned DEFAULT NULL,
+  `quantity` int(11) NOT NULL,
+  `type` enum('In','Out','Sales Return','Purchases Return') NOT NULL,
+  `add_id` int(11) DEFAULT NULL COMMENT 'PURCHASES ID',
+  `out_id` int(11) DEFAULT NULL COMMENT 'SALES ID',
+  `date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `stock_movements_ibfk_1` (`product_id`),
+  CONSTRAINT `stock_movements_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=159 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+
+CREATE TABLE `stocks` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `product_id` int(10) unsigned DEFAULT NULL,
+  `quantity` int(11) NOT NULL,
+  `last_updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `product_id` (`product_id`),
+  CONSTRAINT `stocks_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
