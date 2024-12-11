@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import WebLayout from './Layout/WebLayout';
 import Breadcrumb from './Components/Breadcrumb';
 import { Head, router, useForm } from '@inertiajs/react';
@@ -10,48 +10,56 @@ import { CartContext } from './context/CartContext';
 
 export default function Checkout({ auth }) {
     const { cart } = useContext(CartContext);
-    const [paymentMethod, setPaymentMethod] = useState();
+    const [paymentMethod, setPaymentMethod] = useState('');
+
+    // Calculate amounts using useMemo for performance optimization
+    const subAmount = useMemo(() =>
+        cart.reduce((total, item) => total + item.salePrice * item.quantity, 0),
+        [cart]
+    );
+
+    const shippingFee = 50;
+    const discountAmount = 0;
+    const taxAmount = 0;
+
+    const totalAmount = useMemo(() =>
+        subAmount + discountAmount + taxAmount + shippingFee,
+        [subAmount, discountAmount, taxAmount, shippingFee]
+    );
+
+    // Data for submission
     const data = {
-        subAmount: cart.reduce((total, item) => total + item.sale_price * item.quantity, 0),
-        discountAmount: 0,
-        taxAmount: 0,
-        shippingFee: 50,
-        totalAmount: cart.reduce((total, item) => total + item.sale_price * item.quantity, 0) + 50,
-        paymentMehtod: paymentMethod,
+        subAmount,
+        discountAmount,
+        taxAmount,
+        shippingFee,
+        totalAmount,
+        paymentMethod,
         orderDetails: cart,
-    }
+    };
 
-    console.log(data)
-
-    // submit the checkout
     const submit = () => {
         try {
+            if (!paymentMethod || cart.length === 0) {
+                SwalAlert('warning', 'Select Payment Method and add items to the cart');
+                return;
+            }
+    
             router.post('/order-store', data, {
                 preserveScroll: true,
                 onSuccess: () => {
-                    // SwalAlert('success', 'Add Successfully!!', 'center');
+                    // SwalAlert('success', 'Order placed successfully!', 'center');
+                    console.log('Order placed successfully');
                 },
                 onError: (errors) => {
-                    // Handle error response
-                    // if (props.errors && Object.keys(props.errors).length > 0) {
-                    //     const errorMessages = '<ul>' + Object.values(props.errors).map(err => `<li>${err}</li>`).join('') + '</ul>';
-                    //     Swal.fire({
-                    //         title: 'Error!',
-                    //         html: errorMessages,
-                    //         icon: 'error',
-                    //         confirmButtonText: 'Cool'
-                    //     });
-                    // }
-                    console.error('Failed price insert:', props.errors);
+                    console.error('Failed to place order:', errors);
+                    SwalAlert('error', 'Failed to place order. Please try again.', 'center');
                 },
             });
         } catch (error) {
-            console.error('Failed :', error);
+            console.error('An unexpected error occurred:', error);
         }
     };
-
-
-
 
     return (
         <WebLayout auth={auth}>
@@ -144,7 +152,7 @@ export default function Checkout({ auth }) {
                     <h4 className="text-gray-800 text-lg mb-4 font-medium uppercase">order summary</h4>
                     <div className="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercas">
                         <p>subtotal</p>
-                        <p>৳ {cart.reduce((total, item) => total + item.sale_price * item.quantity, 0)}</p>
+                        <p>৳ {subAmount}</p>
                     </div>
                     <div className="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercas">
                         <p>shipping</p>
@@ -156,7 +164,7 @@ export default function Checkout({ auth }) {
                     </div>
                     <div className="flex justify-between text-gray-800 font-medium py-3 uppercas">
                         <p className="font-semibold">Total</p>
-                        <p>৳ {cart.reduce((total, item) => total + item.sale_price * item.quantity, 0) + 50}</p>
+                        <p>৳ {totalAmount}</p>
                     </div>
                     <div className="flex items-center mb-4 mt-2">
                         <input type="checkbox" name="aggrement" id="aggrement" className="text-primary focus:ring-0 rounded-sm cursor-pointer w-3 h-3" />
@@ -167,11 +175,6 @@ export default function Checkout({ auth }) {
                         <button onClick={() => submit()} className="block w-full py-3 px-4 text-center text-white bg-indigo-500 border border-primary rounded-md hover:bg-transparent hover:text-primary transition font-medium mb-4">
                             Order Placed
                         </button>
-                        <Link href={route('gift')}>
-                            <button className="block w-full py-3 px-4 text-center text-white bg-primary border border-primary rounded-md hover:bg-transparent hover:text-primary transition font-medium">
-                                Order as Gift
-                            </button>
-                        </Link>
                     </div>
                 </div>
             </div>

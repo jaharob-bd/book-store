@@ -22,18 +22,25 @@ class OrderController extends Controller
     // store the order
     public function store(Request $request)
     {
+        $data = $request->all();
+        dd($data);
+    }
+    public function store4(Request $request)
+    {
+        $data = $request->all();
+        dd($data);
         $validated = $request->validate([
-            'subAmount' => 'required|numeric|min:0',
-            'discountAmount' => 'nullable|numeric|min:0',
-            'taxAmount' => 'nullable|numeric|min:0',
-            'shippingFee' => 'nullable|numeric|min:0',
-            'totalAmount' => 'required|numeric|min:0',
-            'orderDetails' => 'required|array',
-            'orderDetails.*.id' => 'required|exists:products,id',
-            'orderDetails.*.salePrice' => 'required|numeric|min:0',
-            'orderDetails.*.mrpPrice' => 'nullable|numeric|min:0',
+            'subAmount'                   => 'required|numeric|min:0',
+            'discountAmount'              => 'nullable|numeric|min:0',
+            'taxAmount'                   => 'nullable|numeric|min:0',
+            'shippingFee'                 => 'nullable|numeric|min:0',
+            'totalAmount'                 => 'required|numeric|min:0',
+            'orderDetails'                => 'required|array',
+            'orderDetails.*.id'           => 'required|exists:products,id',
+            'orderDetails.*.salePrice'    => 'required|numeric|min:0',
+            'orderDetails.*.mrpPrice'     => 'nullable|numeric|min:0',
             'orderDetails.*.categoryName' => 'nullable|string',
-            'orderDetails.*.quantity' => 'required|integer|min:1',
+            'orderDetails.*.quantity'     => 'required|integer|min:1',
         ]);
 
         // Start DB Transaction
@@ -42,15 +49,15 @@ class OrderController extends Controller
         try {
             // Create order
             $order = Order::create([
-                'customer_id' => auth()->id(), // Assuming the logged-in user is the customer
-                'order_date' => now(),
+                'customer_id'      => auth()->id(),                               // Assuming the logged-in user is the customer
+                'order_date'       => now(),
                 'shipping_address' => $request->input('shippingAddress', null),
-                'billing_address' => $request->input('billingAddress', null),
-                'sub_amount' => $validated['subAmount'],
-                'discount_amount' => $validated['discountAmount'] ?? 0.00,
-                'tax_amount' => $validated['taxAmount'] ?? 0.00,
-                'shipping_fee' => $validated['shippingFee'] ?? 0.00,
-                'status' => 'pending', // Assuming a default status
+                'billing_address'  => $request->input('billingAddress', null),
+                'sub_amount'       => $validated['subAmount'],
+                'discount_amount'  => $validated['discountAmount'] ?? 0.00,
+                'tax_amount'       => $validated['taxAmount'] ?? 0.00,
+                'shipping_fee'     => $validated['shippingFee'] ?? 0.00,
+                'status'           => 'pending',                                  // Assuming a default status
             ]);
 
             // Create order details
@@ -64,10 +71,10 @@ class OrderController extends Controller
 
                 // Create order detail record
                 OrderDetail::create([
-                    'order_id' => $order->id,
+                    'order_id'   => $order->id,
                     'product_id' => $detail['id'],
-                    'quantity' => $detail['quantity'],
-                    'price' => $detail['salePrice'],
+                    'quantity'   => $detail['quantity'],
+                    'price'      => $detail['salePrice'],
                 ]);
 
                 // Decrement stock
