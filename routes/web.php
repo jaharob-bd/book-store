@@ -29,7 +29,10 @@ Route::get('/checkout', [CheckoutController::class, 'index'])->middleware('auth'
 Route::get('/gift', [CheckoutController::class, 'gift'])->middleware('auth')->name('gift');
 
 // order routes
+
+Route::get('/order', [OrderController::class, 'index'])->name('order');
 Route::post('/order-store', [OrderController::class, 'store'])->name('order-store');
+
 Route::post('/order-cancel', [OrderController::class, 'cancel'])->name('order-cancel');
 Route::post('/order-complete', [OrderController::class, 'complete'])->name('order-complete');
 Route::post('/order-return', [OrderController::class, 'return'])->name('order-return');

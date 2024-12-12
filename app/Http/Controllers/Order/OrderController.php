@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
 use App\Models\Catalog\Product;
+use App\Models\Consumer\Customer;
 use App\Models\Order\Order;
 use App\Models\Order\OrderDetail;
 use App\Providers\RouteServiceProvider;
@@ -24,11 +25,6 @@ class OrderController extends Controller
     {
         $data = $request->all();
         dd($data);
-    }
-    public function store4(Request $request)
-    {
-        $data = $request->all();
-        dd($data);
         $validated = $request->validate([
             'subAmount'                   => 'required|numeric|min:0',
             'discountAmount'              => 'nullable|numeric|min:0',
@@ -36,20 +32,19 @@ class OrderController extends Controller
             'shippingFee'                 => 'nullable|numeric|min:0',
             'totalAmount'                 => 'required|numeric|min:0',
             'orderDetails'                => 'required|array',
-            'orderDetails.*.id'           => 'required|exists:products,id',
+            'orderDetails.*.id'           => 'required|exists:products,id', // product id
             'orderDetails.*.salePrice'    => 'required|numeric|min:0',
-            'orderDetails.*.mrpPrice'     => 'nullable|numeric|min:0',
-            'orderDetails.*.categoryName' => 'nullable|string',
             'orderDetails.*.quantity'     => 'required|integer|min:1',
         ]);
 
         // Start DB Transaction
         DB::beginTransaction();
-
         try {
+            // get customers information
+            $customerInfo = Customer::where('user_id', '=', auth::user()->id)->first();
             // Create order
             $order = Order::create([
-                'customer_id'      => auth()->id(),                               // Assuming the logged-in user is the customer
+                'customer_id'      => $customerInfo->id,                               // Assuming the logged-in user is the customer
                 'order_date'       => now(),
                 'shipping_address' => $request->input('shippingAddress', null),
                 'billing_address'  => $request->input('billingAddress', null),
@@ -57,7 +52,9 @@ class OrderController extends Controller
                 'discount_amount'  => $validated['discountAmount'] ?? 0.00,
                 'tax_amount'       => $validated['taxAmount'] ?? 0.00,
                 'shipping_fee'     => $validated['shippingFee'] ?? 0.00,
-                'status'           => 'pending',                                  // Assuming a default status
+                'status'           => 'pending',  
+                'created_by'    => auth()->id(), // or some other valid user ID
+                // 'updated_by'    => $data['updated_by'] ?? auth()->id(), // or some other valid user ID                                // Assuming a default status
             ]);
 
             // Create order details
@@ -65,9 +62,9 @@ class OrderController extends Controller
                 $product = Product::with('stock')->findOrFail($detail['id']);
 
                 // Check if enough stock is available
-                if ($product->stock->quantity < $detail['quantity']) {
-                    throw new \Exception("Insufficient stock for product ID: {$detail['id']}");
-                }
+                // if ($product->stock->quantity < $detail['quantity']) {
+                //     throw new \Exception("Insufficient stock for product ID: {$detail['id']}");
+                // }
 
                 // Create order detail record
                 OrderDetail::create([
@@ -78,7 +75,7 @@ class OrderController extends Controller
                 ]);
 
                 // Decrement stock
-                $product->stock->decrement('quantity', $detail['quantity']);
+                // $product->stock->decrement('quantity', $detail['quantity']);
             }
 
             // Commit transaction
