@@ -18,6 +18,7 @@ class Order extends Model
         'tax_amount',
         'shipping_fee',
         'status',
+        'order_no',
     ];
 
     public static function saveOrder($data)
@@ -28,5 +29,16 @@ class Order extends Model
     public function categories()
     {
         // return $this->belongsToMany(Category::class, 'product_categories');
+    }
+
+    // Boot method to generate `order_no`
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($order) {
+            $dateTime = now()->format('YmdHis'); // Current date and time in YYYYMMDDHHMMSS format
+            $order->order_no = sprintf('%s0%d', $dateTime, $order->customer_id);
+        });
     }
 }

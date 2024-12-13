@@ -9,7 +9,7 @@ import { CartContext } from './context/CartContext';
 
 
 export default function Checkout({ auth }) {
-    const { cart } = useContext(CartContext);
+    const { cart, setCart } = useContext(CartContext);
     const [paymentMethod, setPaymentMethod] = useState('');
 
     // Calculate amounts using useMemo for performance optimization
@@ -48,8 +48,8 @@ export default function Checkout({ auth }) {
             router.post('/order-store', data, {
                 preserveScroll: true,
                 onSuccess: () => {
-                    // SwalAlert('success', 'Order placed successfully!', 'center');
-                    console.log('Order placed successfully');
+                    SwalAlert('success', 'Order placed successfully!', 'center');
+                    setCart([]);
                 },
                 onError: (errors) => {
                     console.error('Failed to place order:', errors);

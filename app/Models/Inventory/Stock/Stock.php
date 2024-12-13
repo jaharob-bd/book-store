@@ -3,7 +3,6 @@
 namespace App\Models\Inventory\Stock;
 
 use App\Models\Catalog\Product;
-use App\Models\Catalog\ProductVariantPrice;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
@@ -15,14 +14,12 @@ class Stock extends Model
     use HasFactory;
 
     protected $table = 'stocks';
-    protected $fillable = [
-        'product_id',
-        'quantity',
-        'last_updated',
-        'created_by',
-        'updated_by'
-    ];
+    protected $fillable = ['product_id', 'quantity', 'last_updated', 'created_by', 'updated_by'];
 
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
 
     public static function saveStock($data)
     {
@@ -44,45 +41,5 @@ class Stock extends Model
             );
         }
     }
-
     
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public function productVariantPrice()
-    {
-        return $this->belongsTo(Product::class, 'product_id');
-    }
-    // add all product data to join with stock
-    // public function productName(){
-    //     return $this->productVariantPrice->product();
-    // }
-    // only product name can be joined
-    public function getProductNameAttribute()
-    {
-        return $this->productVariantPrice->product->name;
-    }
-    // only product name can be joined
-    public function getProductIdAttribute()
-    {
-        return $this->productVariantPrice->product->id;
-    }
-    // only variant name can be joined
-    public function getVariantNameAttribute()
-    {
-        return $this->productVariantPrice->variant_name;
-    }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Order;
 use App\Http\Controllers\Controller;
 use App\Models\Catalog\Product;
 use App\Models\Consumer\Customer;
+use App\Models\Inventory\Stock\Stock;
 use App\Models\Order\Order;
 use App\Models\Order\OrderDetail;
 use App\Providers\RouteServiceProvider;
@@ -24,7 +25,6 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        dd($data);
         $validated = $request->validate([
             'subAmount'                   => 'required|numeric|min:0',
             'discountAmount'              => 'nullable|numeric|min:0',
@@ -36,12 +36,11 @@ class OrderController extends Controller
             'orderDetails.*.salePrice'    => 'required|numeric|min:0',
             'orderDetails.*.quantity'     => 'required|integer|min:1',
         ]);
-
         // Start DB Transaction
         DB::beginTransaction();
         try {
             // get customers information
-            $customerInfo = Customer::where('user_id', '=', auth::user()->id)->first();
+            $customerInfo = Customer::where('user_id', '=', Auth::user()->id)->first();
             // Create order
             $order = Order::create([
                 'customer_id'      => $customerInfo->id,                               // Assuming the logged-in user is the customer
@@ -52,19 +51,19 @@ class OrderController extends Controller
                 'discount_amount'  => $validated['discountAmount'] ?? 0.00,
                 'tax_amount'       => $validated['taxAmount'] ?? 0.00,
                 'shipping_fee'     => $validated['shippingFee'] ?? 0.00,
-                'status'           => 'pending',  
-                'created_by'    => auth()->id(), // or some other valid user ID
-                // 'updated_by'    => $data['updated_by'] ?? auth()->id(), // or some other valid user ID                                // Assuming a default status
+                'total_amount'     => $validated['totalAmount'],
+                'status'           => 'Pending',
+                'created_by'       => Auth::user()->id,
             ]);
 
             // Create order details
             foreach ($validated['orderDetails'] as $detail) {
-                $product = Product::with('stock')->findOrFail($detail['id']);
+                $product = Product::with('stock')->find($detail['id']);
 
                 // Check if enough stock is available
-                // if ($product->stock->quantity < $detail['quantity']) {
-                //     throw new \Exception("Insufficient stock for product ID: {$detail['id']}");
-                // }
+                if ($product->stock && $product->stock->quantity < $detail['quantity']) {
+                    throw new \Exception("Insufficient stock for product ID: {$detail['id']}");
+                }
 
                 // Create order detail record
                 OrderDetail::create([
@@ -75,18 +74,27 @@ class OrderController extends Controller
                 ]);
 
                 // Decrement stock
-                // $product->stock->decrement('quantity', $detail['quantity']);
+                $product->stock->decrement('quantity', $detail['quantity']);
             }
 
             // Commit transaction
             DB::commit();
 
-            Session::flash('success', 'Purchase successfully!');
-            return redirect()->route('checkout');
+            Session::flash('success', 'Order Place successfully!');
+            return redirect()->route('order-success');
+
         } catch (\Exception $e) {
             // Rollback transaction on error
             DB::rollBack();
             Session::flash('failed', $e->getMessage());
         }
+    }
+
+    // success order back to other page
+    public function success()
+    {
+        echo 44;
+        // echo 'Order Place successfully'; exit;
+        // return Inertia::render('Wesite/OrderSuccess', ['order_no' => $order_no]);
     }
 }
