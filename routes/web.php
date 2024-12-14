@@ -24,7 +24,6 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
 Route::get('/shop/{slug}', [ShopController::class, 'singleProductView']);
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
-Route::get('/Wishlist', [CartController::class, 'wishList'])->name('Wishlist');
 Route::get('/checkout', [CheckoutController::class, 'index'])->middleware('auth')->name('checkout');
 Route::get('/gift', [CheckoutController::class, 'gift'])->middleware('auth')->name('gift');
 
@@ -37,8 +36,10 @@ Route::get('/order-success', [OrderController::class,'success'])->name('order-su
 Route::get('/order-details/{order_no}', [OrderController::class,'details'])->name('order-details');
 // my order history
 Route::get('/user/my-order-history', [AccountController::class,'myOrderHistory'])->name('user.my-order-history');
-// Route::get('/order-history-details/{order_no}', [AccountController::class,'orderHistoryDetails'])->name('order-history-details');
-
+Route::get('/user/my-wish-list', [AccountController::class, 'myWishList'])->name('user.my-wish-list');
+Route::get('/user/my-change-password', [AccountController::class, 'MyChangePassword'])->name('user.my-change-password');
+Route::get('/user/my-address-manage', [AccountController::class, 'myAddressManage'])->name('user.my-address-manage');
+// my order history
 Route::get('/order-failure', [OrderController::class, 'failure'])->name('order-failure');
 Route::post('/order-cancel', [OrderController::class, 'cancel'])->name('order-cancel');
 Route::post('/order-complete', [OrderController::class, 'complete'])->name('order-complete');

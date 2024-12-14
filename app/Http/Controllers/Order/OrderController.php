@@ -82,7 +82,6 @@ class OrderController extends Controller
 
             Session::flash('success', 'Order Place successfully!');
             return redirect()->route('order-success', ['order_no' => (string)$order->order_no]);
-            // return redirect()->route('order-success', ['order_no' => $order->order_no]);
         } catch (\Exception $e) {
             // Rollback transaction on error
             DB::rollBack();

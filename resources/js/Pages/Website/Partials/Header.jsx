@@ -35,7 +35,7 @@ export default function Header({ auth }) {
                 </button>
             </div>
             <div className="hidden gap-3 md:!flex">
-                <Link href={route('Wishlist')} className="relative flex cursor-pointer flex-col items-center justify-center">
+                <Link href={route('user.my-wish-list')} className="relative flex cursor-pointer flex-col items-center justify-center">
                     <div className="absolute right-0 -top-1 w-5 h-5 rounded-full flex items-center justify-center bg-primary text-white text-xs">
                         {wishList.length}
                     </div>

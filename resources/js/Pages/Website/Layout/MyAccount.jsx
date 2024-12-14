@@ -22,7 +22,6 @@ function MyAccount({ auth, title = "", children }) {
             </div>
             {/* ./wrapper */}
         </WebLayout>
-
     )
 }
 

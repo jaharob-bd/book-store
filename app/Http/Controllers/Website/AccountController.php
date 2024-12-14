@@ -44,4 +44,35 @@ class AccountController extends Controller
         }
         return Inertia::render('Website/MyOrderHistory', ['orders' => $customer->orders]);
     }
+
+    // myWishList 
+    public function myWishList()
+    {
+        $products = $products = DB::table('products as p')
+            ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
+            ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
+            ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+            ->select(
+                'p.*',
+                'a.name as author_name',
+                'pb.name as publisher_name',
+                'c.name as category_name'
+            )
+            ->get();
+
+        return Inertia::render('Website/MyWishList', [
+            'products' => $products
+        ]);
+    }
+
+    // MyChangePassword
+    public function myChangePassword()
+    {
+        return Inertia::render('Website/MyChangePassword');
+    }
+    // MyAddressMange
+    public function myAddressManage()
+    {
+        return Inertia::render('Website/MyAddressMange');
+    }
 }

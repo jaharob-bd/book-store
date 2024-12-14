@@ -28,12 +28,9 @@ function MyAccountSideBar({ auth }) {
                     <a href="#" className="relative hover:text-primary block capitalize transition">
                         Profile information
                     </a>
-                    <Link
-                        href={route('user.my-address-manage')}
-                        className={`relative hover:text-primary block font-medium capitalize transition ${url === '/user/my-order-history' ? 'text-primary' : 'text-gray-500'}`}
-                    >
+                    <a href="#" className="relative hover:text-primary block capitalize transition">
                         Manage addresses
-                    </Link>
+                    </a>
                     <Link
                         href={route('user.my-change-password')}
                         className={`relative hover:text-primary block font-medium capitalize transition ${url === '/user/my-change-password' ? 'text-primary' : 'text-gray-500'}`}

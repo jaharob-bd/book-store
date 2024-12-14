@@ -1,5 +1,6 @@
 import React from 'react';
 import MyAccount from './Layout/MyAccount';
+import { Link } from '@inertiajs/react';
 
 const MyOrderHistory = ({ auth, orders }) => {
     return (
@@ -16,6 +17,7 @@ const MyOrderHistory = ({ auth, orders }) => {
                             <th className="py-2 px-4 border">Shipping Fee (USD)</th>
                             <th className="py-2 px-4 border">Total Amount (USD)</th>
                             <th className="py-2 px-4 border">Status</th>
+                            <th className="py-2 px-4 border">Invoice</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -28,6 +30,16 @@ const MyOrderHistory = ({ auth, orders }) => {
                                 <td className="py-2 px-4 border text-right">{parseFloat(order.shipping_fee).toFixed(2)}</td>
                                 <td className="py-2 px-4 border text-right">{parseFloat(order.total_amount).toFixed(2)}</td>
                                 <td className="py-2 px-4 border text-center">{order.status}</td>
+                                <td className="py-2 px-4 border text-center">
+                                    <Link
+                                        className="flex items-center gap-2 px-4 py-1 text-white bg-red-600 rounded hover:bg-red-700"
+                                        href={route('order-details', order.order_no)}
+                                    >
+                                        <i className="ri-arrow-right-wide-line"></i>
+                                        <span>View</span>
+                                    </Link>
+
+                                </td>
                             </tr>
                         ))}
                     </tbody>
