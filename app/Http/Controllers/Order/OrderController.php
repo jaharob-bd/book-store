@@ -81,8 +81,8 @@ class OrderController extends Controller
             DB::commit();
 
             Session::flash('success', 'Order Place successfully!');
-            return redirect()->route('order-success');
-
+            return redirect()->route('order-success', ['order_no' => (string)$order->order_no]);
+            // return redirect()->route('order-success', ['order_no' => $order->order_no]);
         } catch (\Exception $e) {
             // Rollback transaction on error
             DB::rollBack();
@@ -93,8 +93,22 @@ class OrderController extends Controller
     // success order back to other page
     public function success()
     {
-        echo 44;
-        // echo 'Order Place successfully'; exit;
-        // return Inertia::render('Wesite/OrderSuccess', ['order_no' => $order_no]);
+        // Get order number from request or session
+        $order_no = request()->input('order_no');
+        // dd($order_no);
+
+        if (!$order_no) {
+            // Handle case where order_no might not exist
+            Session::flash('failed', 'Order number is missing.');
+            return redirect()->route('order-failure');
+        }
+
+        return Inertia::render('Website/OrderSuccess', ['order_no' => (string)$order_no]);
+    }
+
+    // failed
+    public function failure()
+    {
+        echo "Order failed";
     }
 }

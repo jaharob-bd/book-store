@@ -37,7 +37,7 @@ class Order extends Model
         parent::boot();
 
         static::creating(function ($order) {
-            $dateTime = now()->format('YmdHis'); // Current date and time in YYYYMMDDHHMMSS format
+            $dateTime = now()->format('dmYHis'); // Current date and time in DDMMYYYYHHMMSS format
             $order->order_no = sprintf('%s0%d', $dateTime, $order->customer_id);
         });
     }

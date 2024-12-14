@@ -44,12 +44,17 @@ export default function Checkout({ auth }) {
                 SwalAlert('warning', 'Select Payment Method and add items to the cart');
                 return;
             }
-    
+
             router.post('/order-store', data, {
                 preserveScroll: true,
-                onSuccess: () => {
-                    SwalAlert('success', 'Order placed successfully!', 'center');
-                    setCart([]);
+                onSuccess: ({ props }) => {
+                    // console.log('Flash Success:', props.flash.success);
+                    if (props.flash.success) {
+                        SwalAlert('success', props.flash.success, 'center');
+                        setCart([]);
+                    } else if (props.flash.failed) {
+                        SwalAlert('warning', props.flash.failed, 'center');
+                    }
                 },
                 onError: (errors) => {
                     console.error('Failed to place order:', errors);
