@@ -35,12 +35,12 @@ function MyAccountSideBar({ auth }) {
                     </a>
                 </div>
                 <div className="space-y-1 pl-8 pt-4">
-                    <a href="#" className="relative hover:text-primary block font-medium capitalize transition">
+                    <Link href={route('user.my-order-history') } className="relative hover:text-primary block font-medium capitalize transition">
                         <span className="absolute -left-8 top-0 text-base">
                             <i className="fa-solid fa-box-archive" />
                         </span>
                         My order history
-                    </a>
+                    </Link>
                     <a href="#" className="relative hover:text-primary block capitalize transition">
                         My returns
                     </a>

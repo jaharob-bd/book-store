@@ -35,9 +35,11 @@ Route::post('/order-store', [OrderController::class, 'store'])->name('order-stor
 // sucess routes for checkout
 Route::get('/order-success', [OrderController::class,'success'])->name('order-success');
 Route::get('/order-details/{order_no}', [OrderController::class,'details'])->name('order-details');
+// my order history
+Route::get('/user/my-order-history', [AccountController::class,'myOrderHistory'])->name('user.my-order-history');
+// Route::get('/order-history-details/{order_no}', [AccountController::class,'orderHistoryDetails'])->name('order-history-details');
 
 Route::get('/order-failure', [OrderController::class, 'failure'])->name('order-failure');
-
 Route::post('/order-cancel', [OrderController::class, 'cancel'])->name('order-cancel');
 Route::post('/order-complete', [OrderController::class, 'complete'])->name('order-complete');
 Route::post('/order-return', [OrderController::class, 'return'])->name('order-return');

@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Website;
 
 use App\Http\Controllers\Controller;
+use App\Models\Consumer\Customer;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 
 class AccountController extends Controller
 {
@@ -31,5 +33,15 @@ class AccountController extends Controller
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
         ]);
+    }
+    // my order history
+    public function myOrderHistory()
+    {
+        $customer = Customer::with('orders')->where('user_id', Auth::user()->id)->first();
+        // return $customer;
+        if (!$customer) {
+            return redirect()->route('home');
+        }
+        return Inertia::render('Website/MyOrderHistory', ['orders' => $customer->orders]);
     }
 }
