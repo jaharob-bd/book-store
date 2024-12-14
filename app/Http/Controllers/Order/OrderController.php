@@ -111,4 +111,38 @@ class OrderController extends Controller
     {
         echo "Order failed";
     }
+    public function details($order_no)
+    {
+        $order_n = Order::with(['customer', 'orderDetails.product'])
+            ->where('order_no', $order_no)
+            ->first(); 
+
+        if ($order_n) {
+            $order = [
+                'id' => $order_n->order_no, // Format ID as INV-XXXXXX
+                'date' => date('Y-m-d', strtotime($order_n->order_date)), // Format the order date
+                'customer' => [
+                    'name' => $order_n->customer->name ?? '',
+                    'email' => $order_n->customer->email ?? '',
+                    'phone' => $order_n->customer->phone ?? '',
+                    'address' => $order_n->shipping_address ?? 'N/A', // Provide a default value if address is null
+                ],
+                'items' => $order_n->orderDetails->map(function ($detail) {
+                    return [
+                        'name' => $detail->product->name ?? 'Unknown Product', // Fetch product name
+                        'quantity' => $detail->quantity,
+                        'price' => floatval($detail->price), // Ensure price is a float
+                    ];
+                })->toArray(),
+                'vatRate' => 0, // Example VAT rate, you can calculate it dynamically if needed
+                'shippingFee' => 50, // Example VAT rate, you can calculate it dynamically if needed
+                'discount' => floatval($order_n->discount_amount), // Use discount amount from the order
+            ];
+        } else {
+            $order = null; // Handle case when order is not found
+        }
+
+        // return $order;
+        return Inertia::render('Website/OrderDetails', ['order' => $order]);
+    }
 }

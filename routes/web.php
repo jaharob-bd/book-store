@@ -34,6 +34,8 @@ Route::get('/order', [OrderController::class, 'index'])->name('order');
 Route::post('/order-store', [OrderController::class, 'store'])->name('order-store');
 // sucess routes for checkout
 Route::get('/order-success', [OrderController::class,'success'])->name('order-success');
+Route::get('/order-details/{order_no}', [OrderController::class,'details'])->name('order-details');
+
 Route::get('/order-failure', [OrderController::class, 'failure'])->name('order-failure');
 
 Route::post('/order-cancel', [OrderController::class, 'cancel'])->name('order-cancel');

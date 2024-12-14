@@ -23,9 +23,15 @@ class OrderDetail extends Model
         'price',
     ];
 
-    /**
-     * Get the order that owns the detail.
-     */
+    public function products()
+    {
+        return $this->belongsTo(Product::class, 'product_id',  'id');
+    }
+    // Accessor for product name
+    public function getProductNameAttribute()
+    {
+        return $this->products ? $this->products->name : null;
+    }
 
     // save order details static function
     public static function saveOrderDetails($data)
@@ -47,7 +53,7 @@ class OrderDetail extends Model
         // $orderDetail->price = $price;
         // $orderDetail->save();
 
-        return $orderDetail;  // return the saved order detail model instance for further operations.
+        // return $orderDetail;  // return the saved order detail model instance for further operations.
     }
 
 

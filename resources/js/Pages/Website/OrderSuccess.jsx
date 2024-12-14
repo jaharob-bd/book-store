@@ -1,5 +1,6 @@
 import React from 'react'
 import WebLayout from './Layout/WebLayout';
+import { Link } from '@inertiajs/react';
 
 const OrderSuccess = ({ auth, order_no }) => {
     if (!order_no) {
@@ -37,18 +38,18 @@ const OrderSuccess = ({ auth, order_no }) => {
                     </p>
 
                     <div className="mt-6 flex justify-center space-x-4">
-                        <a
-                            href="/order-details"
+                        <Link
+                            href={ route('order-details', order_no)}
                             className="px-4 py-2 bg-blue-500 text-white text-sm rounded-lg hover:bg-blue-600 transition"
                         >
                             View Order
-                        </a>
-                        <a
-                            href="/"
+                        </Link>
+                        <Link
+                            href={route('home')}
                             className="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded-lg hover:bg-gray-300 transition"
                         >
                             Back to Homepage
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

@@ -2,8 +2,11 @@
 
 namespace App\Models\Order;
 
+use App\Models\Consumer\Customer;
+use App\Models\Order\OrderDetail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+
 
 class Order extends Model
 {
@@ -21,6 +24,15 @@ class Order extends Model
         'order_no',
     ];
 
+    function customer()
+    {
+        return $this->belongsTo(Customer::class, 'customer_id', 'id');
+    }
+    // orderdetails 
+    public function orderDetails()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
     public static function saveOrder($data)
     {
         // return $this->belongsTo(Brand::class);
