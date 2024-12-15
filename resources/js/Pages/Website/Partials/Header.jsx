@@ -1,17 +1,19 @@
 // partials/Header.js
 import { useState, useEffect, useContext } from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { CartContext } from '../context/CartContext';
 import { WishListContext } from '../context/WishListContext';
 
 export default function Header({ auth }) {
     const { cart } = useContext(CartContext);
     const { wishList } = useContext(WishListContext);
+    const { props } = usePage();
+    const logo = props.url?.base_url + '/company-logo.svg'
 
     return (
         <header className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5">
             <a href="index.html">
-                <img className="cursor-pointer sm:h-auto sm:w-auto" src="company-logo.svg" alt="company logo" />
+                <img className="cursor-pointer sm:h-auto sm:w-auto" src={logo} alt="company logo" />
             </a>
             <div className="md:hidden">
                 <button click="mobileMenuOpen = ! mobileMenuOpen">
