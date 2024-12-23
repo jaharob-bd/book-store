@@ -75,4 +75,9 @@ class AccountController extends Controller
     {
         return Inertia::render('Website/MyAddressMange');
     }
+
+    // myOrderTracking
+    public function myOrderTracking($order_no){
+        return Inertia::render('Website/MyOrderTracking', ['order_no' => $order_no]);
+    }
 }

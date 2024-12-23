@@ -36,6 +36,7 @@ Route::get('/order-success', [OrderController::class,'success'])->name('order-su
 Route::get('/order-details/{order_no}', [OrderController::class,'details'])->name('order-details');
 // my order history
 Route::get('/user/my-order-history', [AccountController::class,'myOrderHistory'])->name('user.my-order-history');
+Route::get('/user/my-order-tracking/{order_no}', [AccountController::class,'myOrderTracking'])->name('user.my-order-tracking');
 Route::get('/user/my-wish-list', [AccountController::class, 'myWishList'])->name('user.my-wish-list');
 Route::get('/user/my-change-password', [AccountController::class, 'MyChangePassword'])->name('user.my-change-password');
 Route::get('/user/my-address-manage', [AccountController::class, 'myAddressManage'])->name('user.my-address-manage');
