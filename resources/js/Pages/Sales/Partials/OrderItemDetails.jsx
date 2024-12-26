@@ -13,7 +13,7 @@ export const OrderItemDetails = ({ order }) => {
                 <div className="h-full overflow-hidden mt-4">
                     <div className="p-1">
                         <p className="font-bold">
-                            INVOICE : <span className="text-red-500">{order.order_no}</span>
+                            INVOICE : <span className="text-red-500">{order.order_no}</span> [Grand Total : <span className="">{order.total_amount}</span>]
                         </p>
                     </div>
                     <div className="-mx-4 mt-2 flow-root sm:mx-0">

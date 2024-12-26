@@ -1,6 +1,6 @@
 import React from 'react'
 
-export const OrderCancel = ({ handleOnchange, handleSubmitCancel }) => {
+export const OrderInvoice = ({ handleOnchange, handleSubmitCancel }) => {
     return (
         <div>
             <form className="p-2 mx-auto" onSubmit={handleSubmitCancel}>

@@ -6,6 +6,54 @@ export const OrderViewActionButton = ({ order, openModal, handleDownload, isLoad
     return (
         <div className="flex flex-wrap gap-2.5 items-center">
             <div>
+                {
+                    order?.status != 'invoiced' && order?.status != 'canceled' ?
+                        <button
+                            className="bg-green-700 text-green-100 hover:bg-green-800 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-green-400/20 transition-all hover:shadow-lg hover:shadow-green-400/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled"
+                            onClick={() => openModal('Invoice')}
+                        >
+                            <i className="ri-bill-line pr-1"></i>
+                            Invoice
+                        </button>
+                        :
+                        null
+                }
+                {
+                    order?.status != 'shipped' && order?.status != 'canceled' ?
+                        <button
+                            className="bg-red-700 text-green-100 hover:bg-red-800 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-green-400/20 transition-all hover:shadow-lg hover:shadow-green-400/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled"
+                            onClick={() => openModal('Shipped')}
+                        >
+                            <i className="ri-bill-line pr-1"></i>
+                            Shipment
+                        </button>
+                        :
+                        null
+                }
+                {
+                    order?.status != 'refunded' && order?.status != 'canceled' ?
+                        <button
+                            className="bg-yellow-500 hover:bg-yellow-600 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-yellow-500/20 transition-all hover:shadow-lg hover:shadow-yellow-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            onClick={() => openModal('Refund')}
+                        >
+                            <i className="ri-refund-line pr-1"></i>
+                            Refund
+                        </button>
+                        :
+                        null
+                }
+                {
+                    order?.status != 'canceled' ?
+                        <button
+                            className="bg-red-600 text-red-100 hover:bg-red-700 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                            onClick={() => openModal('Cancel')}
+                        >
+                            <i className="ri-close-circle-line pr-1"></i>
+                            Cancel
+                        </button>
+                        :
+                        null
+                }
                 <ReactToPrint
                     trigger={() => (
                         <button
@@ -33,40 +81,6 @@ export const OrderViewActionButton = ({ order, openModal, handleDownload, isLoad
                     <i className="ri-mail-send-line pr-1"></i>
                     Send Email
                 </Link>
-                {
-                    order?.status != 'invoiced' && order?.status != 'canceled' ?
-                        <Link
-                            className="bg-green-700 text-green-100 hover:bg-green-800 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-green-400/20 transition-all hover:shadow-lg hover:shadow-green-400/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled"
-                        >
-                            <i className="ri-bill-line pr-1"></i>
-                            Invoice
-                        </Link>
-                        :
-                        null
-                }
-                {
-                    order?.status != 'refunded' && order?.status != 'canceled' ?
-                        <Link
-                            className="bg-yellow-500 hover:bg-yellow-600 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-yellow-500/20 transition-all hover:shadow-lg hover:shadow-yellow-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                        >
-                            <i className="ri-refund-line pr-1"></i>
-                            Refund
-                        </Link>
-                        :
-                        null
-                }
-                {
-                    order?.status != 'canceled' ?
-                        <button
-                            className="bg-red-600 text-red-100 hover:bg-red-700 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                            onClick={() => openModal()}
-                        >
-                            <i className="ri-close-circle-line pr-1"></i>
-                            Cancel
-                        </button>
-                        :
-                        null
-                }
                 <Link
                     href={route('orders')}
                     type="button"

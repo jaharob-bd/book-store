@@ -10,7 +10,7 @@ import { calculateSubTotal } from '@/Utils/PriceCalculation';
 import { calculateDiscount } from '@/Utils/PriceCalculation';
 import { calculateVAT } from '@/Utils/PriceCalculation';
 import { calculateGrandTotal } from '@/Utils/PriceCalculation';
-import { OrderCancel } from './OrderCancel';
+import { OrderCancel } from './OrderStatus';
 import SwalAlert from '@/Components/Alert/SwalAlert'
 import { pdf } from '@react-pdf/renderer';
 import OrderInvoiceDownload from './OrderInvoiceDownload';
