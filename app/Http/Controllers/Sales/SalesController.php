@@ -14,6 +14,7 @@ use App\Models\Catalog\Product;
 use App\Models\Consumer\Customer;
 use App\Models\Inventory\Stock\StockChd;
 use App\Models\Inventory\Stock\StockMst;
+use App\Models\Order\Order;
 use App\Models\Purchase\PurchaseMst;
 use App\Models\Sales\SalPayDetail;
 use App\Models\Supplier\Supplier;
@@ -27,8 +28,8 @@ class SalesController extends Controller
 {
     function index()
     {
-        // return SaleMst::all();
-        $data['sales'] = SaleMst::with('customer')->orderBy('id', 'desc')->get();
+        $data['orders'] = Order::with(['customer', 'orderDetails'])->get();
+        // return $data;
         return Inertia::render('Sales/OrderLists', $data);
     }
     function create()
@@ -239,54 +240,56 @@ class SalesController extends Controller
     // view 
     function show($id)
     {
-        $sale = SaleMst::with(['saleChds.productVariantPrice.product', 'salPayDetails'])->find($id);
+        $data['order'] = Order::with(['customer', 'orderDetails.product'])->find($id);
+        // return $data;
+        // $sale = SaleMst::with(['saleChds.productVariantPrice.product', 'salPayDetails'])->find($id);
 
-        $data['sales'] = [
-            'id' => $sale->id,
-            'sale_uid' => $sale->sale_uid,
-            'sale_date' => $sale->sale_date,
-            'sub_total' => $sale->sub_total,
-            'discount_type' => $sale->discount_type,
-            'discount_amt' => $sale->discount_amt,
-            'VAT_type' => $sale->VAT_type,
-            'VAT_amt' => $sale->VAT_amt,
-            'grand_total' => $sale->grand_total,
-            'paid_amt' => $sale->paid_amt,
-            'change_amt' => $sale->change_amt,
-            'due_amt' => $sale->due_amt,
-            'store_id' => $sale->store_id,
-            'status' => $sale->status,
-            'created_by' => $sale->created_by,
-            'updated_by' => $sale->updated_by,
-            'created_at' => $sale->created_at,
-            'updated_at' => $sale->updated_at,
-            'customer_details' => [
-                'name' => $sale->customer->name,
-                'email' => $sale->customer->email,
-                'phone' => $sale->customer->phone,
-                'created_at' => $sale->customer->created_at,
-                'customer_group_name' => $sale->customer->group ? $sale->customer->group->name : '',
-            ],
-            'sale_details' => $sale->saleChds->map(function ($chd) {
-                return [
-                    'id' => $chd->id,
-                    'sale_mst_id' => $chd->sale_mst_id,
-                    'product_name' => $chd->product_name,
-                    'product_v_id' => $chd->product_v_id,
-                    'variant_name' => $chd->variant_name,
-                    'price' => $chd->price,
-                    'quantity' => $chd->quantity,
-                    'total_price' => $chd->total_price,
-                    'sale_date' => $chd->sale_date,
-                    'status' => $chd->status,
-                    'created_by' => $chd->created_by,
-                    'updated_by' => $chd->updated_by,
-                    'created_at' => $chd->created_at,
-                    'updated_at' => $chd->updated_at,
-                ];
-            }),
-            'payment_details' => $sale->SalPayDetails
-        ];
+        // $data['sales'] = [
+        //     'id' => $sale->id,
+        //     'sale_uid' => $sale->sale_uid,
+        //     'sale_date' => $sale->sale_date,
+        //     'sub_total' => $sale->sub_total,
+        //     'discount_type' => $sale->discount_type,
+        //     'discount_amt' => $sale->discount_amt,
+        //     'VAT_type' => $sale->VAT_type,
+        //     'VAT_amt' => $sale->VAT_amt,
+        //     'grand_total' => $sale->grand_total,
+        //     'paid_amt' => $sale->paid_amt,
+        //     'change_amt' => $sale->change_amt,
+        //     'due_amt' => $sale->due_amt,
+        //     'store_id' => $sale->store_id,
+        //     'status' => $sale->status,
+        //     'created_by' => $sale->created_by,
+        //     'updated_by' => $sale->updated_by,
+        //     'created_at' => $sale->created_at,
+        //     'updated_at' => $sale->updated_at,
+        //     'customer_details' => [
+        //         'name' => $sale->customer->name,
+        //         'email' => $sale->customer->email,
+        //         'phone' => $sale->customer->phone,
+        //         'created_at' => $sale->customer->created_at,
+        //         'customer_group_name' => $sale->customer->group ? $sale->customer->group->name : '',
+        //     ],
+        //     'sale_details' => $sale->saleChds->map(function ($chd) {
+        //         return [
+        //             'id' => $chd->id,
+        //             'sale_mst_id' => $chd->sale_mst_id,
+        //             'product_name' => $chd->product_name,
+        //             'product_v_id' => $chd->product_v_id,
+        //             'variant_name' => $chd->variant_name,
+        //             'price' => $chd->price,
+        //             'quantity' => $chd->quantity,
+        //             'total_price' => $chd->total_price,
+        //             'sale_date' => $chd->sale_date,
+        //             'status' => $chd->status,
+        //             'created_by' => $chd->created_by,
+        //             'updated_by' => $chd->updated_by,
+        //             'created_at' => $chd->created_at,
+        //             'updated_at' => $chd->updated_at,
+        //         ];
+        //     }),
+        //     'payment_details' => $sale->SalPayDetails
+        // ];
         return Inertia::render('Sales/OrderView', $data);
     }
     function canceled(Request $request)

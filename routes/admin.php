@@ -69,11 +69,12 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/stock-movements', [StockController::class, 'stockMovement'])->name('stock-movements');
     Route::get('/get-stock-movements', [StockController::class, 'getStockMovement'])->name('get-stock-movements');
 
-    // Sales invoice
+    // Sales Order Management 
     Route::get('/sales/orders', [SalesController::class, 'index'])->name('orders');
     Route::get('/sales/order/create', [SalesController::class, 'create'])->name('order.create');
     Route::get('/sales/order/view/{id}', [SalesController::class, 'show'])->name('order.view');
+
     // Route::post('/order-store', [SalesController::class, 'store'])->name('order-store');
-    Route::post('/order-cancel', [SalesController::class, 'canceled'])->name('order-cancel');
-    Route::post('/invoice-store', [ProfileController::class, 'store'])->name('invoice-store');
+    // Route::post('/order-cancel', [SalesController::class, 'canceled'])->name('order-cancel');
+    // Route::post('/invoice-store', [ProfileController::class, 'store'])->name('invoice-store');
 });

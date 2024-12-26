@@ -6,10 +6,10 @@ import Modal from '@/Components/Modal';
 import ReactToPrint from 'react-to-print';
 import PrintComponent from '@/Components/PrintComponent';
 
-export default function OrderLists({ auth, sales }) {
+export default function OrderLists({ auth, orders }) {
     const componentRef = useRef();
     const [isOpenModal, setIsOpenModal] = useState(false);
-    const [saleLists, setSaleLists] = useState(sales);
+    // const [orders, setOrders] = useState(orders);
 
     // console.log(errors);
     const { t } = useTranslation();
@@ -74,6 +74,9 @@ export default function OrderLists({ auth, sales }) {
                                         VAT
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider text-nowrap">
+                                        Shipping Fee
+                                    </th>
+                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider text-nowrap">
                                         Grand Total
                                     </th>
                                     <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -88,10 +91,10 @@ export default function OrderLists({ auth, sales }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {saleLists.map((sale) => (
-                                    <tr key={sale.id}>
+                                {orders.map((order) => (
+                                    <tr key={order.id}>
                                         <td className="border-b border-gray-200 bg-white text-sm text-center text-nowrap">
-                                            <Link href={`/sales/order/view/${sale.id}`}
+                                            <Link href={`/sales/order/view/${order.id}`}
                                                 className="select-none rounded-lg bg-blue-500 py-1 px-1 mr-1 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                                                 type="button"
                                             >
@@ -99,34 +102,37 @@ export default function OrderLists({ auth, sales }) {
                                             </Link>
                                         </td>
                                         <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm text-nowrap">
-                                            {sale.sale_uid}
+                                            {order.order_no}
                                         </td>
                                         <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm text-nowrap">
-                                            {sale.customer.name}
+                                            {order.customer.name}
                                         </td>
                                         <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm text-nowrap">
-                                            {sale.sale_date}
+                                            {order.order_date}
                                         </td>
                                         <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
-                                            {sale.sub_total}
+                                            {order.sub_amount}
                                         </td>
                                         <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
-                                            {sale.discount_amt}
+                                            {order.discount_amount}
                                         </td>
                                         <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
-                                            {sale.VAT_amt}
+                                            {order.tax_amount}
                                         </td>
                                         <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
-                                            {sale.grand_total}
+                                            {order.shipping_fee}
                                         </td>
                                         <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
-                                            {sale.paid_amt}
+                                            {order.total_amount}
                                         </td>
                                         <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
-                                            {sale.due_amt}
+                                            {order.paid_amt}
+                                        </td>
+                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
+                                            {order.due_amt}
                                         </td>
                                         <td className="px-2 py-2 border-b border-gray-200 bg-white text">
-                                            {sale.status}
+                                            {order.status}
                                         </td>
                                     </tr>
                                 ))}

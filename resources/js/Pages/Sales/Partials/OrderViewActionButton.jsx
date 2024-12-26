@@ -2,7 +2,7 @@ import React from 'react'
 import ReactToPrint from 'react-to-print';
 import { Head, Link } from '@inertiajs/react';
 
-export const OrderViewActionButton = ({ saleData, openModal, handleDownload, isLoading, sendEmail }) => {
+export const OrderViewActionButton = ({ order, openModal, handleDownload, isLoading, sendEmail }) => {
     return (
         <div className="flex flex-wrap gap-2.5 items-center">
             <div>
@@ -34,7 +34,7 @@ export const OrderViewActionButton = ({ saleData, openModal, handleDownload, isL
                     Send Email
                 </Link>
                 {
-                    saleData?.status != 'invoiced' && saleData?.status != 'canceled' ?
+                    order?.status != 'invoiced' && order?.status != 'canceled' ?
                         <Link
                             className="bg-green-700 text-green-100 hover:bg-green-800 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-green-400/20 transition-all hover:shadow-lg hover:shadow-green-400/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled"
                         >
@@ -45,7 +45,7 @@ export const OrderViewActionButton = ({ saleData, openModal, handleDownload, isL
                         null
                 }
                 {
-                    saleData?.status != 'refunded' && saleData?.status != 'canceled' ?
+                    order?.status != 'refunded' && order?.status != 'canceled' ?
                         <Link
                             className="bg-yellow-500 hover:bg-yellow-600 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-yellow-500/20 transition-all hover:shadow-lg hover:shadow-yellow-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                         >
@@ -56,7 +56,7 @@ export const OrderViewActionButton = ({ saleData, openModal, handleDownload, isL
                         null
                 }
                 {
-                    saleData?.status != 'canceled' ?
+                    order?.status != 'canceled' ?
                         <button
                             className="bg-red-600 text-red-100 hover:bg-red-700 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-red-500/20 transition-all hover:shadow-lg hover:shadow-red-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                             onClick={() => openModal()}
