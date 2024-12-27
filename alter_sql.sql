@@ -130,3 +130,22 @@ CREATE TABLE `stocks` (
   UNIQUE KEY `product_id` (`product_id`),
   CONSTRAINT `stocks_ibfk_1` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+
+-- 28-12-2024
+CREATE TABLE `order_tracking` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) unsigned NOT NULL,
+  `status` enum('Pending','Processing','Shipped','Delivered','Cancelled','Refunded') NOT NULL,
+  `tracking_number` varchar(50) DEFAULT NULL,
+  `carrier_name` varchar(100) DEFAULT NULL,
+  `status_updated_at` datetime DEFAULT current_timestamp(),
+  `estimated_delivery_date` datetime DEFAULT NULL,
+  `remarks` text DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `order_id` (`order_id`),
+  CONSTRAINT `order_tracking_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

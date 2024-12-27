@@ -1,117 +1,62 @@
 import React from 'react';
 import WebLayout from './Layout/WebLayout';
 
-const MyOrderTracking =  ({auth}) => {
+const MyOrderTracking = ({ auth, order, tracking }) => {
     // console.log(auth);
     return (
         <WebLayout auth={auth}>
             <section className="py-8 antialiased md:py-16">
                 <div className="mx-auto max-w-screen-xl px-4 2xl:px-0">
-                    <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">Track the delivery of order #957684673</h2>
+                    <h2 className="text-xl font-semibold text-gray-900 sm:text-2xl">Track the delivery of order #{order.order_no}</h2>
                     <div className="mt-6 sm:mt-8 lg:flex lg:gap-8">
                         <div className="w-full divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200 dark:divide-gray-700 dark:border-gray-700 lg:max-w-xl xl:max-w-2xl">
-                            <div className="space-y-4 p-6">
-                                <div className="flex items-center gap-6">
-                                    <a href="#" className="h-14 w-14 shrink-0">
-                                        <img className="h-full w-full" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg" alt="imac image" />
-                                        <img className="hidden h-full w-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="imac image" />
-                                    </a>
-                                    <a href="#" className="min-w-0 flex-1 font-medium text-gray-900 hover:underline "> PC system All in One APPLE iMac (2023) mqrq3ro/a, Apple M3, 24" Retina 4.5K, 8GB, SSD 256GB, 10-core GPU, macOS Sonoma, Blue, Keyboard layout INT </a>
-                                </div>
-                                <div className="flex items-center justify-between gap-4">
-                                    <p className="text-sm font-normal text-gray-500 "><span className="font-medium text-gray-900 ">Product ID:</span> BJ8364850</p>
-                                    <div className="flex items-center justify-end gap-4">
-                                        <p className="text-base font-normal text-gray-900">x1</p>
-                                        <p className="text-xl font-bold leading-tight text-gray-900">$1,499</p>
+
+                            {
+                                // map order.orderDetails
+                                order.order_details.map(item => (
+                                    <div key={item.id} className="space-y-4 p-6">
+                                        <div className="flex items-center gap-6">
+                                            <a href="#" className="h-14 w-14 shrink-0">
+                                                <img className="h-full w-full" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg" alt="imac image" />
+                                                <img className="hidden h-full w-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="imac image" />
+                                            </a>
+                                            <a href="#" className="min-w-0 flex-1 font-medium text-gray-900 hover:underline ">
+                                                {item.product.name}
+                                            </a>
+                                        </div>
+                                        <div className="flex items-center justify-between gap-4">
+                                            <p className="text-sm font-normal text-gray-500 "><span className="font-medium text-gray-900 ">Product ID:</span> BJ8364850</p>
+                                            <div className="flex items-center justify-end gap-4">
+                                                <p className="text-base font-normal text-gray-900">x{item.quantity}</p>
+                                                <p className="text-xl font-bold leading-tight text-gray-900">{item.price * item.quantity}</p>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div className="space-y-4 p-6">
-                                <div className="flex items-center gap-6">
-                                    <a href="#" className="h-14 w-14 shrink-0">
-                                        <img className="h-full w-full" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/apple-watch-light.svg" alt="phone image" />
-                                        <img className="hidden h-full w-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/apple-watch-dark.svg" alt="phone image" />
-                                    </a>
-                                    <a href="#" className="min-w-0 flex-1 font-medium text-gray-900 hover:underline"> Restored Apple Watch Series 8 (GPS) 41mm Midnight Aluminum Case with Midnight Sport Band </a>
-                                </div>
-                                <div className="flex items-center justify-between gap-4">
-                                    <p className="text-sm font-normal text-gray-500 "><span className="font-medium text-gray-900 ">Product ID:</span> BJ8364850</p>
-                                    <div className="flex items-center justify-end gap-4">
-                                        <p className="text-base font-normal text-gray-900">x2</p>
-                                        <p className="text-xl font-bold leading-tight text-gray-900 ">$598</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="space-y-4 p-6">
-                                <div className="flex items-center gap-6">
-                                    <a href="#" className="h-14 w-14 shrink-0">
-                                        <img className="h-full w-full" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/ps5-light.svg" alt="console image" />
-                                        <img className="hidden h-full w-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/ps5-dark.svg" alt="console image" />
-                                    </a>
-                                    <a href="#" className="min-w-0 flex-1 font-medium text-gray-900 hover:underline "> Sony Playstation 5 Digital Edition Console with Extra Blue Controller, White PULSE 3D Headset and Surge Dual Controller </a>
-                                </div>
-                                <div className="flex items-center justify-between gap-4">
-                                    <p className="text-sm font-normal text-gray-500 "><span className="font-medium text-gray-900 ">Product ID:</span> BJ8364850</p>
-                                    <div className="flex items-center justify-end gap-4">
-                                        <p className="text-base font-normal text-gray-900 ">x1</p>
-                                        <p className="text-xl font-bold leading-tight text-gray-900 ">$799</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="space-y-4 p-6">
-                                <div className="flex items-center gap-6">
-                                    <a href="#" className="h-14 w-14 shrink-0">
-                                        <img className="h-full w-full" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/xbox-light.svg" alt="xbox image" />
-                                        <img className="hidden h-full w-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/xbox-dark.svg" alt="xbox image" />
-                                    </a>
-                                    <a href="#" className="min-w-0 flex-1 font-medium text-gray-900 hover:underline "> Xbox Series X Diablo IV Bundle + 2 Xbox Wireless Controller Carbon Black + Controller Charger </a>
-                                </div>
-                                <div className="flex items-center justify-between gap-4">
-                                    <p className="text-sm font-normal text-gray-500 "><span className="font-medium text-gray-900 ">Product ID:</span> BJ8364850</p>
-                                    <div className="flex items-center justify-end gap-4">
-                                        <p className="text-base font-normal text-gray-900 ">x1</p>
-                                        <p className="text-xl font-bold leading-tight text-gray-900 ">$699</p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="space-y-4 p-6">
-                                <div className="flex items-center gap-6">
-                                    <a href="#" className="h-14 w-14 shrink-0">
-                                        <img className="h-full w-full" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/iphone-light.svg" alt="phone image" />
-                                        <img className="hidden h-full w-full dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/iphone-dark.svg" alt="phone image" />
-                                    </a>
-                                    <a href="#" className="min-w-0 flex-1 font-medium text-gray-900 hover:underline "> APPLE iPhone 15 5G phone, 256GB, Gold </a>
-                                </div>
-                                <div className="flex items-center justify-between gap-4">
-                                    <p className="text-sm font-normal text-gray-500 "><span className="font-medium text-gray-900 ">Product ID:</span> BJ8364850</p>
-                                    <div className="flex items-center justify-end gap-4">
-                                        <p className="text-base font-normal text-gray-900 ">x3</p>
-                                        <p className="text-xl font-bold leading-tight text-gray-900">$2,997</p>
-                                    </div>
-                                </div>
-                            </div>
+                                ))
+                            }
+
                             <div className="space-y-4 bg-gray-50 text-gray-900 p-6">
                                 <div className="space-y-2">
                                     <dl className="flex items-center justify-between gap-4">
                                         <dt className="font-normal text-gray-900 ">Original price</dt>
-                                        <dd className="font-medium text-gray-900 ">$6,592.00</dd>
+                                        <dd className="font-medium text-gray-900 ">{order.order_details.reduce((total, item) => total + item.price * item.quantity, 0)}</dd>
                                     </dl>
                                     <dl className="flex items-center justify-between gap-4">
-                                        <dt className="font-normal text-gray-900 ">Savings</dt>
-                                        <dd className="text-base font-medium text-green-500">-$299.00</dd>
+                                        <dt className="font-normal text-gray-900 ">Discount</dt>
+                                        <dd className="text-base font-medium text-green-500">-{order.discount_amount}</dd>
                                     </dl>
                                     <dl className="flex items-center justify-between gap-4">
-                                        <dt className="font-normal text-gray-900 ">Store Pickup</dt>
-                                        <dd className="font-medium text-gray-900 ">$99</dd>
+                                        <dt className="font-normal text-gray-900 ">VAT</dt>
+                                        <dd className="font-medium text-gray-900 ">{order.tax_amount}</dd>
                                     </dl>
                                     <dl className="flex items-center justify-between gap-4">
-                                        <dt className="font-normal text-gray-900 ">Tax</dt>
-                                        <dd className="font-medium text-gray-900 ">$799</dd>
+                                        <dt className="font-normal text-gray-900 ">Delivery Fee</dt>
+                                        <dd className="font-medium text-gray-900 ">{order.shipping_fee}</dd>
                                     </dl>
                                 </div>
                                 <dl className="flex items-center justify-between gap-4 border-t border-gray-200 pt-2 dark:border-gray-700">
                                     <dt className="text-lg font-bold text-gray-900 ">Total</dt>
-                                    <dd className="text-lg font-bold text-gray-900 ">$7,191.00</dd>
+                                    <dd className="text-lg font-bold text-gray-900 ">{order.order_details.reduce((total, item) => total + item.price * item.quantity, 0) + parseFloat(order.shipping_fee)}</dd>
                                 </dl>
                             </div>
                         </div>
@@ -125,7 +70,42 @@ const MyOrderTracking =  ({auth}) => {
                                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5" />
                                             </svg>
                                         </span>
-                                        <h4 className="mb-0.5 text-base font-semibold text-gray-900 ">Estimated delivery in 24 Nov 2023</h4>
+                                        <h4 className="mb-0.5 text-base font-semibold text-gray-900 ">Created order in {tracking?.Pending?.statusUpdatedAt || tracking?.Pending?.statusUpdatedAt}</h4>
+                                        <p className="text-sm font-normal text-gray-500 ">Order Pending</p>
+                                    </li>
+                                    <li className="mb-10 ms-6">
+                                        <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white dark:bg-gray-700 dark:ring-gray-800">
+                                            <svg className="h-4 w-4 text-gray-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5" />
+                                            </svg>
+                                        </span>
+                                        <h4 className="mb-0.5 text-base font-semibold text-gray-900 ">
+                                            {tracking?.Processing?.statusUpdatedAt ? `Order Confirm in ${tracking?.Processing?.statusUpdatedAt}` : 'Please wait...'}
+                                        </h4>
+                                        <p className="text-sm font-normal text-gray-500 ">Order Processing</p>
+                                    </li>
+                                    <li className="mb-10 ms-6 text-primary-700 dark:text-primary-500">
+                                        <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white dark:bg-primary-900 dark:ring-gray-800">
+                                            <svg className="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 11.917 9.724 16.5 19 7.5" />
+                                            </svg>
+                                        </span>
+                                        <h4 className="mb-0.5 text-base font-semibold">
+                                            {tracking?.Shipped?.statusUpdatedAt ? `Order Shipping in ${tracking?.Shipped?.statusUpdatedAt}` : 'Please wait...'}
+                                        </h4>
+                                        <p className="text-sm">Products delivered to the courier
+                                            {tracking?.Shipped?.carrierName ? `- ${tracking?.Shipped?.carrierName}` : ''}
+                                        </p>
+                                    </li>
+                                    <li className="mb-10 ms-6">
+                                        <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 ring-8 ring-white dark:bg-gray-700 dark:ring-gray-800">
+                                            <svg className="h-4 w-4 text-gray-500 " aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" viewBox="0 0 24 24">
+                                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5" />
+                                            </svg>
+                                        </span>
+                                        <h4 className="mb-0.5 text-base font-semibold text-gray-900 ">
+                                            {tracking?.Shipped?.estimatedDeliveryDate ? `Estimated delivery in  ${tracking?.Shipped?.estimatedDeliveryDate}` : 'Please wait...'}
+                                        </h4>
                                         <p className="text-sm font-normal text-gray-500 ">Products delivered</p>
                                     </li>
                                     <li className="mb-10 ms-6">
@@ -134,7 +114,7 @@ const MyOrderTracking =  ({auth}) => {
                                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h6l2 4m-8-4v8m0-8V6a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v9h2m8 0H9m4 0h2m4 0h2v-4m0 0h-5m3.5 5.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Zm-10 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" />
                                             </svg>
                                         </span>
-                                        <h4 className="mb-0.5 text-base font-semibold text-gray-900 ">Today</h4>
+                                        <h4 className="mb-0.5 text-base font-semibold text-gray-900 ">{tracking?.Delivered?.statusUpdatedAt ? `Order Delivered in ' ${tracking?.Delivered}`?.statusUpdatedAt : 'Please wait...'}</h4>
                                         <p className="text-sm font-normal text-gray-500 ">Products being delivered</p>
                                     </li>
                                     <li className="mb-10 ms-6 text-primary-700 dark:text-primary-500">
@@ -143,26 +123,8 @@ const MyOrderTracking =  ({auth}) => {
                                                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 11.917 9.724 16.5 19 7.5" />
                                             </svg>
                                         </span>
-                                        <h4 className="mb-0.5 font-semibold">23 Nov 2023, 15:15</h4>
-                                        <p className="text-sm">Products in the courier's warehouse</p>
-                                    </li>
-                                    <li className="mb-10 ms-6 text-primary-700 dark:text-primary-500">
-                                        <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white dark:bg-primary-900 dark:ring-gray-800">
-                                            <svg className="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 11.917 9.724 16.5 19 7.5" />
-                                            </svg>
-                                        </span>
-                                        <h4 className="mb-0.5 text-base font-semibold">22 Nov 2023, 12:27</h4>
-                                        <p className="text-sm">Products delivered to the courier - DHL Express</p>
-                                    </li>
-                                    <li className="mb-10 ms-6 text-primary-700 dark:text-primary-500">
-                                        <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white dark:bg-primary-900 dark:ring-gray-800">
-                                            <svg className="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width={24} height={24} fill="none" viewBox="0 0 24 24">
-                                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 11.917 9.724 16.5 19 7.5" />
-                                            </svg>
-                                        </span>
-                                        <h4 className="mb-0.5 font-semibold">19 Nov 2023, 10:47</h4>
-                                        <p className="text-sm">Payment accepted - VISA Credit Card</p>
+                                        <h4 className="mb-0.5 font-semibold">{tracking?.Payment?.statusUpdatedAt ? `Payment in ${tracking?.Payment?.statusUpdatedA}` : 'Please wait...'}</h4>
+                                        <p className="text-sm">Payment accepted - {tracking?.Payment?.statusUpdatedAt ? 'VISA Credit Card' : 'Not Payment'}</p>
                                     </li>
                                     <li className="ms-6 text-primary-700 dark:text-primary-500">
                                         <span className="absolute -start-3 flex h-6 w-6 items-center justify-center rounded-full bg-primary-100 ring-8 ring-white dark:bg-primary-900 dark:ring-gray-800">
@@ -171,8 +133,8 @@ const MyOrderTracking =  ({auth}) => {
                                             </svg>
                                         </span>
                                         <div>
-                                            <h4 className="mb-0.5 font-semibold">19 Nov 2023, 10:45</h4>
-                                            <a href="#" className="text-sm font-medium hover:underline">Order placed - Receipt #647563</a>
+                                            <h4 className="mb-0.5 font-semibold">{tracking?.Placed?.statusUpdatedAt ? tracking?.Placed?.statusUpdatedAt : 'Please wait...'}</h4>
+                                            <a href="#" className="text-sm font-medium hover:underline">Order placed {tracking?.Placed?.statusUpdatedAt ? '- Receipt #647563' : ''}</a>
                                         </div>
                                     </li>
                                 </ol>

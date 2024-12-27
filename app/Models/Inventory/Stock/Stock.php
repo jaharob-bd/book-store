@@ -21,6 +21,37 @@ class Stock extends Model
         return $this->belongsTo(Product::class, 'product_id');
     }
 
+    public static function stockUpdate($data)
+    {
+        // Validate input data
+        if (!isset($data['status']) || !isset($data['items']) || !is_array($data['items'])) {
+            throw new \InvalidArgumentException('Invalid data format. "status" and "items" keys are required.');
+        }
+
+        // If status is 'Cancelled' or 'Refunded', increment stock
+        if ($data['status'] === 'Cancelled' || $data['status'] === 'Refunded') {
+            foreach ($data['items'] as $item) {
+                if (!isset($item['product_id']) || !isset($item['quantity'])) {
+                    throw new \InvalidArgumentException('Invalid item data. "product_id" and "quantity" are required.');
+                }
+
+                Stock::where('product_id', $item['product_id'])->increment('quantity', $item['quantity']);
+            }
+        }
+
+        // If status is 'Delivered', decrement stock
+        if ($data['status'] === 'Delivered') {
+            foreach ($data['items'] as $item) {
+                if (!isset($item['product_id']) || !isset($item['quantity'])) {
+                    throw new \InvalidArgumentException('Invalid item data. "product_id" and "quantity" are required.');
+                }
+
+                Stock::where('product_id', $item['product_id'])->decrement('quantity', $item['quantity']);
+            }
+        }
+        return true;
+    }
+
     public static function saveStock($data)
     {
         foreach ($data['items'] as $stock) {
@@ -41,5 +72,4 @@ class Stock extends Model
             );
         }
     }
-    
 }

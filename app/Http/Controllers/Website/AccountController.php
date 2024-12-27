@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Website;
 
 use App\Http\Controllers\Controller;
 use App\Models\Consumer\Customer;
+use App\Models\Order\Order;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
@@ -77,7 +79,42 @@ class AccountController extends Controller
     }
 
     // myOrderTracking
-    public function myOrderTracking($order_no){
-        return Inertia::render('Website/MyOrderTracking', ['order_no' => $order_no]);
+    public function myOrderTracking($order_no)
+    {
+        // echo 555;
+        $order = Order::with('orderDetails.product', 'orderTracking')->where('order_no', $order_no)->first();
+        // return $order;
+        if (!$order) {
+            return redirect()->route('home');
+        }
+        // order history
+        $tracking = [];
+        foreach ($order->orderTracking as $value) {
+            $tracking[$value->status] = [
+                'statusUpdatedAt' => $value->status_updated_at
+                    ? Carbon::parse($value->status_updated_at)->format('d M Y, H:i')
+                    : null,
+                'estimatedDeliveryDate' => $value->estimated_delivery_date
+                    ? Carbon::parse($value->estimated_delivery_date)->format('d M Y')
+                    : null,
+                'carrierName' => $value->carrier_name ?? null,
+            ];
+        }
+
+        // Ensure all statuses are included, even if no entry exists for them
+        $statuses = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Payment', 'Placed'];
+
+        foreach ($statuses as $status) {
+            if (!isset($tracking[$status])) {
+                $tracking[$status] = [
+                    'statusUpdatedAt' => $status == 'Pending' ? Carbon::parse($order->order_date)->format('d M Y, , H:i') : null,
+                    'estimatedDeliveryDate' => null,
+                    'carrierName' => null,
+                ];
+            }
+        }
+        // return $tracking['Processing']['statusUpdatedAt'];
+        // return $tracking;
+        return Inertia::render('Website/MyOrderTracking', ['order' => $order, 'tracking' => $tracking]);
     }
 }

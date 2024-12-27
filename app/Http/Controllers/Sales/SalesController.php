@@ -12,9 +12,11 @@ use Inertia\Inertia;
 use Inertia\Response;
 use App\Models\Catalog\Product;
 use App\Models\Consumer\Customer;
+use App\Models\Inventory\Stock\Stock;
 use App\Models\Inventory\Stock\StockChd;
 use App\Models\Inventory\Stock\StockMst;
 use App\Models\Order\Order;
+use App\Models\Order\OrderTracking;
 use App\Models\Purchase\PurchaseMst;
 use App\Models\Sales\SalPayDetail;
 use App\Models\Supplier\Supplier;
@@ -32,6 +34,29 @@ class SalesController extends Controller
         // return $data;
         return Inertia::render('Sales/OrderLists', $data);
     }
+
+    function statusUpdate(Request $request)
+    {
+        $data = $request->all();
+        // dd($data['id']);
+        try {
+            DB::beginTransaction();
+            // order table update
+            Order::orderStatusUpdate($data);
+            Stock::stockUpdate($data);
+            OrderTracking:: orderTrackingSave($data);
+            // send mail to customer
+            DB::commit();
+            Session::flash('success', 'Order Cancel successfully!');
+            return redirect()->route('order.view', $data['id']);
+        } catch (\Exception $e) {
+            // Rollback transaction in case of error
+            DB::rollBack();
+            Session::flash('failed', $e->getMessage());
+        }
+    }
+
+    // order status update
     function create()
     {
         $data['products'] = Product::with('variantPrices')->get();
@@ -291,55 +316,5 @@ class SalesController extends Controller
         //     'payment_details' => $sale->SalPayDetails
         // ];
         return Inertia::render('Sales/OrderView', $data);
-    }
-    function canceled(Request $request)
-    {
-        $data = $request->all();
-        // dd($data);
-        try {
-            DB::beginTransaction();
-            // update saleMst with requested
-            $updateData =  [
-                'status' => 'canceled',
-                'canceled_remarks' => $data['remarks'],
-                'canceled_at' => Carbon::now(),
-                'canceled_by' => Auth::id(),
-                'updated_at' => Carbon::now() // explicitly setting the updated_at timestamp
-            ];
-            // dd($updateData);
-            $updateMst = SaleMst::where('id', $data['id'])->update($updateData);
-            // dd($updateMst);
-            // update stockMst with increased quantity
-            foreach ($data['items'] as $item) {
-                StockMst::where('product_v_id', $item['product_v_id'])->increment('quantity', $item['quantity']);
-            }
-            // create stockChd with negative quantity
-            foreach ($data['items'] as $item) {
-                StockChd::create([
-                    'product_v_id' => $item['product_v_id'],
-                    'quantity' => $item['quantity'],
-                    'movement_type' => 'Sales Return',
-                    'movement_in_id' => $item['sale_mst_id'],
-                ]);
-            }
-            // create saleReturn with requested
-            // SaleReturn::create([
-            //    'sale_mst_id' => $data['sale_mst_id'],
-            //     'customer_id' => $data['customer_id'],
-            //     'total_price' => $data['total_price'],
-            //     'created_by' => auth()->id(),
-            //     'updated_by' => auth()->id(),
-            // ]);
-            // send mail to customer
-            // send mail to admin
-
-            DB::commit();
-            Session::flash('success', 'Order Cancel successfully!');
-            return redirect()->route('order.view', $data['id']);
-        } catch (\Exception $e) {
-            // Rollback transaction in case of error
-            DB::rollBack();
-            Session::flash('failed', $e->getMessage());
-        }
     }
 }

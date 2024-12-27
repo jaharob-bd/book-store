@@ -75,6 +75,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/sales/order/view/{id}', [SalesController::class, 'show'])->name('order.view');
 
     // Route::post('/order-store', [SalesController::class, 'store'])->name('order-store');
-    // Route::post('/order-cancel', [SalesController::class, 'canceled'])->name('order-cancel');
+    Route::post('/order-cancel', [SalesController::class, 'statusUpdate'])->name('order-cancel');
     // Route::post('/invoice-store', [ProfileController::class, 'store'])->name('invoice-store');
 });

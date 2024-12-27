@@ -19,14 +19,33 @@ export default function OrderView({ auth, order }) {
     const { t } = useTranslation();
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [actionButton, setActionButton] = useState('');
-    const [cancelData, setCancelData] = useState({ id: order.id, status: 'canceled', remarks: '', items: order.order_details });
+    const [isLoading, setIsLoading] = useState(false);
+    const [statusData, setStatusData] = useState({
+        id: order.id,              // Order ID
+        status: actionButton,      // Current action button status
+        remarks: '',               // User remarks
+        carrierName: '',           // Name of the shipping carrier
+        trackingNumber: actionButton == 'Shipped' ? order.order_no : '', // Tracking number for the order
+        source: '',                // Source of the update (e.g., admin or consumer)
+        items: order.order_details // Details of the items in the order
+    });
 
-    const closeModal = () => setIsOpenModal(false);
+    useEffect(() => {
+        setStatusData((prevData) => ({
+            ...prevData,
+            status: actionButton,
+        }));
+    }, [actionButton]);
+
+    const closeModal = () => {
+        setIsOpenModal(false);
+        setActionButton('');
+    }
     const openModal = (actionButton) => {
+        console.log('openModal', actionButton);
         setIsOpenModal(true);
         setActionButton(actionButton);
     };
-    const [isLoading, setIsLoading] = useState(false);
 
     const sendEmail = (e) => {
         e.preventDefault();
@@ -57,27 +76,25 @@ export default function OrderView({ auth, order }) {
     const handleOnchange = (e) => {
         e.preventDefault();
         const { name, value } = e.target;
-        setCancelData((prevData) => ({ ...prevData, [name]: value }));
-        console.log(cancelData)
+        setStatusData((prevData) => ({ ...prevData, [name]: value }));
+        console.log(statusData)
     };
 
     // submit cancel data
-    const handleSubmitCancel = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
-        // cancel the order
-        console.log('cancelData', cancelData);
-        if (cancelData.remarks === '') {
-            SwalAlert('warning', 'Please add cancel reason', 'center');
+        if (actionButton === 'Cancelled' && statusData.remarks === '') {
+            SwalAlert('warning', 'Please add reason', 'center');
             return;
         }
 
         try {
-            router.post('/order-cancel', cancelData, {
+            router.post('/order-cancel', statusData, {
                 preserveScroll: true,
-                onSuccess: () => {
+                onSuccess: ({ props }) => {
                     SwalAlert('success', 'Order Cancel Successfully!!', 'center');
-                    // setSaleData((prevData) => ({ ...prevData, status: 'canceled' }));
-                    setCancelData({});
+                    setStatusData((prevData) => ({ ...prevData, status: '', carrierName: '', trackingNumber: '' }));
+                    // setStatusData({});
                     setIsOpenModal(false);
                 },
                 onError: (errors) => {
@@ -122,7 +139,7 @@ export default function OrderView({ auth, order }) {
                 <OrderStatus
                     actionButton={actionButton}
                     handleOnchange={handleOnchange}
-                    handleSubmitCancel={handleSubmitCancel}
+                    handleSubmit={handleSubmit}
                 />
             </Modal>
         </AuthenticatedLayout >
