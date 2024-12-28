@@ -44,7 +44,7 @@ class SalesController extends Controller
             // order table update
             Order::orderStatusUpdate($data);
             Stock::stockUpdate($data);
-            OrderTracking:: orderTrackingSave($data);
+            OrderTracking::orderTrackingSave($data);
             // send mail to customer
             DB::commit();
             Session::flash('success', 'Order Cancel successfully!');
@@ -55,6 +55,24 @@ class SalesController extends Controller
             Session::flash('failed', $e->getMessage());
         }
     }
+
+
+    public function shipments()
+    {
+        $data['orders'] = Order::with(['orderTracking' => function ($query) {
+            $query->where('status', 'Shipped');
+        }])
+            ->where('status', 'Shipped')
+            ->whereHas('orderTracking', function ($query) {
+                $query->where('status', 'Shipped');
+            })
+            ->get();
+
+        // return $data;
+
+        return Inertia::render('Sales/OrderShipments', $data);
+    }
+
 
     // order status update
     function create()

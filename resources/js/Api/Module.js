@@ -104,6 +104,34 @@ export const modules = [
                 menu_name: "order create",
                 controller_name: "",
                 route: "order.create"
+            },
+            {
+                id: 3,
+                parent_id: 5,
+                menu_name: "shipments",
+                controller_name: "",
+                route: "order.create"
+            },
+            // {
+            //     id: 4,
+            //     parent_id: 5,
+            //     menu_name: "invoices",
+            //     controller_name: "",
+            //     route: "order.create"
+            // },
+            {
+                id: 5,
+                parent_id: 5,
+                menu_name: "refunds",
+                controller_name: "",
+                route: "order.create"
+            },
+            {
+                id: 5,
+                parent_id: 5,
+                menu_name: "transactions",
+                controller_name: "",
+                route: "order.create"
             }
         ]
     },
