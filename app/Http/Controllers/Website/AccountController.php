@@ -11,6 +11,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class AccountController extends Controller
 {
@@ -42,6 +43,7 @@ class AccountController extends Controller
         $customer = Customer::with('orders')->where('user_id', Auth::user()->id)->first();
         // return $customer;
         if (!$customer) {
+            Session::flash('failed', 'Not found customer!');
             return redirect()->route('home');
         }
         return Inertia::render('Website/MyOrderHistory', ['orders' => $customer->orders]);
@@ -85,6 +87,7 @@ class AccountController extends Controller
         $order = Order::with('orderDetails.product', 'orderTracking')->where('order_no', $order_no)->first();
         // return $order;
         if (!$order) {
+            Session::flash('failed', 'Not found order!');
             return redirect()->route('home');
         }
         // order history
