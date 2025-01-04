@@ -36,7 +36,7 @@ export default function OrderShipments({ auth, orders }) {
                                 Export
                             </Link>
                         </div>
-                        <div>
+                        {/* <div>
                             <Link
                                 href={route('order.create')}
                                 type="button"
@@ -44,7 +44,7 @@ export default function OrderShipments({ auth, orders }) {
                                 <i className="ri-add-circle-line p-1"></i>
                                 Create Order
                             </Link>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">

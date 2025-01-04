@@ -110,7 +110,7 @@ export const modules = [
                 parent_id: 5,
                 menu_name: "shipments",
                 controller_name: "",
-                route: "order.create"
+                route: "order.shipments"
             },
             // {
             //     id: 4,

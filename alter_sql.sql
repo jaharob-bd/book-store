@@ -149,3 +149,28 @@ CREATE TABLE `order_tracking` (
   KEY `order_id` (`order_id`),
   CONSTRAINT `order_tracking_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 04-01-2025
+DROP TABLE `payments`;
+CREATE TABLE `payments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `transaction_id` varchar(255) NOT NULL,
+  `order_id` int(10) unsigned NOT NULL,
+  `payment_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `payment_method` enum('Card','Mobile','Bank','Cash') NOT NULL,
+  `amount` decimal(12,2) NOT NULL,
+  `bank_name` varchar(255) DEFAULT NULL COMMENT 'Bank',
+  `account_number` varchar(255) DEFAULT NULL COMMENT 'Bank',
+  `mobile_number` varchar(255) DEFAULT NULL COMMENT 'Mobile',
+  `card_number` varchar(255) DEFAULT NULL COMMENT 'Card',
+  `card_expiry_date` date DEFAULT NULL,
+  `card_cvv` varchar(10) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  `status` int(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `payments_ibfk_1` (`order_id`),
+  CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;

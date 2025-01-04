@@ -17,6 +17,7 @@ use App\Models\Inventory\Stock\StockChd;
 use App\Models\Inventory\Stock\StockMst;
 use App\Models\Order\Order;
 use App\Models\Order\OrderTracking;
+use App\Models\Order\Payment;
 use App\Models\Purchase\PurchaseMst;
 use App\Models\Sales\SalPayDetail;
 use App\Models\Supplier\Supplier;
@@ -45,6 +46,7 @@ class SalesController extends Controller
             Order::orderStatusUpdate($data);
             Stock::stockUpdate($data);
             OrderTracking::orderTrackingSave($data);
+            Payment::paymentUpdate($data);
             // send mail to customer
             DB::commit();
             Session::flash('success', 'Order Cancel successfully!');
@@ -55,7 +57,6 @@ class SalesController extends Controller
             Session::flash('failed', $e->getMessage());
         }
     }
-
 
     public function shipments()
     {

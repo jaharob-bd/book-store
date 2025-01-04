@@ -1,6 +1,6 @@
-import React from 'react'
-
-export const OrderStatus = ({ actionButton, handleOnchange, handleSubmit }) => {
+import React, { useState } from 'react';
+export const OrderStatus = (props) => {
+    const { statusData, totalDueAmount, actionButton, actionPaymentMethod, setActionPaymentMethod, handleOnchange, handleSubmit } = props;
     const getButtonText = () => {
         switch (actionButton) {
             case 'Processing':
@@ -11,103 +11,169 @@ export const OrderStatus = ({ actionButton, handleOnchange, handleSubmit }) => {
                 return 'Cancelled';
             case 'Refunded':
                 return 'Refund Issued';
+            case 'Payment':
+                return 'Payment';
             default:
                 return '';
         }
     };
-    //  `status` enum('Pending','Processing','Shipped','Delivered','Cancelled','Refunded') DEFAULT 'Pending',
 
-    // const handleSubmit = () => {
-    //     switch (actionButton) {
-    //         case 'Cancel':
-    //             handleSubmitCancel();
-    //             break;
-    //         case 'Invoice':
-    //             // Add Invoice-specific logic
-    //             break;
-    //         case 'Shipped':
-    //             // Add Shipped-specific logic
-    //             break;
-    //         case 'Refund':
-    //             // Add Refund-specific logic
-    //             break;
-    //         default:
-    //             break;
-    //     }
-    // };
+    const renderTabContent = () => {
+        switch (actionPaymentMethod) {
+            case 'Cash':
+                return (
+                    <div></div>
+                );
+            case 'Bank':
+                return (
+                    <div>
+                        <label className="dark:text-gray-800" htmlFor="bankName">
+                            Bank Name
+                            <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                            name="bankName"
+                            type="text"
+                            value={statusData.bankName}
+                            className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500"
+                            onChange={handleOnchange}
+                        />
+                        <label className="dark:text-gray-800" htmlFor="accountNumber">
+                            Account Number
+                            <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                            name="accountNumber"
+                            type="text"
+                            value={statusData.accountNumber}
+                            className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500"
+                            onChange={handleOnchange}
+                        />
+                    </div>
+                );
+            case 'Mobile':
+                return (
+                    <div>
+                        <label className="dark:text-gray-800" htmlFor="mobileNumber">
+                            Mobile Number
+                            <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                            name="mobileNumber"
+                            type="text"
+                            value={statusData.mobileNumber}
+                            className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500"
+                            onChange={handleOnchange}
+                        />
+                        <label className="dark:text-gray-800" htmlFor="transactionId">
+                            Transaction ID
+                            <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                            name="transactionId"
+                            type="text"
+                            value={statusData.transactionId}
+                            className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500"
+                            onChange={handleOnchange}
+                        />
+                    </div>
+                );
+            case 'Card':
+                return (
+                    <div>
+                        <label className="dark:text-gray-800" htmlFor="cardNumber">
+                            Card Number
+                            <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                            name="cardNumber"
+                            type="text"
+                            value={statusData.cardNumber}
+                            className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500"
+                            onChange={handleOnchange}
+                        />
+                        <label className="dark:text-gray-800" htmlFor="cardExpiryDate">
+                            Expiry Date
+                            <span className="text-red-600">*</span>
+                        </label>
+                        <input
+                            name="cardExpiryDate"
+                            type="month"
+                            value={statusData.cardExpiryDate}
+                            className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500"
+                            onChange={handleOnchange}
+                        />
+                        <label className="dark:text-gray-800" htmlFor="cardCVV">CVV</label>
+                        <input
+                            name="cardCVV"
+                            type="password"
+                            value={statusData.cardCVV}
+                            className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500"
+                            onChange={handleOnchange}
+                        />
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
 
     return (
         <div>
             <form className="p-2 mx-auto" onSubmit={handleSubmit}>
-                {
-                    actionButton === 'Shipped' && (
-                        <div>
-                            {/* Carrier Name Input */}
-                            <div className="grid grid-cols-1 gap-1 sm:grid-cols-1">
-                                <div>
-                                    <label className="dark:text-gray-800" htmlFor="carrierName">
-                                        Carrier Name
-                                    </label>
-                                    <input
-                                        name="carrierName"
-                                        type="text"
-                                        className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500"
-                                        onChange={handleOnchange}
-                                    />
-                                </div>
-                            </div>
 
-                            {/* Tracking Number Input */}
-                            <div className="grid grid-cols-1 gap-1 sm:grid-cols-1">
-                                <div>
-                                    <label className="dark:text-gray-800" htmlFor="trackingNumber">
-                                        Tracking Number
-                                    </label>
-                                    <input
-                                        name="trackingNumber"
-                                        type="text"
-                                        className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500"
-                                        onChange={handleOnchange}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Source Select */}
-                            <div className="grid grid-cols-1 gap-1 sm:grid-cols-1">
-                                <div>
-                                    <label className="dark:text-gray-800" htmlFor="source">
-                                        Source <span className="text-red-600">*</span>
-                                    </label>
-                                    <select
-                                        name="source"
-                                        className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500"
-                                        onChange={handleOnchange}
-                                    >
-                                        <option value="admin">Default</option>
-                                        <option value="consumer">Consumer</option>
-                                    </select>
-                                </div>
-                            </div>
+                {actionButton === 'Payment' && (
+                    <div>
+                        {/* Tabs */}
+                        <div className="flex justify-center mb-2">
+                            <span
+                                className="px-4 py-2 mx-1 rounded-md bg-red-600 font-bold text-white"
+                            >Total Due Amount {totalDueAmount}</span>
+                            {['Cash', 'Bank', 'Mobile', 'Card'].map((tab) => (
+                                <button
+                                    key={tab}
+                                    type="button"
+                                    className={`px-4 py-2 mx-1 rounded-md ${actionPaymentMethod === tab ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-800'}`}
+                                    onClick={() => setActionPaymentMethod(tab)}
+                                >
+                                    {tab}
+                                </button>
+                            ))}
                         </div>
-                    )
-                }
+                        <div>
+                            <label className="dark:text-gray-800" htmlFor="amount">Amount
+                                <span className="text-red-600">*</span>
+                            </label>
+                            <input
+                                name="amount"
+                                type="number"
+                                value={statusData.amount}
+                                className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500"
+                                onChange={handleOnchange}
+                            />
+                        </div>
+                        {/* Tab Content */}
+                        <div className="rounded-md">
+                            {renderTabContent()}
+                        </div>
+                    </div>
+                )}
                 <div className="grid grid-cols-1 gap-1 sm:grid-cols-1">
                     <div>
-                        <label className="dark:text-gray-800" htmlFor="name">Remarks <span className="text-red-600">*</span></label>
+                        <label className="dark:text-gray-800" htmlFor="remarks">Remarks</label>
                         <textarea
                             name="remarks"
                             type="text"
                             rows={4}
-                            className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 "
+                            className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:border-blue-500"
                             onChange={handleOnchange}
-                        >
-                        </textarea >
+                        />
                     </div>
                 </div>
                 <div className="flex justify-end mt-6">
                     <button
                         type="submit"
-                        className="px-6 py-2 leading-5 transition-colors duration-200 transform bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br"
+                        className="px-6 py-2 leading-5 text-white transition-colors duration-200 transform bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br"
                     >
                         {getButtonText()}
                     </button>

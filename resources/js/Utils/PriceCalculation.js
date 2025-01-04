@@ -3,8 +3,8 @@ export const calculateSubTotal = (items) => {
     return items.reduce((total, item) => total + item.quantity * item.price, 0);
 };
 
-export const calculateGrandTotal = (subTotal, discount, vat) => {
-    return parseInt(subTotal) - parseInt(discount) + parseInt(vat);
+export const calculateGrandTotal = (subTotal, discount, vat, shipingFee) => {
+    return parseInt(subTotal) - parseInt(discount) + parseInt(vat) + parseInt(shipingFee);
 };
 
 export const calculateDiscount = (subTotal, discountType, discount) => {

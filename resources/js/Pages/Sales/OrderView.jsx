@@ -19,28 +19,44 @@ export default function OrderView({ auth, order }) {
     const { t } = useTranslation();
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [actionButton, setActionButton] = useState('');
+    const [actionPaymentMethod, setActionPaymentMethod] = useState('Cash');
     const [isLoading, setIsLoading] = useState(false);
+    const [totalDueAmount, setTotalDueAmount] = useState(order.total_amount - order.paid_amount);
+
     const [statusData, setStatusData] = useState({
-        id: order.id,              // Order ID
-        status: actionButton,      // Current action button status
-        remarks: '',               // User remarks
-        carrierName: '',           // Name of the shipping carrier
-        trackingNumber: actionButton == 'Shipped' ? order.order_no : '', // Tracking number for the order
-        source: '',                // Source of the update (e.g., admin or consumer)
-        items: order.order_details // Details of the items in the order
+        id            : order.id,                                         // Order ID
+        status        : actionButton,                                     // Current action button status
+        remarks       : '',                                               // User remarks
+        carrierName   : '',                                               // Name of the shipping carrier
+        trackingNumber: actionButton == 'Shipped' ? order.order_no: '',   // Tracking number for the order
+        source        : '',
+        paymentMethod : actionPaymentMethod,                              // Payment method
+        amount        : totalDueAmount,                                   // cash
+        bankName      : '',                                               // Bank
+        accountNumber : '',
+        mobileNumber  : '',                                               // mobile
+        transactionId : '',
+        cardNumber    : '',                                               // Card
+        cardExpiryDate: '',
+        cardCVV       : '',
+        totalAmount   : order.total_amount,
+        items         : order.order_details                               // Details of the items in the order
     });
+    // console.log(statusData);
 
     useEffect(() => {
         setStatusData((prevData) => ({
             ...prevData,
             status: actionButton,
+            paymentMethod: actionPaymentMethod,
         }));
-    }, [actionButton]);
+    }, [actionButton, actionPaymentMethod]);
 
     const closeModal = () => {
         setIsOpenModal(false);
         setActionButton('');
     }
+
     const openModal = (actionButton) => {
         console.log('openModal', actionButton);
         setIsOpenModal(true);
@@ -72,39 +88,84 @@ export default function OrderView({ auth, order }) {
         URL.revokeObjectURL(url); // Clean up the URL object
     }
 
-    // onchange handle input  
     const handleOnchange = (e) => {
         e.preventDefault();
         const { name, value } = e.target;
-        setStatusData((prevData) => ({ ...prevData, [name]: value }));
-        console.log(statusData)
+        // console.log('cash value : ' + value);
+        // console.log('due amount : ' + totalDueAmount);
+
+        setStatusData((prevData) => {
+            // Validate the amount condition
+            if (name === 'amount' && parseFloat(value) > totalDueAmount) {
+                SwalAlert('warning', 'Cash amount should not exceed total due amount', 'center');
+                // Return the previous data without updating the state
+                return { ...prevData };
+            }
+
+            // Update the state with the new value
+            return { ...prevData, [name]: value };
+        });
     };
 
+    // Validation helper functions
+    const validateCancelledAction = () => {
+        if (actionButton === 'Cancelled' && statusData.remarks.trim() === '') {
+            SwalAlert('warning', 'Please add a reason', 'center');
+            return false;
+        }
+        return true;
+    };
+
+    const validatePaymentAction = () => {
+        if (actionButton !== 'Payment') return true; // Skip if not a Payment action
+        if (actionPaymentMethod === 'Cash' && (isNaN(parseFloat(statusData.amount)) || parseFloat(statusData.amount) <= 0)) {
+            SwalAlert('warning', 'Please enter a valid cash amount', 'center');
+            return false;
+        }
+        if (actionPaymentMethod === 'Mobile' && (!statusData.mobileNumber || !statusData.transactionId)) {
+            SwalAlert('warning', 'Mobile payment requires mobile number and transaction ID', 'center');
+            return false;
+        }
+        if (actionPaymentMethod === 'Bank' && (!statusData.bankName || !statusData.accountNumber)) {
+            SwalAlert('warning', 'Bank payment requires bank name and account number', 'center');
+            return false;
+        }
+        if (actionPaymentMethod === 'Card' && (!statusData.cardNumber || !statusData.cardExpiryDate)) {
+            SwalAlert('warning', 'Card payment requires card number and expiry date', 'center');
+            return false;
+        }
+        return true;
+    };
     // submit cancel data
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (actionButton === 'Cancelled' && statusData.remarks === '') {
-            SwalAlert('warning', 'Please add reason', 'center');
-            return;
+        // Main validation
+        if (!validateCancelledAction() || !validatePaymentAction()) {
+            return false;
         }
+        console.log('Submitting:', actionButton, actionPaymentMethod, 'Cash amount:', statusData.amount);
 
         try {
-            router.post('/order-cancel', statusData, {
+            router.post('/status-update', statusData, {
                 preserveScroll: true,
                 onSuccess: ({ props }) => {
-                    SwalAlert('success', 'Order Cancel Successfully!!', 'center');
-                    setStatusData((prevData) => ({ ...prevData, status: '', carrierName: '', trackingNumber: '' }));
-                    // setStatusData({});
+                    SwalAlert('success', 'Order cancelled successfully!', 'center');
+                    setStatusData((prevData) => ({
+                        ...prevData,
+                        status: '',
+                        carrierName: '',
+                        trackingNumber: '',
+                    }));
                     setIsOpenModal(false);
                 },
                 onError: (errors) => {
-                    console.error('Failed price insert:', '');
+                    console.error('Failed to submit:', errors);
                 },
             });
         } catch (error) {
-            console.error('Failed :', error);
+            console.error('Failed:', error);
         }
-    }
+    };
 
     return (
         <AuthenticatedLayout user={auth.user} header={'sales List'}>
@@ -136,10 +197,9 @@ export default function OrderView({ auth, order }) {
                 maxWidth="2xl"
                 onClose={closeModal}
             >
+
                 <OrderStatus
-                    actionButton={actionButton}
-                    handleOnchange={handleOnchange}
-                    handleSubmit={handleSubmit}
+                    {...{ statusData, totalDueAmount, actionButton, actionPaymentMethod, setActionPaymentMethod, handleOnchange, handleSubmit }}
                 />
             </Modal>
         </AuthenticatedLayout >

@@ -39,32 +39,35 @@ class OrderTracking extends Model
 
     public static function orderTrackingSave($data)
     {
-        // Validate required fields
-        if (!isset($data['id'])) {
-            throw new \InvalidArgumentException('Required keys are missing: id');
+        if ($data['status'] != 'Payment') {
+            // Validate required fields
+            if (!isset($data['id'])) {
+                throw new \InvalidArgumentException('Required keys are missing: id');
+            }
+            $checkDuplicate = OrderTracking::where([
+                ['order_id', '=', $data['id']],
+                ['status', '=', $data['status']],
+            ])->first();
+            if ($checkDuplicate) {
+                throw new \Exception('Order tracking with same status and order id already exists.');
+            }
+            // status log added or updated
+            $orderTrackingData = [
+                'order_id' => $data['id'], // Replace with the actual order ID
+                'status' => $data['status'],
+                'tracking_number' => $data['trackingNumber'], // TRK1234567890
+                'carrier_name' => $data['carrierName'], // FedEx
+                'status_updated_at' => now(),
+                'estimated_delivery_date' => Carbon::now()->addDays(2)->toDateString(), // Now + 2 days
+                'remarks' => $data['remarks'] ?? 'Shipped successfully.',
+                'created_by' => auth()->id(), // Assuming the logged-in user
+                'updated_by' => auth()->id(), // Assuming the logged-in user
+            ];
+            // Insert the data
+            $orderTracking = OrderTracking::create($orderTrackingData);
+            return $orderTracking->id;
         }
-        $checkDuplicate = OrderTracking::where([
-            ['order_id', '=', $data['id']],
-            ['status', '=', $data['status']],
-        ])->first();
-        if ($checkDuplicate) {
-            throw new \Exception('Order tracking with same status and order id already exists.');
-        }
-        // status log added or updated
-        $orderTrackingData = [
-            'order_id' => $data['id'], // Replace with the actual order ID
-            'status' => $data['status'],
-            'tracking_number' => $data['trackingNumber'], // TRK1234567890
-            'carrier_name' => $data['carrierName'], // FedEx
-            'status_updated_at' => now(),
-            'estimated_delivery_date' => Carbon::now()->addDays(2)->toDateString(), // Now + 2 days
-            'remarks' => $data['remarks'] ?? 'Shipped successfully.',
-            'created_by' => auth()->id(), // Assuming the logged-in user
-            'updated_by' => auth()->id(), // Assuming the logged-in user
-        ];
-        // Insert the data
-        $orderTracking = OrderTracking::create($orderTrackingData);
-        return $orderTracking->id;
+        return true;
     }
     /**
      * Define the relationship with the `orders` table.
