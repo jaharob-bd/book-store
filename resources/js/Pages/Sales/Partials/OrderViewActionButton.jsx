@@ -2,7 +2,8 @@ import React from 'react'
 import ReactToPrint from 'react-to-print';
 import { Head, Link } from '@inertiajs/react';
 
-export const OrderViewActionButton = ({ order, openModal, handleDownload, isLoading, sendEmail }) => {
+export const OrderViewActionButton = (props) => {
+    const { order, openModal, handleDownload, isLoading, sendEmail } = props;
     return (
         <div className="flex flex-wrap gap-2.5 items-center">
             <div>

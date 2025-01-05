@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 
-export const OrderOtherDetails = ({ order }) => {
+export const OrderOtherDetails = (props) => {
+    const order = props.order;
     // set state customerData
-    const [customerData, setCustomerData] = useState(order.customer); 
+    const [customerData, setCustomerData] = useState(order.customer);
     return (
         <div className="w-full md:w-4/12 flex-grow flex px-3">
             <div className="bg-white rounded-3xl flex flex-col w-full py-6">

@@ -1,19 +1,24 @@
 import React from 'react'
 
-export const OrderItemDetails = ({ order }) => {
+export const OrderItemDetails = (props) => {
+    const order = props.order;
     const subTotal = order.order_details.reduce((total, item) => {
         const itemTotal = item.quantity * item.price;
         return total + itemTotal;
     }, 0);
     const grandTotal = subTotal + parseFloat(order.tax_amount) + parseFloat(order.shipping_fee) - parseFloat(order.discount_amount);
-
+    const totalPaymentAmount = order?.payment_details.reduce((total, item) => {
+        return total + parseFloat(item.amount);
+    }, 0);
     return (
         <div className="w-full md:w-8/12 flex-grow flex">
             <div className="flex flex-col bg-blue-gray-50 h-full w-full py-2">
                 <div className="h-full overflow-hidden mt-4">
                     <div className="p-1">
                         <p className="font-bold">
-                            INVOICE : <span className="text-red-500">{order.order_no}</span> [Grand Total : <span className="">{order.total_amount}</span>]
+                            INVOICE : <span className="text-red-500">{order.order_no}</span>
+                            [Grand Total : <span className="">{order.total_amount}</span>]
+                            <span className="text-green-600 uppercase">{grandTotal === totalPaymentAmount ? '  Full Paid' : ''}</span>
                         </p>
                     </div>
                     <div className="-mx-4 mt-2 flow-root sm:mx-0">
@@ -95,9 +100,12 @@ export const OrderItemDetails = ({ order }) => {
                             </tfoot>
                         </table>
                         <div className="py-2 mt-4 font-bold">
-                            Payment Details:
+                            <span className="uppercase">Payment Details: </span>
+                            <span className="text-red">
+                                [Toal Payment: {totalPaymentAmount}]
+                            </span>
                         </div>
-                        {/* {
+                        {
                             order?.payment_details?.length ?
                                 <table className="border border-gray-300">
                                     <thead className="border-b border-gray-300">
@@ -117,14 +125,14 @@ export const OrderItemDetails = ({ order }) => {
                                                         {index + 1}
                                                     </td>
                                                     <td className="pl-1 border-l border-r border-b border-indigo-500">
-                                                        {method.payment_uid}
+                                                        {method.transaction_id}
                                                     </td>
                                                     <td className="pl-1 border-l border-r border-b border-indigo-500">
-                                                        {method.payment_amt}
+                                                        {method.amount}
                                                     </td>
                                                     <td className="pl-1 border-l border-r border-b border-indigo-500">
                                                         {
-                                                            (method.payment_details)
+                                                            (method.payment_method)
                                                         }
                                                     </td>
                                                     <td className="pl-1 border-l border-r border-b border-indigo-500">
@@ -135,8 +143,8 @@ export const OrderItemDetails = ({ order }) => {
                                     </tbody>
                                 </table>
                                 :
-                                'No payment found'
-                        } */}
+                                <span className="text-red-600 font-bold text-2xl">No payment found</span>
+                        }
                     </div>
                 </div>
             </div>

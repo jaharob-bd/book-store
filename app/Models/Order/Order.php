@@ -4,6 +4,7 @@ namespace App\Models\Order;
 
 use App\Models\Consumer\Customer;
 use App\Models\Order\OrderDetail;
+use App\Models\Order\Payment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -26,8 +27,10 @@ class Order extends Model
 
     public static function orderStatusUpdate($data)
     {
+        // dd(isset($data['id']));
         // Validate that 'status' and 'id' keys are present
         if (!isset($data['status']) || !isset($data['id'])) {
+            // redirect to view controller
             throw new \InvalidArgumentException('Required keys "status" and "id" are missing from data array.');
         }
 
@@ -58,6 +61,10 @@ class Order extends Model
     public function orderTracking()
     {
         return $this->hasMany(OrderTracking::class, 'order_id', 'id');
+    }
+    public function paymentDetails()
+    {
+        return $this->hasMany(Payment::class);
     }
     public static function saveOrder($data)
     {

@@ -22,25 +22,35 @@ export default function OrderView({ auth, order }) {
     const [actionPaymentMethod, setActionPaymentMethod] = useState('Cash');
     const [isLoading, setIsLoading] = useState(false);
     const [totalDueAmount, setTotalDueAmount] = useState(order.total_amount - order.paid_amount);
+    // payment details
+    const [paymentDetails, setPaymentDetails] = useState({
+        bankName: '',                                               // Bank
+        accountNumber: '',                                               // Account number
+        mobileNumber: '',                                               // mobile
+        transactionId: '',                                               // transaction ID
+        cardNumber: '',                                               // Card
+        cardExpiryDate: '',
+        cardCVV: '',
+    });
 
     const [statusData, setStatusData] = useState({
-        id            : order.id,                                         // Order ID
-        status        : actionButton,                                     // Current action button status
-        remarks       : '',                                               // User remarks
-        carrierName   : '',                                               // Name of the shipping carrier
-        trackingNumber: actionButton == 'Shipped' ? order.order_no: '',   // Tracking number for the order
-        source        : '',
-        paymentMethod : actionPaymentMethod,                              // Payment method
-        amount        : totalDueAmount,                                   // cash
-        bankName      : '',                                               // Bank
-        accountNumber : '',
-        mobileNumber  : '',                                               // mobile
-        transactionId : '',
-        cardNumber    : '',                                               // Card
+        id: order.id,                                         // Order ID
+        status: actionButton,                                     // Current action button status
+        remarks: '',                                               // User remarks
+        carrierName: '',                                               // Name of the shipping carrier
+        trackingNumber: actionButton == 'Shipped' ? order.order_no : '',   // Tracking number for the order
+        source: '',
+        paymentMethod: actionPaymentMethod,                              // Payment method
+        amount: totalDueAmount,                                   // cash
+        bankName: '',                                               // Bank
+        accountNumber: '',
+        mobileNumber: '',                                               // mobile
+        transactionId: '',
+        cardNumber: '',                                               // Card
         cardExpiryDate: '',
-        cardCVV       : '',
-        totalAmount   : order.total_amount,
-        items         : order.order_details                               // Details of the items in the order
+        cardCVV: '',
+        totalAmount: order.total_amount,
+        items: order.order_details                               // Details of the items in the order
     });
     // console.log(statusData);
 
@@ -58,7 +68,6 @@ export default function OrderView({ auth, order }) {
     }
 
     const openModal = (actionButton) => {
-        console.log('openModal', actionButton);
         setIsOpenModal(true);
         setActionButton(actionButton);
     };
@@ -91,13 +100,11 @@ export default function OrderView({ auth, order }) {
     const handleOnchange = (e) => {
         e.preventDefault();
         const { name, value } = e.target;
-        // console.log('cash value : ' + value);
-        // console.log('due amount : ' + totalDueAmount);
 
         setStatusData((prevData) => {
             // Validate the amount condition
             if (name === 'amount' && parseFloat(value) > totalDueAmount) {
-                SwalAlert('warning', 'Cash amount should not exceed total due amount', 'center');
+                SwalAlert('warning', 'Amount should not exceed total due amount', 'center');
                 // Return the previous data without updating the state
                 return { ...prevData };
             }
@@ -143,19 +150,32 @@ export default function OrderView({ auth, order }) {
         if (!validateCancelledAction() || !validatePaymentAction()) {
             return false;
         }
-        console.log('Submitting:', actionButton, actionPaymentMethod, 'Cash amount:', statusData.amount);
 
         try {
             router.post('/status-update', statusData, {
                 preserveScroll: true,
                 onSuccess: ({ props }) => {
                     SwalAlert('success', 'Order cancelled successfully!', 'center');
+                    setTotalDueAmount(totalDueAmount - statusData.amount);
                     setStatusData((prevData) => ({
                         ...prevData,
-                        status: '',
-                        carrierName: '',
-                        trackingNumber: '',
+                        // id            : prevData.id,
+                        // status        : prevData.status,
+                        // trackingNumber: actionButton == 'Shipped' ? prevData.order_no: '',
+                        // remarks       : '',                                                 // User remarks
+                        // carrierName   : '',
+                        // bankName      : '',                                                 // Bank
+                        // accountNumber : '',
+                        // mobileNumber  : '',                                                 // mobile
+                        // transactionId : '',
+                        // cardNumber    : '',                                                 // Card
+                        // cardExpiryDate: '',
+                        // cardCVV       : '',
+                        // paymentMethod : prevData.paymentMethod,
+                        amount: totalDueAmount - prevData.amount,
+                        // items         : prevData.order_details
                     }));
+                    console.log(statusData);
                     setIsOpenModal(false);
                 },
                 onError: (errors) => {
@@ -179,16 +199,12 @@ export default function OrderView({ auth, order }) {
                         </span>
                     </p>
                     <OrderViewActionButton
-                        order={order}
-                        openModal={openModal}
-                        handleDownload={handleDownload}
-                        isLoading={isLoading}
-                        sendEmail={sendEmail}
+                        {...{ order, openModal, handleDownload, isLoading, sendEmail }}
                     />
                 </div>
                 <div className="flex flex-col md:flex-row w-full h-full">
-                    <OrderItemDetails order={order} />
-                    <OrderOtherDetails order={order} />
+                    <OrderItemDetails {...{ order }} />
+                    <OrderOtherDetails {...{ order }} />
                 </div>
             </div>
             <Modal
@@ -197,7 +213,6 @@ export default function OrderView({ auth, order }) {
                 maxWidth="2xl"
                 onClose={closeModal}
             >
-
                 <OrderStatus
                     {...{ statusData, totalDueAmount, actionButton, actionPaymentMethod, setActionPaymentMethod, handleOnchange, handleSubmit }}
                 />
