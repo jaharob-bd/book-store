@@ -25,7 +25,7 @@ export default function Shop(props) {
                 {/* drawer component */}
                 <Drawer />
                 {/* ./sidebar */}
-                <Filter {...{ categories, authors, publishers }} />
+                <Filter {...{ products, categories, authors, publishers }} />
                 {/* products */}
                 <div className="col-span-3">
                     <div className="flex items-center mb-4">

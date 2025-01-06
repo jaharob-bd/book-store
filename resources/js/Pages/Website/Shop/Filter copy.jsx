@@ -1,25 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
 
 function Filter(props) {
     const { categories, authors, publishers } = props;
+    const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
 
     const [filters, setFilters] = useState({
-        authors: [],
-        categories: [],
-        publishers: [],
-        price: "",
+        authors   : searchParams.get("author")?.split(",") || [],
+        categories: searchParams.get("category")?.split(",") || [],
+        publishers: searchParams.get("publisher")?.split(",") || [],
+        price     : searchParams.get("price") || "",
     });
-
-    useEffect(() => {
-        // Parse query params from URL manually
-        const params = new URLSearchParams(window.location.search);
-        setFilters({
-            authors: params.get("author")?.split(",") || [],
-            categories: params.get("category")?.split(",") || [],
-            publishers: params.get("publisher")?.split(",") || [],
-            price: params.get("price") || "",
-        });
-    }, []);
 
     const handleCheckboxChange = (type, id) => {
         const selected = new Set(filters[type]);
@@ -45,15 +37,12 @@ function Filter(props) {
     };
 
     const applyFilters = () => {
-        const params = new URLSearchParams();
-        if (filters.authors.length) params.set("author", filters.authors.join(","));
-        if (filters.categories.length) params.set("category", filters.categories.join(","));
-        if (filters.publishers.length) params.set("publisher", filters.publishers.join(","));
-        if (filters.price) params.set("price", filters.price);
-
-        // Update the URL manually
-        const newUrl = `${window.location.pathname}?${params.toString()}`;
-        window.history.pushState(null, "", newUrl);
+        const params = {};
+        if (filters.authors.length) params.author = filters.authors.join(",");
+        if (filters.categories.length) params.category = filters.categories.join(",");
+        if (filters.publishers.length) params.publisher = filters.publishers.join(",");
+        if (filters.price) params.price = filters.price;
+        setSearchParams(params);
     };
 
     return (

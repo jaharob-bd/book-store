@@ -23,16 +23,26 @@ use Illuminate\Support\Facades\Log;
 
 class ShopController extends Controller
 {
-    function index()
+    function index(Request $request)
     {
+        $data = $request->all();
+
+        // [
+        //   "author" => "1"
+        //   "category" => "1"
+        //   "price" => "100-200"
+        //   "publisher" => "1"
+        // ]
+
+        // dd($data['author']);
+        // shop?author=1&category=1&price=100-200&publisher=1
         // category
         $data['categories'] = Category::where('status', '1')->get();
         // author
         $data['authors'] = Author::where('status', '1')->get();
         // publisher
         $data['publishers'] = Publisher::where('status', '1')->get();
-        // return $data['publishers'];
-        $data['products'] = DB::table('products as p')
+        $products = DB::table('products as p')
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
             ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
             ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
@@ -41,9 +51,18 @@ class ShopController extends Controller
                 'a.name as author_name',
                 'pb.name as publisher_name',
                 'c.name as category_name'
-            )
-            ->get();
-            // return $data;
+            );
+        if (isset($data['category']) && $data['category'] != '') {
+            $products = $products->where('p.category_id', $data['category']);
+        }
+        if (isset($data['author']) && $data['author'] != '') {
+            $products = $products->where('p.author_id', $data['author']);
+        }
+        if (isset($data['publisher']) && $data['publisher'] != '') {
+            $products = $products->where('p.publisher_id', $data['publisher']);
+        }
+        $data['products'] = $products->get();
+        // return $data['products'];
 
         return Inertia::render('Website/Shop', $data);
     }
@@ -63,16 +82,17 @@ class ShopController extends Controller
                 'c.name as category_name'
             )
             ->first();
-            if (!$product) {
-                abort(404, 'Product not found');
-            }
+        if (!$product) {
+            abort(404, 'Product not found');
+        }
         return Inertia::render('Website/SingleProduct', [
             'product' => $product,
         ]);
     }
 
     // filter products
-    function filterProducts(Request $request){
+    function filterProducts(Request $request)
+    {
         $data = $request->all();
         $products = DB::table('products as p')
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
@@ -84,17 +104,16 @@ class ShopController extends Controller
                 'pb.name as publisher_name',
                 'c.name as category_name'
             );
-        if(isset($data['category_id']) && $data['category_id'] != ''){
-            $products = $products->where('p.category_id', $data['category_id']);
+        if (isset($data['category']) && $data['category'] != '') {
+            $products = $products->where('p.category_id', $data['category']);
         }
-        if(isset($data['author_id']) && $data['author_id'] != ''){
-            $products = $products->where('p.author_id', $data['author_id']);
+        if (isset($data['author']) && $data['author'] != '') {
+            $products = $products->where('p.author_id', $data['author']);
         }
-        if(isset($data['publisher_id']) && $data['publisher_id'] != ''){
-            $products = $products->where('p.publisher_id', $data['publisher_id']);
+        if (isset($data['publisher']) && $data['publisher'] != '') {
+            $products = $products->where('p.publisher_id', $data['publisher']);
         }
         $products = $products->get();
         return response()->json($products);
     }
-
 }
