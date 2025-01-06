@@ -1,3 +1,5 @@
+// react  useState
+import React, {useState} from 'react';
 import WebLayout from './Layout/WebLayout';
 import Filter from './Shop/Filter';
 import Drawer from './Shop/Drawer';
@@ -7,8 +9,9 @@ import AddToCartLink from './Components/AddToCartLink';
 import Breadcrumb from './Components/Breadcrumb';
 
 export default function Shop(props) {
-    const { auth, products, categories, authors, publishers } = props;
-    console.log(publishers);
+    const { auth, categories, authors, publishers } = props;
+    // product state
+    const [products, setProducts] = useState(props.products);
     return (
         <WebLayout auth={auth}>
             <Breadcrumb title="Shop" />
@@ -25,7 +28,7 @@ export default function Shop(props) {
                 {/* drawer component */}
                 <Drawer />
                 {/* ./sidebar */}
-                <Filter {...{ products, categories, authors, publishers }} />
+                <Filter {...{ products, setProducts, categories, authors, publishers }} />
                 {/* products */}
                 <div className="col-span-3">
                     <div className="flex items-center mb-4">
@@ -50,37 +53,39 @@ export default function Shop(props) {
                     </div>
                     <div className="grid md:grid-cols-3 grid-cols-2 gap-6">
                         {/* Products */}
-                        {products.map((product, index) => (
-                            <div key={index} className="bg-white shadow rounded overflow-hidden group">
-                                <div className="relative">
-                                    <img src="image.png" alt="product 1" className="w-full" />
-                                    <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                                        <ProductLink slug={product.url_key} />
-                                        <WishLink product={product} />
-                                    </div>
-                                </div>
-                                <div className="pt-4 pb-3 px-4">
-                                    <a href="#">
-                                        <h4 className="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">{product.name}</h4>
-                                    </a>
-                                    <div className="flex items-baseline mb-1 space-x-2">
-                                        <p className="text-xl text-primary font-semibold">{product.sale_price}</p>
-                                        <p className="text-sm text-gray-400 line-through">{product.mrp_price}</p>
-                                    </div>
-                                    <div className="flex items-center">
-                                        <div className="flex gap-1 text-sm text-yellow-400">
-                                            <span><i className="fa-solid fa-star" /></span>
-                                            <span><i className="fa-solid fa-star" /></span>
-                                            <span><i className="fa-solid fa-star" /></span>
-                                            <span><i className="fa-solid fa-star" /></span>
-                                            <span><i className="fa-solid fa-star" /></span>
+                        {
+                            products && products.map((product, index) => (
+                                <div key={index} className="bg-white shadow rounded overflow-hidden group">
+                                    <div className="relative">
+                                        <img src="image.png" alt="product 1" className="w-full" />
+                                        <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
+                                            <ProductLink slug={product.url_key} />
+                                            <WishLink product={product} />
                                         </div>
-                                        <div className="text-xs text-gray-500 ml-3">(150)</div>
                                     </div>
+                                    <div className="pt-4 pb-3 px-4">
+                                        <a href="#">
+                                            <h4 className="uppercase font-medium text-xl mb-2 text-gray-800 hover:text-primary transition">{product.name}</h4>
+                                        </a>
+                                        <div className="flex items-baseline mb-1 space-x-2">
+                                            <p className="text-xl text-primary font-semibold">{product.sale_price}</p>
+                                            <p className="text-sm text-gray-400 line-through">{product.mrp_price}</p>
+                                        </div>
+                                        <div className="flex items-center">
+                                            <div className="flex gap-1 text-sm text-yellow-400">
+                                                <span><i className="fa-solid fa-star" /></span>
+                                                <span><i className="fa-solid fa-star" /></span>
+                                                <span><i className="fa-solid fa-star" /></span>
+                                                <span><i className="fa-solid fa-star" /></span>
+                                                <span><i className="fa-solid fa-star" /></span>
+                                            </div>
+                                            <div className="text-xs text-gray-500 ml-3">(150)</div>
+                                        </div>
+                                    </div>
+                                    <AddToCartLink product={product} />
                                 </div>
-                                <AddToCartLink product={product} />
-                            </div>
-                        ))}
+                            ))
+                        }
                     </div>
                 </div>
             </div>
