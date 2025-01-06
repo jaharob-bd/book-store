@@ -1,64 +1,50 @@
 import React from 'react'
 
-function Sidebar() {
+function Filter(props) {
     return (
         <div className="col-span-1 bg-white px-4 pb-6 shadow rounded overflow-hiddenb hidden md:block">
             <div className="divide-y divide-gray-200 space-y-5">
                 <div>
                     <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium">Categories</h3>
                     <div className="space-y-2">
-                        <div className="flex items-center">
-                            <input type="checkbox" name="cat-1" id="cat-1" className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
-                            <label htmlFor="cat-1" className="text-gray-600 ml-3 cusror-pointer">Bedroom</label>
-                            <div className="ml-auto text-gray-600 text-sm">(15)</div>
-                        </div>
-                        <div className="flex items-center">
-                            <input type="checkbox" name="cat-2" id="cat-2" className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
-                            <label htmlFor="cat-2" className="text-gray-600 ml-3 cusror-pointer">Sofa</label>
-                            <div className="ml-auto text-gray-600 text-sm">(9)</div>
-                        </div>
-                        <div className="flex items-center">
-                            <input type="checkbox" name="cat-3" id="cat-3" className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
-                            <label htmlFor="cat-3" className="text-gray-600 ml-3 cusror-pointer">Office</label>
-                            <div className="ml-auto text-gray-600 text-sm">(21)</div>
-                        </div>
-                        <div className="flex items-center">
-                            <input type="checkbox" name="cat-4" id="cat-4" className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
-                            <label htmlFor="cat-4" className="text-gray-600 ml-3 cusror-pointer">Outdoor</label>
-                            <div className="ml-auto text-gray-600 text-sm">(10)</div>
-                        </div>
+                        {/* map categories */}
+                        {props.categories.map((category, index) => (
+                            <div key={index} className="flex items-center">
+                                <input type="checkbox" name={`cat-${category.id}`} id={`cat-${category.id}`} className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
+                                <label htmlFor={`cat-${category.id}`} className="text-gray-600 ml-3 cusror-pointer">{category.name}</label>
+                                <div className="ml-auto text-gray-600 text-sm">({category.products_count})</div>
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <div className="pt-4">
-                    <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium">Brands</h3>
+                    <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium">Author</h3>
                     <div className="space-y-2">
-                        <div className="flex items-center">
-                            <input type="checkbox" name="brand-1" id="brand-1" className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
-                            <label htmlFor="brand-1" className="text-gray-600 ml-3 cusror-pointer">Cooking Color</label>
-                            <div className="ml-auto text-gray-600 text-sm">(15)</div>
-                        </div>
-                        <div className="flex items-center">
-                            <input type="checkbox" name="brand-2" id="brand-2" className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
-                            <label htmlFor="brand-2" className="text-gray-600 ml-3 cusror-pointer">Magniflex</label>
-                            <div className="ml-auto text-gray-600 text-sm">(9)</div>
-                        </div>
-                        <div className="flex items-center">
-                            <input type="checkbox" name="brand-3" id="brand-3" className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
-                            <label htmlFor="brand-3" className="text-gray-600 ml-3 cusror-pointer">Ashley</label>
-                            <div className="ml-auto text-gray-600 text-sm">(21)</div>
-                        </div>
-                        <div className="flex items-center">
-                            <input type="checkbox" name="brand-4" id="brand-4" className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
-                            <label htmlFor="brand-4" className="text-gray-600 ml-3 cusror-pointer">M&amp;D</label>
-                            <div className="ml-auto text-gray-600 text-sm">(10)</div>
-                        </div>
-                        <div className="flex items-center">
-                            <input type="checkbox" name="brand-5" id="brand-5" className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
-                            <label htmlFor="brand-5" className="text-gray-600 ml-3 cusror-pointer">Olympic</label>
-                            <div className="ml-auto text-gray-600 text-sm">(10)</div>
-                        </div>
+                        {/* map authors */}
+                        {props.authors.map((author, index) => (
+                            <div key={index} className="flex items-center">
+                                <input type="checkbox" name={`author-${author.id}`} id={`author-${author.id}`} className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
+                                <label htmlFor={`author-${author.id}`} className="text-gray-600 ml-3 cusror-pointer">{author.name}</label>
+                                <div className="ml-auto text-gray-600 text-sm">({author.products_count})</div>
+                            </div>
+                        ))}
                     </div>
                 </div>
+                <div className="pt-4">
+                    <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium">Publisher</h3>
+                    <div className="space-y-2">
+                        {/* map authors */}
+                        {props.publishers.map((publisher, index) => (
+                            <div key={index} className="flex items-center">
+                                <input type="checkbox" name={`publisher-${publisher.id}`} id={`publisher-${publisher.id}`} className="text-primary focus:ring-0 rounded-sm cursor-pointer" />
+                                <label htmlFor={`publisher-${publisher.id}`} className="text-gray-600 ml-3 cusror-pointer">{publisher.name}</label>
+                                <div className="ml-auto text-gray-600 text-sm">({publisher.products_count})</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                
                 <div className="pt-4">
                     <h3 className="text-xl text-gray-800 mb-3 uppercase font-medium">Price</h3>
                     <div className="mt-4 flex items-center">
@@ -114,4 +100,4 @@ function Sidebar() {
     )
 }
 
-export default Sidebar
+export default Filter

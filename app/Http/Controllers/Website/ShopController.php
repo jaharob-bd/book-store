@@ -16,6 +16,8 @@ use App\Models\Catalog\Product;
 use App\Http\Requests\Catalog\Product\StoreProductRequest;
 use App\Http\Requests\Catalog\Product\VariantPriceRequest;
 use App\Models\Catalog\Category;
+use App\Models\Catalog\Author;
+use App\Models\Catalog\Publisher;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -23,7 +25,14 @@ class ShopController extends Controller
 {
     function index()
     {
-        $products = $products = DB::table('products as p')
+        // category
+        $data['categories'] = Category::where('status', '1')->get();
+        // author
+        $data['authors'] = Author::where('status', '1')->get();
+        // publisher
+        $data['publishers'] = Publisher::where('status', '1')->get();
+        // return $data['publishers'];
+        $data['products'] = DB::table('products as p')
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
             ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
             ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
@@ -34,10 +43,9 @@ class ShopController extends Controller
                 'c.name as category_name'
             )
             ->get();
+            // return $data;
 
-        return Inertia::render('Website/Shop', [
-            'products' => $products
-        ]);
+        return Inertia::render('Website/Shop', $data);
     }
 
     function singleProductView($slug)

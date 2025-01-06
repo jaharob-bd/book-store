@@ -1,12 +1,14 @@
 import WebLayout from './Layout/WebLayout';
-import Sidebar from './Shop/Sidebar';
+import Filter from './Shop/Filter';
 import Drawer from './Shop/Drawer';
 import ProductLink from './Components/ProductLink';
 import WishLink from './Components/WishLink';
 import AddToCartLink from './Components/AddToCartLink';
 import Breadcrumb from './Components/Breadcrumb';
 
-export default function Shop({ auth, products }) {
+export default function Shop(props) {
+    const { auth, products, categories, authors, publishers } = props;
+    console.log(publishers);
     return (
         <WebLayout auth={auth}>
             <Breadcrumb title="Shop" />
@@ -23,7 +25,7 @@ export default function Shop({ auth, products }) {
                 {/* drawer component */}
                 <Drawer />
                 {/* ./sidebar */}
-                <Sidebar />
+                <Filter {...{ categories, authors, publishers }} />
                 {/* products */}
                 <div className="col-span-3">
                     <div className="flex items-center mb-4">
