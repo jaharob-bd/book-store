@@ -71,4 +71,30 @@ class ShopController extends Controller
         ]);
     }
 
+    // filter products
+    function filterProducts(Request $request){
+        $data = $request->all();
+        $products = DB::table('products as p')
+            ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
+            ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
+            ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+            ->select(
+                'p.*',
+                'a.name as author_name',
+                'pb.name as publisher_name',
+                'c.name as category_name'
+            );
+        if(isset($data['category_id']) && $data['category_id'] != ''){
+            $products = $products->where('p.category_id', $data['category_id']);
+        }
+        if(isset($data['author_id']) && $data['author_id'] != ''){
+            $products = $products->where('p.author_id', $data['author_id']);
+        }
+        if(isset($data['publisher_id']) && $data['publisher_id'] != ''){
+            $products = $products->where('p.publisher_id', $data['publisher_id']);
+        }
+        $products = $products->get();
+        return response()->json($products);
+    }
+
 }
