@@ -37,8 +37,8 @@ export default function Nav({ auth }) {
                     <div className="mx-7 flex gap-8">
                         <Link href="/" className="font-light text-white duration-100 hover:text-yellow-400 hover:underline">Home</Link>
                         <Link href={route('shop')} className="font-light text-white duration-100 hover:text-yellow-400 hover:underline">Shop</Link>
-                        <a className="font-light text-white duration-100 hover:text-yellow-400 hover:underline" href="about-us.html">About Us</a>
-                        <a className="font-light text-white duration-100 hover:text-yellow-400 hover:underline" href="contact-us.html">Contact Us</a>
+                        <Link href={route('about')} className="font-light text-white duration-100 hover:text-yellow-400 hover:underline">About Us</Link>
+                        <Link href={route('contact')} className="font-light text-white duration-100 hover:text-yellow-400 hover:underline">Contact Us</Link>
                     </div>
                     <div className="ml-auto flex gap-4 px-5">
 

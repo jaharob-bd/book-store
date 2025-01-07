@@ -6,6 +6,7 @@ use App\Http\Controllers\Website\CheckoutController;
 use App\Http\Controllers\Website\HomeController;
 use App\Http\Controllers\Website\ShopController;
 use App\Http\Controllers\Website\CartController;
+use App\Http\Controllers\Website\PageController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -46,7 +47,9 @@ Route::post('/order-cancel', [OrderController::class, 'cancel'])->name('order-ca
 Route::post('/order-complete', [OrderController::class, 'complete'])->name('order-complete');
 Route::post('/order-return', [OrderController::class, 'return'])->name('order-return');
 Route::post('/order-review', [OrderController::class, 'review'])->name('order-review');
-// end routes
+// pages routes
+Route::get('/about', [PageController::class, 'about'])->name('about');
+Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 
 // my account controller
 Route::middleware('auth')->group(function () {
