@@ -23,6 +23,7 @@ Route::fallback(function () {
 */
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/shop', [ShopController::class, 'index'])->name('shop');
+Route::get('/shop/filter', [ShopController::class, 'filter'])->name('shop.filter');
 Route::get('/shop/{slug}', [ShopController::class, 'singleProductView']);
 Route::get('/cart', [CartController::class, 'index'])->name('cart');
 Route::get('/checkout', [CheckoutController::class, 'index'])->middleware('auth')->name('checkout');

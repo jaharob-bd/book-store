@@ -40,7 +40,7 @@ const ActionButton = () => {
                 </div>
 
                 {/* Love Button */}
-                <div className="relative">
+                {/* <div className="relative">
                     <button className="bg-red-500 hover:bg-red-600 text-white font-semibold p-4 rounded-full flex items-center justify-center">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +60,7 @@ const ActionButton = () => {
                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold py-1 px-2 rounded-full">
                         {loveCount}
                     </span>
-                </div>
+                </div> */}
             </div>
         </div>
     );

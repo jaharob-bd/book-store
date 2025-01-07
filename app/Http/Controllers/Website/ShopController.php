@@ -42,6 +42,32 @@ class ShopController extends Controller
         $data['authors'] = Author::where('status', '1')->get();
         // publisher
         $data['publishers'] = Publisher::where('status', '1')->get();
+        // $products = DB::table('products as p')
+        //     ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
+        //     ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
+        //     ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+        //     ->select(
+        //         'p.*',
+        //         'a.name as author_name',
+        //         'pb.name as publisher_name',
+        //         'c.name as category_name'
+        //     );
+        // if (isset($data['category']) && $data['category'] != '') {
+        //     $products = $products->where('p.category_id', $data['category']);
+        // }
+        // if (isset($data['author']) && $data['author'] != '') {
+        //     $products = $products->where('p.author_id', $data['author']);
+        // }
+        // if (isset($data['publisher']) && $data['publisher'] != '') {
+        //     $products = $products->where('p.publisher_id', $data['publisher']);
+        // }
+
+
+        // $data = $request->all();
+        // $data = array_map(function ($value) {
+        //     return str_replace('_', ',', $value);
+        // }, $request->all());
+
         $products = DB::table('products as p')
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
             ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
@@ -52,15 +78,25 @@ class ShopController extends Controller
                 'pb.name as publisher_name',
                 'c.name as category_name'
             );
-        if (isset($data['category']) && $data['category'] != '') {
-            $products = $products->where('p.category_id', $data['category']);
+
+        // Handle "category" filter
+        if (!empty($data['category'])) {
+            $categoryIds = explode('_', $data['category']); // Convert "1,2,3" into an array
+            $products = $products->whereIn('p.category_id', $categoryIds);
         }
-        if (isset($data['author']) && $data['author'] != '') {
-            $products = $products->where('p.author_id', $data['author']);
+
+        // Handle "author" filter
+        if (!empty($data['author'])) {
+            $authoryIds = explode('_', $data['author']); // Convert "1,2,3" into an array
+            $products = $products->whereIn('p.author_id', $authoryIds);
         }
-        if (isset($data['publisher']) && $data['publisher'] != '') {
-            $products = $products->where('p.publisher_id', $data['publisher']);
+
+        // Handle "publisher" filter
+        if (!empty($data['publisher'])) {
+            $publisherIds = explode('_', $data['publisher']); // Convert "1,2,3" into an array
+            $products = $products->whereIn('p.publisher_id', $publisherIds);
         }
+
         $data['products'] = $products->get();
         // return $data['products'];
 
@@ -91,9 +127,13 @@ class ShopController extends Controller
     }
 
     // filter products
-    function filterProducts(Request $request)
+    function filter(Request $request)
     {
         $data = $request->all();
+        // $data = array_map(function ($value) {
+        //     return str_replace('_', ',', $value);
+        // }, $request->all());
+
         $products = DB::table('products as p')
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
             ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
@@ -104,16 +144,26 @@ class ShopController extends Controller
                 'pb.name as publisher_name',
                 'c.name as category_name'
             );
-        if (isset($data['category']) && $data['category'] != '') {
-            $products = $products->where('p.category_id', $data['category']);
+
+        // Handle "category" filter
+        if (!empty($data['category'])) {
+            $categoryIds = explode('_', $data['category']); // Convert "1,2,3" into an array
+            $products = $products->whereIn('p.category_id', $categoryIds);
         }
-        if (isset($data['author']) && $data['author'] != '') {
-            $products = $products->where('p.author_id', $data['author']);
+
+        // Handle "author" filter
+        if (!empty($data['author'])) {
+            $authoryIds = explode('_', $data['author']); // Convert "1,2,3" into an array
+            $products = $products->whereIn('p.author_id', $authoryIds);
         }
-        if (isset($data['publisher']) && $data['publisher'] != '') {
-            $products = $products->where('p.publisher_id', $data['publisher']);
+
+        // Handle "publisher" filter
+        if (!empty($data['publisher'])) {
+            $publisherIds = explode('_', $data['publisher']); // Convert "1,2,3" into an array
+            $products = $products->whereIn('p.publisher_id', $publisherIds);
         }
+
         $products = $products->get();
-        return response()->json($products);
+        return response()->json($products, 200);
     }
 }

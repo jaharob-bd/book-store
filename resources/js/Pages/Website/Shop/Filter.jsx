@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 function Filter(props) {
-    const { products, setProducts, categories, authors, publishers } = props;
+    const { setProducts, categories, authors, publishers } = props;
 
     const [filters, setFilters] = useState({
         authors: [],
@@ -54,38 +54,31 @@ function Filter(props) {
 
     const applyFilters = () => {
         const params = new URLSearchParams();
-
         if (filters.price) params.set("price", filters.price);
-        if (filters.authors.length) params.set("author", filters.authors.join(","));
-        if (filters.categories.length) params.set("category", filters.categories.join(","));
-        if (filters.publishers.length) params.set("publisher", filters.publishers.join(","));
-
+        if (filters.authors.length) params.set("author", filters.authors.join("_"));
+        if (filters.categories.length) params.set("category", filters.categories.join("_"));
+        if (filters.publishers.length) params.set("publisher", filters.publishers.join("_"));
         const newUrl = `${window.location.pathname}?${params.toString()}`;
-        console.log("Updated URL:", newUrl);
         window.history.pushState(null, "", newUrl);
-
-        filteredProducts();
+        filteredProducts(params.toString());
     };
 
-    const filteredProducts = () => {
-        const [min, max] = filters.price.split("-").map((v) => parseFloat(v.trim()) || "");
-
-        const filtered = products.filter((product) => {
-            const matchesPrice =
-                (!min || product.price >= min) &&
-                (!max || product.price <= max);
-            const matchesAuthors =
-                !filters.authors.length || filters.authors.includes(String(product.author_id));
-            const matchesCategories =
-                !filters.categories.length || filters.categories.includes(String(product.category_id));
-            const matchesPublishers =
-                !filters.publishers.length || filters.publishers.includes(String(product.id_publisher));
-
-            return matchesPrice && matchesAuthors && matchesCategories && matchesPublishers;
-        });
-
-        console.log("Filtered Products:", filtered);
-        setProducts(filtered);
+    const filteredProducts = (params) => {
+        fetch(`/shop/filter?${params.toString()}`)
+            .then((response) => {
+                console.log('Response:', response); // Log the raw response
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json(); // Convert response to JSON
+            })
+            .then((data) => {
+                console.log("Filtered Products:", data); // Log the parsed data
+                setProducts(data); // Ensure setProducts is a valid state setter
+            })
+            .catch((error) => {
+                console.error("Error fetching products:", error.message);
+            });
     };
 
     return (
