@@ -71,7 +71,7 @@ const Contact = ({ auth }) => {
     return (
         <WebLayout auth={auth} title="Contact">
             <div className="relative">
-                <img className="brightness-50 filter lg:h-[500px] object-cover w-full" src="/about.jpeg" alt="Iphone with Macbook image" />
+                <img className="brightness-50 filter lg:h-[500px] object-cover w-full" src="/contact.jpeg" alt="Iphone with Macbook image" />
                 <div className="-translate-x-1/2 -translate-y-1/2 absolute flex flex-col left-1/2 lg:ml-5 max-w-[1200px] mx-auto text-center text-white top-1/2 w-11/12">
                     <h1 className="font-bold sm:text-5xl text-4xl">Contact Us</h1>
                     <p className="lg:pt-5 lg:text-base lg:w-3/5 mx-auto pt-3 text-xs">
