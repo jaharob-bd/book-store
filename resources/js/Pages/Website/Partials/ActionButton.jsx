@@ -13,7 +13,7 @@ const ActionButton = () => {
 
     return (
         <div>
-            <div className="fixed top-1/2 transform -translate-y-1/2 right-4 flex flex-col justify-center items-center space-y-6 w-20">
+            <div className="fixed z-50 top-1/2 transform -translate-y-1/2 right-4 flex flex-col justify-center items-center space-y-6 w-20">
                 <div className="relative">
                     <Link href={route('cart')}>
                         <button className="bg-blue-500 hover:bg-blue-600 text-white font-semibold p-4 rounded-full flex items-center justify-center">
