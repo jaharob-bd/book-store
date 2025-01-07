@@ -14,9 +14,9 @@ function Filter(props) {
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         setFilters({
-            authors: params.get("author")?.split(",") || [],
-            categories: params.get("category")?.split(",") || [],
-            publishers: params.get("publisher")?.split(",") || [],
+            authors: params.get("author")?.split("_") || [],
+            categories: params.get("category")?.split("_") || [],
+            publishers: params.get("publisher")?.split("_") || [],
             price: params.get("price") || "",
         });
     }, []);

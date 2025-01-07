@@ -26,47 +26,11 @@ class ShopController extends Controller
     function index(Request $request)
     {
         $data = $request->all();
-
-        // [
-        //   "author" => "1"
-        //   "category" => "1"
-        //   "price" => "100-200"
-        //   "publisher" => "1"
-        // ]
-
-        // dd($data['author']);
-        // shop?author=1&category=1&price=100-200&publisher=1
-        // category
         $data['categories'] = Category::where('status', '1')->get();
         // author
         $data['authors'] = Author::where('status', '1')->get();
         // publisher
         $data['publishers'] = Publisher::where('status', '1')->get();
-        // $products = DB::table('products as p')
-        //     ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
-        //     ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
-        //     ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
-        //     ->select(
-        //         'p.*',
-        //         'a.name as author_name',
-        //         'pb.name as publisher_name',
-        //         'c.name as category_name'
-        //     );
-        // if (isset($data['category']) && $data['category'] != '') {
-        //     $products = $products->where('p.category_id', $data['category']);
-        // }
-        // if (isset($data['author']) && $data['author'] != '') {
-        //     $products = $products->where('p.author_id', $data['author']);
-        // }
-        // if (isset($data['publisher']) && $data['publisher'] != '') {
-        //     $products = $products->where('p.publisher_id', $data['publisher']);
-        // }
-
-
-        // $data = $request->all();
-        // $data = array_map(function ($value) {
-        //     return str_replace('_', ',', $value);
-        // }, $request->all());
 
         $products = DB::table('products as p')
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
@@ -98,8 +62,6 @@ class ShopController extends Controller
         }
 
         $data['products'] = $products->get();
-        // return $data['products'];
-
         return Inertia::render('Website/Shop', $data);
     }
 
