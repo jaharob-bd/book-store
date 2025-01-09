@@ -46,19 +46,19 @@ class ShopController extends Controller
         // Handle "category" filter
         if (!empty($data['category'])) {
             $categoryIds = explode('_', $data['category']); // Convert "1,2,3" into an array
-            $products = $products->whereIn('p.category_id', $categoryIds);
+            $products = $products->orWhereIn('p.category_id', $categoryIds);
         }
 
         // Handle "author" filter
         if (!empty($data['author'])) {
             $authoryIds = explode('_', $data['author']); // Convert "1,2,3" into an array
-            $products = $products->whereIn('p.author_id', $authoryIds);
+            $products = $products->orWhereIn('p.author_id', $authoryIds);
         }
 
         // Handle "publisher" filter
         if (!empty($data['publisher'])) {
             $publisherIds = explode('_', $data['publisher']); // Convert "1,2,3" into an array
-            $products = $products->whereIn('p.publisher_id', $publisherIds);
+            $products = $products->orWhereIn('p.publisher_id', $publisherIds);
         }
 
         $data['products'] = $products->get();
@@ -110,19 +110,19 @@ class ShopController extends Controller
         // Handle "category" filter
         if (!empty($data['category'])) {
             $categoryIds = explode('_', $data['category']); // Convert "1,2,3" into an array
-            $products = $products->whereIn('p.category_id', $categoryIds);
+            $products = $products->orWhereIn('p.category_id', $categoryIds);
         }
 
         // Handle "author" filter
         if (!empty($data['author'])) {
             $authoryIds = explode('_', $data['author']); // Convert "1,2,3" into an array
-            $products = $products->whereIn('p.author_id', $authoryIds);
+            $products = $products->orWhereIn('p.author_id', $authoryIds);
         }
 
         // Handle "publisher" filter
         if (!empty($data['publisher'])) {
             $publisherIds = explode('_', $data['publisher']); // Convert "1,2,3" into an array
-            $products = $products->whereIn('p.publisher_id', $publisherIds);
+            $products = $products->orWhereIn('p.publisher_id', $publisherIds);
         }
 
         $products = $products->get();

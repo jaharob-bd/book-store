@@ -13,9 +13,7 @@ export default function Cart({ auth, products }) {
     return (
         <WebLayout auth={auth}>
             <Breadcrumb title="Cart" />
-
             <div>
-
                 <div className="container mx-auto mt-10">
                     <div className="flex shadow-md my-10">
                         <div className="w-3/4 bg-white px-10 py-10">
@@ -67,8 +65,6 @@ export default function Cart({ auth, products }) {
                                 Continue Shopping
                             </Link>
                         </div>
-
-
                         <div id="summary" className="w-1/4 px-8 py-10">
                             <p className="font-bold">ORDER SUMMARY</p>
                             <div className="flex justify-between mt-10 mb-5">
@@ -109,8 +105,6 @@ export default function Cart({ auth, products }) {
             <section id="shop">
                 <div className="container mx-auto px-4 py-8">
                     {/* <h1 className="text-3xl font-bold text-center mb-8">Cart</h1> */}
-
-
                     {/* Suggested Products Section */}
                     <div className="mt-12">
                         <h2 className="text-2xl font-bold text-center mb-6">Products for you</h2>

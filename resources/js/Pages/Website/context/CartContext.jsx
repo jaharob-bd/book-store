@@ -1,7 +1,7 @@
 // context/CartContext.js
+import SwalAlert from '@/Components/Alert/SwalAlert';
 import React, { createContext, useState, useEffect } from 'react';
 import secureLocalStorage from 'react-secure-storage';
-
 // Create Cart Context
 export const CartContext = createContext([]);
 
@@ -16,30 +16,12 @@ export const CartProvider = ({ children }) => {
         secureLocalStorage.setItem("cart", cart);
     }, [cart]);
 
-
-    const addToCart1 = (product) => {
-        setCart((prevCart) => {
-            const existingProduct = prevCart.find((item) => item.id === product.id);
-            if (existingProduct) {
-                // If product exists, update its quantity
-                return prevCart.map((item) =>
-                    item.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
-                        : item
-                );
-            } else {
-                // If product doesn't exist, add it to the cart
-                return [...prevCart, { ...product, quantity: 1 }];
-            }
-        });
-    };
-
-
     const addToCart = (product) => {
         setCart((prevCart) => {
             const existingProduct = prevCart.find((item) => item.id === product.id);
 
             if (existingProduct) {
+                SwalAlert('success', product.name + ' updated quantity');
                 // Update only the `quantity` column
                 return prevCart.map((item) =>
                     item.id === product.id
@@ -47,6 +29,8 @@ export const CartProvider = ({ children }) => {
                         : item
                 );
             } else {
+                // alert success
+                SwalAlert('success', product.name + ' Add to cart');
                 // Add new product with specific columns
                 return [
                     ...prevCart,

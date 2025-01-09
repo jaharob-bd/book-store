@@ -3,7 +3,7 @@ import React from 'react';
 const Banner = () => {
     return (
         <div>
-            <div className="bg-cover bg-no-repeat bg-center py-36" style={{ backgroundImage: 'url("assets/images/banner-bg.jpg")' }}>
+            <div className="bg-cover bg-no-repeat bg-center py-36" style={{ backgroundImage: 'url("/banner-bg.jpeg")' }}>
                 <div className="container">
                     <h1 className="text-6xl text-gray-800 font-medium mb-4 capitalize">
                         best collection for <br /> home decoration
