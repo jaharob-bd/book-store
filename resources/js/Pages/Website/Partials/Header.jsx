@@ -12,7 +12,7 @@ export default function Header({ auth }) {
 
     return (
         <header className="mx-auto flex h-16 max-w-[1200px] items-center justify-between px-5">
-            <a href="index.html">
+            <a href={route('home')} className="flex items-center">
                 <img className="cursor-pointer sm:h-auto sm:w-auto" src={logo} alt="company logo" />
             </a>
             <div className="md:hidden">
