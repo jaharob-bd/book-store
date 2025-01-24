@@ -1,7 +1,7 @@
 import React from "react";
 import WebLayout from "./Layout/WebLayout";
 
-const OrderDetails = ({auth, order}) => {
+const OrderDetails = ({ auth, order }) => {
     // Calculate subtotal
     const calculateSubtotal = () =>
         order.items.reduce((total, item) => total + item.quantity * item.price, 0);
@@ -10,7 +10,7 @@ const OrderDetails = ({auth, order}) => {
     const calculateVAT = (subtotal) => (subtotal * order.vatRate) / 100;
 
     // Calculate grand total
-    const calculateGrandTotal = (subtotal, vat, discount, fee) => subtotal - discount + vat + fee; 
+    const calculateGrandTotal = (subtotal, vat, discount, fee) => subtotal - discount + vat + fee;
 
     const subtotal = calculateSubtotal();
     const vat = calculateVAT(subtotal);
@@ -28,10 +28,10 @@ const OrderDetails = ({auth, order}) => {
                             <p className="text-gray-600">Date: {order.date}</p>
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold text-gray-800">Your Company</h2>
-                            <p className="text-gray-600">123 Business St, City</p>
-                            <p className="text-gray-600">Email: support@company.com</p>
-                            <p className="text-gray-600">Phone: +123 456 7890</p>
+                            <h2 className="text-xl font-bold text-gray-800">Moriyam Paper</h2>
+                            <p className="text-gray-600">Road: 5, House:16, Sector:10</p>
+                            <p className="text-gray-600">Email: khalil@gmail.com</p>
+                            <p className="text-gray-600">Phone: 01828-516711</p>
                         </div>
                     </div>
 
@@ -39,7 +39,7 @@ const OrderDetails = ({auth, order}) => {
                     <div className="mb-6">
                         <h3 className="text-lg font-semibold text-gray-800">Customer Details</h3>
                         <p className="text-gray-600">Name: {order.customer.name}</p>
-                        <p className="text-gray-600">Email: {order.customer.email}</p>
+                        {order?.customer?.email && <p className="text-gray-600">Email: {order?.customer?.email}</p>}
                         <p className="text-gray-600">Phone: {order.customer.phone}</p>
                         <p className="text-gray-600">Address: {order.customer.address}</p>
                     </div>
@@ -69,10 +69,10 @@ const OrderDetails = ({auth, order}) => {
                                                 {item.quantity}
                                             </td>
                                             <td className="border border-gray-200 p-2 text-right">
-                                                ${item.price.toFixed(2)}
+                                                {item.price.toFixed(2)}
                                             </td>
                                             <td className="border border-gray-200 p-2 text-right">
-                                                ${(item.quantity * item.price).toFixed(2)}
+                                                {(item.quantity * item.price).toFixed(2)}
                                             </td>
                                         </tr>
                                     ))}
@@ -87,23 +87,23 @@ const OrderDetails = ({auth, order}) => {
                             <div className="w-full max-w-md">
                                 <div className="flex justify-between mb-2">
                                     <span className="text-gray-600">Subtotal:</span>
-                                    <span className="font-semibold text-gray-800">${subtotal.toFixed(2)}</span>
+                                    <span className="font-semibold text-gray-800">{subtotal.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between mb-2">
                                     <span className="text-gray-600">Discount:</span>
-                                    <span className="font-semibold text-gray-800">-${order.discount.toFixed(2)}</span>
+                                    <span className="font-semibold text-gray-800">{order.discount.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between mb-2">
                                     <span className="text-gray-600">VAT ({order.vatRate}%):</span>
-                                    <span className="font-semibold text-gray-800">${vat.toFixed(2)}</span>
+                                    <span className="font-semibold text-gray-800">{vat.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between mb-2">
                                     <span className="text-gray-600">Shipp Fee (50):</span>
-                                    <span className="font-semibold text-gray-800">${order.shippingFee.toFixed(2)}</span>
+                                    <span className="font-semibold text-gray-800">{order.shippingFee.toFixed(2)}</span>
                                 </div>
                                 <div className="flex justify-between mt-4 border-t pt-4">
                                     <span className="text-lg font-bold text-gray-800">Grand Total:</span>
-                                    <span className="text-lg font-bold text-green-500">${grandTotal.toFixed(2)}</span>
+                                    <span className="text-lg font-bold text-green-500">{grandTotal.toFixed(2)}</span>
                                 </div>
                             </div>
                         </div>

@@ -31,7 +31,7 @@ class SalesController extends Controller
 {
     function index()
     {
-        $data['orders'] = Order::with(['customer', 'orderDetails'])->get();
+        $data['orders'] = Order::with(['customer', 'orderDetails'])->orderby('id', 'DESC')->get();
         // return $data;
         return Inertia::render('Sales/OrderLists', $data);
     }

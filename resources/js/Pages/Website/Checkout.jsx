@@ -163,10 +163,10 @@ export default function Checkout({ auth }) {
                         <p>shipping</p>
                         <p>৳ 50</p>
                     </div>
-                    <div className="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercas">
+                    {/* <div className="flex justify-between border-b border-gray-200 mt-1 text-gray-800 font-medium py-3 uppercas">
                         <p>Online Fee</p>
                         <p>৳ 10</p>
-                    </div>
+                    </div> */}
                     <div className="flex justify-between text-gray-800 font-medium py-3 uppercas">
                         <p className="font-semibold">Total</p>
                         <p>৳ {totalAmount}</p>
