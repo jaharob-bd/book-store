@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#ddd",
-    marginBottom: 2,
+    marginBottom: 1,
   },
   tableRow: {
     display: "flex",
@@ -52,13 +52,33 @@ const styles = StyleSheet.create({
   },
   tableCell: {
     flex: 1,
-    padding: 4,
+    padding: 2,
     nowrap: "nowrap",
     borderRightWidth: 1,
     borderRightColor: "#ddd",
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
     fontWeight: "normal"
+  },
+  tableNoBorderCell: {
+    flex: 1,
+    padding: 2,
+    nowrap: "nowrap",
+  },
+  tableNoCell: {
+    width: "5%",
+    padding: 2,
+    nowrap: "nowrap",
+    borderRightWidth: 1,
+    borderRightColor: "#ddd",
+    borderBottomWidth: 1,
+    borderBottomColor: "#ddd",
+    fontWeight: "normal"
+  },
+  tableNoBorderCellIndex: {
+    width: "5%",
+    padding: 2,
+    nowrap: "nowrap",
   },
   tableCellHeader: {
     fontWeight: "bold",
@@ -110,112 +130,114 @@ const styles = StyleSheet.create({
 });
 
 // Create Document Component
-function OrderInvoiceDownload() {
+function OrderInvoiceDownload({ order }) {
+  const calculateSubtotal = () =>
+    order.order_details.reduce((total, item) => total + item.quantity * item.price, 0);
+  const vat = (calculateSubtotal() * 0) / 100;
+  const grandTotal = calculateSubtotal() - 0 + 0 + 0;
   return (
-      <Document>
-        <Page size="A4" style={styles.page}>
-           <View style={styles.flexCol}>
-            <View style={styles.flexRow}>
-              <Image
-                style={styles.logo}
-                src="logo.png"
-              />
-              <Text style={styles.boldText}>
-                Hotel Rajshahi inn 
-              </Text>
-            </View>
-            <View style={styles.textCenter}>
-              <Text style={styles.textGray}>
-                  188/3, Uposhohor, Boalia, Rajshahi.
-              </Text>
-            </View>
+    <Document>
+      <Page size="A4" style={styles.page}>
+        <View style={styles.flexCol}>
+          <View style={styles.flexRow}>
+            <Image
+              style={styles.logo}
+              src="logo.png"
+            />
+            <Text style={styles.boldText}>
+              Moriyam Paper Ltd
+            </Text>
           </View>
-          <View style={styles.grid}>
-            <View>
-              <Text style={{ fontWeight: "bold", color: "#444" }}>
-                Bill to :
-              </Text>
-              <Text style={{ color: "#444" }}>
-                Mohammad Ali Abdullah
-                {"\n"}
-                Mobile: 01730034488
-              </Text>
-              <Text style={{ color: "#444" }}>Email: pikin96370@leacore.com</Text>
-            </View>
-            <View style={styles.textRight}>
-              <Text style={{ fontWeight: "bold", color: "#444" }}>Invoice No: BN-123</Text>
-              <Text>
-                Invoice date: <Text style={{ color: "#444" }}>03/07/2023</Text>
-                {"\n"}
-                Due date: <Text style={{ color: "#444" }}>31/07/2023</Text>
-              </Text>
-            </View>
+          <View style={styles.textCenter}>
+            <Text style={styles.textGray}>
+              Road: 5, House:16, Sector:10, Dhaka.
+            </Text>
           </View>
-          <View style={styles.table}>
-            <View style={[styles.tableRow, styles.tableCellHeader]}>
-              <Text style={[styles.tableCell]}>Room Type</Text>
-              <Text style={[styles.tableCell, styles.textRight]}>Number of Room</Text>
-              <Text style={[styles.tableCell, styles.textRight]}>Price</Text>
-              <Text style={[styles.tableCell, styles.textRight]}>Amount</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={styles.tableCell}>
-                <Text style={{ fontWeight: "bold" }}>Dulex - 102</Text>
-              </Text>
-              <Text style={[styles.tableCell, styles.textRight]}>500.0</Text>
-              <Text style={[styles.tableCell, styles.textRight]}>$100.00</Text>
-              <Text style={[styles.tableCell, styles.textRight]}>$5,000.00</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={styles.tableCell}>
-                <Text style={{ fontWeight: "bold" }}>Delux - 101</Text>
-              </Text>
-              <Text style={[styles.tableCell, styles.textRight]}>500.0</Text>
-              <Text style={[styles.tableCell, styles.textRight]}>$100.00</Text>
-              <Text style={[styles.tableCell, styles.textRight]}>$5,000.00</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={styles.tableCell}>
-                <Text style={{ fontWeight: "bold" }}>Super Suti - 305</Text>
-              </Text>
-              <Text style={[styles.tableCell, styles.textRight]}>50.0</Text>
-              <Text style={[styles.tableCell, styles.textRight]}>$100.00</Text>
-              <Text style={[styles.tableCell, styles.textRight]}>$500.00</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={[styles.tableCell, styles.textRight]} colSpan={3}>
-                Subtotal
-              </Text>
-              <Text style={[styles.tableCell, styles.textRight]}>
-                $10,500.00
-              </Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={[styles.tableCell, styles.textRight]} colSpan={3}>
-                Tax
-              </Text>
-              <Text style={[styles.tableCell, styles.textRight]}>$1,050.00</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={[styles.tableCell, styles.textRight]} colSpan={3}>
-                Discount
-              </Text>
-              <Text style={[styles.tableCell, styles.textRight]}>- 10%</Text>
-            </View>
-            <View style={styles.tableRow}>
-              <Text style={[styles.tableCell, styles.textRight]} colSpan={3}>
-                Total
-              </Text>
-              <Text style={[styles.tableCell, styles.textRight]}>
-                $11,550.00
-              </Text>
-            </View>
+        </View>
+        <View style={[styles.grid, { paddingTop: "8px" }]}>
+          <View>
+            <Text style={{ fontWeight: "bold", color: "#444" }}>
+              Bill to :
+            </Text>
+            <Text style={{ color: "#444" }}>
+              {order.customer.name}
+              {"\n"}
+              Mobile: {order.customer.phone}
+            </Text>
+            {order?.customer?.email && <Text style={{ color: "#444" }}>Email: {order.customer.email}</Text>}
           </View>
-          <Text style={styles.footer}>
-            Thank You.
-          </Text>
-        </Page>
-      </Document>
+          <View style={styles.textRight}>
+            <Text style={{ fontWeight: "bold", color: "#444" }}>Invoice No: {order.order_no}</Text>
+            <Text>
+              Invoice date: <Text style={{ color: "#444" }}>{order.order_date}</Text>
+            </Text>
+          </View>
+        </View>
+        <View style={styles.table}>
+          <View style={[styles.tableRow, styles.tableCellHeader]}>
+            <Text style={[styles.tableNoCell]}>#</Text>
+            <Text style={[styles.tableCell, styles.textRight]}>Item</Text>
+            <Text style={[styles.tableCell, styles.textRight]}>Quantity</Text>
+            <Text style={[styles.tableCell, styles.textRight]}>Price</Text>
+            <Text style={[styles.tableCell, styles.textRight]}>Total</Text>
+          </View>
+          {order.order_details.map((item, index) => (
+            <View style={styles.tableRow} key={index}>
+              <Text style={styles.tableNoCell}>
+                <Text style={{ fontWeight: "bold" }}>{index + 1}</Text>
+              </Text>
+              <Text style={[styles.tableCell, styles.textRight]}>{item?.product.name}</Text>
+              <Text style={[styles.tableCell, styles.textRight]}>{item.quantity}</Text>
+              <Text style={[styles.tableCell, styles.textRight]}>{item.price}</Text>
+              <Text style={[styles.tableCell, styles.textRight]}>{(item.quantity * item.price)}</Text>
+            </View>
+          ))}
+          <View style={styles.tableRow}>
+            <Text style={styles.tableNoBorderCellIndex}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}>
+              Subtotal
+            </Text>
+            <Text style={[styles.tableCell, styles.textRight]}>
+              {calculateSubtotal()}
+            </Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableNoBorderCellIndex}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}>
+              Tax
+            </Text>
+            <Text style={[styles.tableCell, styles.textRight]}> {vat}</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableNoBorderCellIndex}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}>
+              Discount
+            </Text>
+            <Text style={[styles.tableCell, styles.textRight]}>- 0</Text>
+          </View>
+          <View style={styles.tableRow}>
+            <Text style={styles.tableNoBorderCellIndex}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}></Text>
+            <Text style={[styles.tableNoBorderCell, styles.textRight]}>
+              Total
+            </Text>
+            <Text style={[styles.tableCell, styles.textRight]}>
+              {grandTotal}
+            </Text>
+          </View>
+        </View>
+        <Text style={styles.footer}>
+          Thank You.
+        </Text>
+      </Page>
+    </Document>
 
   );
 }

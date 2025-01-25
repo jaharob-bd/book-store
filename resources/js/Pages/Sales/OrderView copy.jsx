@@ -13,7 +13,7 @@ import { calculateGrandTotal } from '@/Utils/PriceCalculation';
 import { OrderCancel } from './OrderStatus';
 import SwalAlert from '@/Components/Alert/SwalAlert'
 import { pdf } from '@react-pdf/renderer';
-import OrderInvoiceDownload from './OrderInvoiceDownload';
+import OrderInvoiceDownload from './OrderInvoiceDownload_new';
 
 export default function OrderView({ auth, sales }) {
     const { t } = useTranslation();

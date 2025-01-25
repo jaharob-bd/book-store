@@ -16,12 +16,14 @@ import { pdf } from '@react-pdf/renderer';
 import OrderInvoiceDownload from './OrderInvoiceDownload';
 
 export default function OrderView({ auth, order }) {
+    console.log(order);
     const { t } = useTranslation();
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [actionButton, setActionButton] = useState('');
     const [actionPaymentMethod, setActionPaymentMethod] = useState('Cash');
     const [isLoading, setIsLoading] = useState(false);
     const [totalDueAmount, setTotalDueAmount] = useState(order.total_amount - order.paid_amount);
+    const fileName = order.order_no;
     // payment details
     const [paymentDetails, setPaymentDetails] = useState({
         bankName: '',                                               // Bank
@@ -84,7 +86,7 @@ export default function OrderView({ auth, order }) {
 
     const handleDownload = async () => {
         setIsLoading(true);
-        const blob = await pdf(<OrderInvoiceDownload />).toBlob();
+        const blob = await pdf(<OrderInvoiceDownload {...{ order }} />).toBlob();
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
