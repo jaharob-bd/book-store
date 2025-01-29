@@ -19,6 +19,7 @@ const OrderDetails = ({ auth, order }) => {
     const subtotal = calculateSubtotal();
     const vat = calculateVAT(subtotal);
     const grandTotal = calculateGrandTotal(subtotal, vat, order.discount, order.shippingFee);
+    let totalAmount = 0; // Declare and initialize totalAmount
 
     return (
         <WebLayout auth={auth}>
@@ -70,31 +71,49 @@ const OrderDetails = ({ auth, order }) => {
                         <div className="grid grid-cols-2 gap-4">
                             {/* Payment Details */}
                             <table className="w-full border-collapse border border-gray-300 text-sm">
-                                <thead className="">
+                                <thead>
                                     <tr>
                                         <th className="text-center bg-gray-200 p-2" colSpan={4}>Payment Method</th>
                                     </tr>
-                                    <tr>
-                                        <th className="border border-gray-300 p-2 text-right">#</th>
-                                        <th className="border border-gray-300 p-2 text-right">Payment Method</th>
-                                        <th className="border border-gray-300 p-2 text-right">Payment Date</th>
-                                        <th className="border border-gray-300 p-2 text-right">Payment Amount</th>
-                                    </tr>
+                                    {order.payments && order.payments.length > 0 && (
+                                        <tr>
+                                            <th className="border border-gray-300 p-2 text-center">#</th>
+                                            <th className="border border-gray-300 p-2 text-left">Method</th>
+                                            <th className="border border-gray-300 p-2 text-center">Date</th>
+                                            <th className="border border-gray-300 p-2 text-right">Amount</th>
+                                        </tr>
+                                    )}
                                 </thead>
                                 <tbody>
-
-                                    <tr>
-                                        <td className="border border-gray-300 text-center font-bold">1</td>
-                                        <td className="border border-gray-300 text-right">PayPal</td>
-                                        <td className="border border-gray-300 text-right">2022-09-15</td>
-                                        <td className="border border-gray-300 text-right">100.00</td>
-                                    </tr>
-                                    <tr>
-                                        <td className="border border-gray-300 text-right" colSpan={3}>Total Payment:</td>
-                                        <td className="border border-gray-300 text-right">100.00</td>
-                                    </tr>
+                                    {order.payments && order.payments.length > 0 ? (
+                                        <>
+                                            {order.payments.map((method, index) => (
+                                                <tr key={index}>
+                                                    <td className="border border-gray-300 text-center font-bold">{index + 1}</td>
+                                                    <td className="border border-gray-300 text-left">{method.payment_method}</td>
+                                                    <td className="border border-gray-300 text-center">{method.payment_date}</td>
+                                                    <td className="border border-gray-300 text-right">
+                                                        {parseFloat(method.amount).toFixed(2)}
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                            <tr>
+                                                <td className="border border-gray-300 text-right font-semibold" colSpan={3}>Total Payment:</td>
+                                                <td className="border border-gray-300 text-right font-semibold">
+                                                    {order.payments.reduce((sum, method) => sum + parseFloat(method.amount), 0).toFixed(2)}
+                                                </td>
+                                            </tr>
+                                        </>
+                                    ) : (
+                                        <tr>
+                                            <td className="border border-gray-300 text-center font-bold text-red-600" colSpan={4}>
+                                                Not found payment data.
+                                            </td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
+
                             {/* Totals Section */}
                             <table className="w-full border-collapse border border-gray-300 text-sm">
                                 <tbody>

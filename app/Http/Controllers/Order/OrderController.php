@@ -112,10 +112,10 @@ class OrderController extends Controller
     }
     public function details($order_no)
     {
-        $order_n = Order::with(['customer', 'orderDetails.product'])
+        $order_n = Order::with(['customer', 'orderDetails.product', 'paymentDetails'])
             ->where('order_no', $order_no)
             ->first(); 
-
+// return $order_n;
         if ($order_n) {
             $order = [
                 'id' => $order_n->order_no, // Format ID as INV-XXXXXX
@@ -131,6 +131,14 @@ class OrderController extends Controller
                         'name' => $detail->product->name ?? 'Unknown Product', // Fetch product name
                         'quantity' => $detail->quantity,
                         'price' => floatval($detail->price), // Ensure price is a float
+                    ];
+                })->toArray(),
+                'payments' => $order_n->paymentDetails->map(function ($payment) {
+                    return [
+                        'transaction_id' => $payment->transaction_id ?? 'Unknown Product', // Fetch product name
+                        'amount' => $payment->amount,
+                        'payment_method' => $payment->payment_method,
+                        'payment_date' => $payment->payment_date, // Ensure price is a float
                     ];
                 })->toArray(),
                 'vatRate' => 0, // Example VAT rate, you can calculate it dynamically if needed
