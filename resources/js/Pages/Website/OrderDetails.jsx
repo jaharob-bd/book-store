@@ -1,38 +1,29 @@
-import React from "react";
+import React, { forwardRef, useRef } from 'react';
 import { usePage } from '@inertiajs/react';
 import WebLayout from "./Layout/WebLayout";
+import ReactToPrint from 'react-to-print';
 
 const OrderDetails = ({ auth, order }) => {
-    console.log(order);
+    const componentRef = useRef();
     const { props } = usePage();
     const logo = props.url?.base_url + '/company-logo.svg'
-    // Calculate subtotal
-    const calculateSubtotal = () =>
-        order.items.reduce((total, item) => total + item.quantity * item.price, 0);
-
-    // Calculate VAT
+    const calculateSubtotal = () => order.items.reduce((total, item) => total + item.quantity * item.price, 0);
     const calculateVAT = (subtotal) => (subtotal * order.vatRate) / 100;
-
-    // Calculate grand total
     const calculateGrandTotal = (subtotal, vat, discount, fee) => subtotal - discount + vat + fee;
-
     const subtotal = calculateSubtotal();
     const vat = calculateVAT(subtotal);
     const grandTotal = calculateGrandTotal(subtotal, vat, order.discount, order.shippingFee);
-    let totalAmount = 0; // Declare and initialize totalAmount
 
     return (
         <WebLayout auth={auth}>
             <div className="p-8 bg-gray-100 min-h-screen">
-                <div className="max-w-4xl mx-auto bg-white p-8 shadow-lg rounded-lg">
+                <div ref={componentRef} className="max-w-4xl mx-auto p-8 bg-white rounded-lg">
                     <div className="flex flex-col items-center border-b border-gray-400 pb-4 mb-4">
                         <div className="flex items-center mb-1">
-                            {/* <img src={logo} alt="Logo" className="w-20 h-10" /> */}
                             <h1 className="text-lg font-bold ml-2 text-center">Moriyam Paper Ltd</h1>
                         </div>
                         <p className="text-gray-600 text-sm text-center">Road: 5, House:16, Sector:10, Dhaka.</p>
                     </div>
-
                     <div className="flex justify-between mb-4">
                         <div>
                             <p className="font-bold text-gray-700">Bill to:</p>
@@ -113,8 +104,6 @@ const OrderDetails = ({ auth, order }) => {
                                     )}
                                 </tbody>
                             </table>
-
-                            {/* Totals Section */}
                             <table className="w-full border-collapse border border-gray-300 text-sm">
                                 <tbody>
                                     <tr>
@@ -141,9 +130,7 @@ const OrderDetails = ({ auth, order }) => {
                             </table>
                         </div>
                     </div>
-
-
-                    {/* terms and condition */}
+                    {/* Terms and condition */}
                     <div className="flex justify-between pt-7">
                         <div className="">
                             <h2 className="text-lg font-bold">Terms & Conditions:</h2>
@@ -155,10 +142,26 @@ const OrderDetails = ({ auth, order }) => {
                             <p className="text-gray-700">6. Please ensure that all necessary documents are attached in the invoice.</p>
                         </div>
                     </div>
-                    <div className="mt-4 text-center text-gray-500 text-sm border-t border-gray-300 pt-2">
+                    <div className="mt-4 text-center text-gray-500 text-sm border-t border-gray-300 pt-2 print:absolute print:bottom-3 print:w-full print:text-center">
                         Thank You.
                     </div>
                 </div>
+                <center>
+                <ReactToPrint
+                    trigger={() => (
+                        <button
+                            className="hover:text-white hover:bg-blue-600 text-red-600 font-bold py-1 px-1 rounded uppercase"
+                            type="button"
+                        >
+                            <i className="ri-printer-line text-lg mr-1"></i>
+                            Print Invoice
+                        </button>
+                    )}
+                    content={() => componentRef.current}
+                />
+                    {/* <button onClick={() => window.print()} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Print Invoice</button> */}
+                </center>
+
             </div>
         </WebLayout>
     );

@@ -112,41 +112,40 @@ class OrderController extends Controller
     }
     public function details($order_no)
     {
-        $order_n = Order::with(['customer', 'orderDetails.product', 'paymentDetails'])
+        $order = Order::with(['customer', 'orderDetails.product', 'paymentDetails'])
             ->where('order_no', $order_no)
-            ->first(); 
-// return $order_n;
-        if ($order_n) {
+            ->first();
+        if ($order) {
             $order = [
-                'id' => $order_n->order_no, // Format ID as INV-XXXXXX
-                'date' => date('Y-m-d', strtotime($order_n->order_date)), // Format the order date
+                'id'       => $order->order_no,                               // Format ID as INV-XXXXXX
+                'date'     => date('Y-m-d', strtotime($order->order_date)),   // Format the order date
                 'customer' => [
-                    'name' => $order_n->customer->name ?? '',
-                    'email' => $order_n->customer->email ?? '',
-                    'phone' => $order_n->customer->phone ?? '',
-                    'address' => $order_n->shipping_address ?? 'N/A', // Provide a default value if address is null
+                    'name'    => $order->customer->name ?? '',
+                    'email'   => $order->customer->email ?? '',
+                    'phone'   => $order->customer->phone ?? '',
+                    'address' => $order->shipping_address ?? 'N/A',   // Provide a default value if address is null
                 ],
-                'items' => $order_n->orderDetails->map(function ($detail) {
+                'items' => $order->orderDetails->map(function ($detail) {
                     return [
-                        'name' => $detail->product->name ?? 'Unknown Product', // Fetch product name
+                        'name'     => $detail->product->name ?? 'Unknown Product',   // Fetch product name
                         'quantity' => $detail->quantity,
-                        'price' => floatval($detail->price), // Ensure price is a float
+                        'price'    => floatval($detail->price),                      // Ensure price is a float
                     ];
                 })->toArray(),
-                'payments' => $order_n->paymentDetails->map(function ($payment) {
+                'payments' => $order->paymentDetails->map(function ($payment) {
                     return [
-                        'transaction_id' => $payment->transaction_id ?? 'Unknown Product', // Fetch product name
-                        'amount' => $payment->amount,
+                        'transaction_id' => $payment->transaction_id ?? 'Unknown Product',   // Fetch product name
+                        'amount'         => $payment->amount,
                         'payment_method' => $payment->payment_method,
-                        'payment_date' => $payment->payment_date, // Ensure price is a float
+                        'payment_date'   => $payment->payment_date,                          // Ensure price is a float
                     ];
                 })->toArray(),
-                'vatRate' => 0, // Example VAT rate, you can calculate it dynamically if needed
-                'shippingFee' => 50, // Example VAT rate, you can calculate it dynamically if needed
-                'discount' => floatval($order_n->discount_amount), // Use discount amount from the order
+                'vatRate'     => 0,                                   // Example VAT rate, you can calculate it dynamically if needed
+                'shippingFee' => 50,                                  // Example VAT rate, you can calculate it dynamically if needed
+                'discount'    => floatval($order->discount_amount),   // Use discount amount from the order
             ];
         } else {
-            $order = null; // Handle case when order is not found
+            $order = null;  // Handle case when order is not found
         }
 
         // return $order;

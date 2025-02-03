@@ -18,7 +18,6 @@ use App\Models\Inventory\Stock\StockMst;
 use App\Models\Order\Order;
 use App\Models\Order\OrderTracking;
 use App\Models\Order\Payment;
-use App\Models\Purchase\PurchaseMst;
 use App\Models\Sales\SalPayDetail;
 use App\Models\Supplier\Supplier;
 use App\Models\Sales\SaleMst;
