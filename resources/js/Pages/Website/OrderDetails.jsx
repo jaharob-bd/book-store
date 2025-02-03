@@ -147,19 +147,18 @@ const OrderDetails = ({ auth, order }) => {
                     </div>
                 </div>
                 <center>
-                <ReactToPrint
-                    trigger={() => (
-                        <button
-                            className="hover:text-white hover:bg-blue-600 text-red-600 font-bold py-1 px-1 rounded uppercase"
-                            type="button"
-                        >
-                            <i className="ri-printer-line text-lg mr-1"></i>
-                            Print Invoice
-                        </button>
-                    )}
-                    content={() => componentRef.current}
-                />
-                    {/* <button onClick={() => window.print()} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">Print Invoice</button> */}
+                    <ReactToPrint
+                        trigger={() => (
+                            <button
+                                className="hover:text-white hover:bg-blue-600 text-red-600 font-bold py-1 px-1 rounded uppercase"
+                                type="button"
+                            >
+                                <i className="ri-printer-line text-lg mr-1"></i>
+                                Print Invoice
+                            </button>
+                        )}
+                        content={() => componentRef.current}
+                    />
                 </center>
 
             </div>
