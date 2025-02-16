@@ -26,33 +26,33 @@ export default function OrderView({ auth, order }) {
     const fileName = order.order_no;
     // payment details
     const [paymentDetails, setPaymentDetails] = useState({
-        bankName: '',                                               // Bank
-        accountNumber: '',                                               // Account number
-        mobileNumber: '',                                               // mobile
-        transactionId: '',                                               // transaction ID
-        cardNumber: '',                                               // Card
+        bankName      : '',   // Bank
+        accountNumber : '',   // Account number
+        mobileNumber  : '',   // mobile
+        transactionId : '',   // transaction ID
+        cardNumber    : '',   // Card
         cardExpiryDate: '',
-        cardCVV: '',
+        cardCVV       : '',
     });
 
     const [statusData, setStatusData] = useState({
-        id: order.id,                                         // Order ID
-        status: actionButton,                                     // Current action button status
-        remarks: '',                                               // User remarks
-        carrierName: '',                                               // Name of the shipping carrier
-        trackingNumber: actionButton == 'Shipped' ? order.order_no : '',   // Tracking number for the order
-        source: '',
-        paymentMethod: actionPaymentMethod,                              // Payment method
-        amount: totalDueAmount,                                   // cash
-        bankName: '',                                               // Bank
-        accountNumber: '',
-        mobileNumber: '',                                               // mobile
-        transactionId: '',
-        cardNumber: '',                                               // Card
+        id            : order.id,                                         // Order ID
+        status        : actionButton,                                     // Current action button status
+        remarks       : '',                                               // User remarks
+        carrierName   : '',                                               // Name of the shipping carrier
+        trackingNumber: actionButton == 'Shipped' ? order.order_no: '',   // Tracking number for the order
+        source        : '',
+        paymentMethod : actionPaymentMethod,                              // Payment method
+        amount        : totalDueAmount,                                   // cash
+        bankName      : '',                                               // Bank
+        accountNumber : '',
+        mobileNumber  : '',                                               // mobile
+        transactionId : '',
+        cardNumber    : '',                                               // Card
         cardExpiryDate: '',
-        cardCVV: '',
-        totalAmount: order.total_amount,
-        items: order.order_details                               // Details of the items in the order
+        cardCVV       : '',
+        totalAmount   : order.total_amount,
+        items         : order.order_details                               // Details of the items in the order
     });
     // console.log(statusData);
 
@@ -86,11 +86,11 @@ export default function OrderView({ auth, order }) {
 
     const handleDownload = async () => {
         setIsLoading(true);
-        const blob = await pdf(<OrderInvoiceDownload {...{ order }} />).toBlob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName + '.pdf';
+        const blob       = await pdf(<OrderInvoiceDownload {...{ order }} />).toBlob();
+        const url        = URL.createObjectURL(blob);
+        const a          = document.createElement('a');
+              a.href     = url;
+              a.download = fileName + '.pdf';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

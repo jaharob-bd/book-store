@@ -40,21 +40,21 @@ const OrderDetails = ({ auth, order }) => {
                         <table className="w-full border-collapse border border-gray-300 text-sm mb-2">
                             <thead className="bg-gray-200">
                                 <tr>
-                                    <th className="border border-gray-300 p-2 w-1/12">#</th>
-                                    <th className="border border-gray-300 p-2 text-left">Item</th>
-                                    <th className="border border-gray-300 p-2 text-right">Quantity</th>
-                                    <th className="border border-gray-300 p-2 text-right">Price</th>
-                                    <th className="border border-gray-300 p-2 text-right">Total</th>
+                                    <th className="border border-gray-300 w-1/12">#</th>
+                                    <th className="border border-gray-300 text-left">Item</th>
+                                    <th className="border border-gray-300 text-right">Quantity</th>
+                                    <th className="border border-gray-300 text-right">Price</th>
+                                    <th className="border border-gray-300 text-right">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {order.items.map((item, index) => (
                                     <tr key={index}>
-                                        <td className="border border-gray-300 p-2 text-center font-bold">{index + 1}</td>
-                                        <td className="border border-gray-300 p-2 text-left">{item.name}</td>
-                                        <td className="border border-gray-300 p-2 text-right">{item.quantity}</td>
-                                        <td className="border border-gray-300 p-2 text-right">{item.price}</td>
-                                        <td className="border border-gray-300 p-2 text-right">{item.quantity * item.price}</td>
+                                        <td className="border border-gray-300 text-center font-bold">{index + 1}</td>
+                                        <td className="border border-gray-300 text-left">{item.name}</td>
+                                        <td className="border border-gray-300 text-right">{item.quantity}</td>
+                                        <td className="border border-gray-300 text-right">{item.price}</td>
+                                        <td className="border border-gray-300 text-right">{item.quantity * item.price}</td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -64,14 +64,14 @@ const OrderDetails = ({ auth, order }) => {
                             <table className="w-full border-collapse border border-gray-300 text-sm">
                                 <thead>
                                     <tr>
-                                        <th className="text-center bg-gray-200 p-2" colSpan={4}>Payment Method</th>
+                                        <th className="text-center bg-gray-200" colSpan={4}>Payment Method</th>
                                     </tr>
                                     {order.payments && order.payments.length > 0 && (
                                         <tr>
-                                            <th className="border border-gray-300 p-2 text-center">#</th>
-                                            <th className="border border-gray-300 p-2 text-left">Method</th>
-                                            <th className="border border-gray-300 p-2 text-center">Date</th>
-                                            <th className="border border-gray-300 p-2 text-right">Amount</th>
+                                            <th className="border border-gray-300 text-center">#</th>
+                                            <th className="border border-gray-300 text-left">Method</th>
+                                            <th className="border border-gray-300 text-center">Date</th>
+                                            <th className="border border-gray-300 text-right">Amount</th>
                                         </tr>
                                     )}
                                 </thead>
@@ -107,24 +107,24 @@ const OrderDetails = ({ auth, order }) => {
                             <table className="w-full border-collapse border border-gray-300 text-sm">
                                 <tbody>
                                     <tr>
-                                        <td className="border border-gray-300 p-2 text-right font-bold">Subtotal</td>
-                                        <td className="border border-gray-300 p-2 text-right font-bold">{subtotal.toFixed(2)}</td>
+                                        <td className="border border-gray-300 text-right font-bold">Subtotal</td>
+                                        <td className="border border-gray-300 text-right font-bold">{subtotal.toFixed(2)}</td>
                                     </tr>
                                     <tr>
-                                        <td className="border border-gray-300 p-2 text-right font-bold">Discount</td>
-                                        <td className="border border-gray-300 p-2 text-right font-bold">{order.discount}</td>
+                                        <td className="border border-gray-300 text-right font-bold">Discount</td>
+                                        <td className="border border-gray-300 text-right font-bold">{(order.discount).toFixed(2)}</td>
                                     </tr>
                                     <tr>
-                                        <td className="border border-gray-300 p-2 text-right font-bold">VAT</td>
-                                        <td className="border border-gray-300 p-2 text-right font-bold">{vat.toFixed(2)}</td>
+                                        <td className="border border-gray-300 text-right font-bold">VAT</td>
+                                        <td className="border border-gray-300 text-right font-bold">{vat.toFixed(2)}</td>
                                     </tr>
                                     <tr>
-                                        <td className="border border-gray-300 p-2 text-right font-bold">Shipping Fee</td>
-                                        <td className="border border-gray-300 p-2 text-right font-bold">50</td>
+                                        <td className="border border-gray-300 text-right font-bold">Shipping Fee</td>
+                                        <td className="border border-gray-300 text-right font-bold">50.00</td>
                                     </tr>
                                     <tr className="bg-gray-200">
-                                        <td className="border border-gray-300 p-2 text-right font-bold">Grand Total</td>
-                                        <td className="border border-gray-300 p-2 text-right font-bold">{grandTotal.toFixed(2)}</td>
+                                        <td className="border border-gray-300 text-right font-bold">Grand Total</td>
+                                        <td className="border border-gray-300 text-right font-bold">{grandTotal.toFixed(2)}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -138,8 +138,8 @@ const OrderDetails = ({ auth, order }) => {
                             <p className="text-gray-700">2. All products are subject to 5% sales tax.</p>
                             <p className="text-gray-700">3. Please provide the invoice copy along with the payment receipt.</p>
                             <p className="text-gray-700">4. If you have any questions or need additional information, please contact us at {order.customer.email}.</p>
-                            <p className="text-gray-700">5. You will be charged a 10% service fee on the invoice amount.</p>
-                            <p className="text-gray-700">6. Please ensure that all necessary documents are attached in the invoice.</p>
+                            {/* <p className="text-gray-700">5. You will be charged a 10% service fee on the invoice amount.</p>
+                            <p className="text-gray-700">6. Please ensure that all necessary documents are attached in the invoice.</p> */}
                         </div>
                     </div>
                     <div className="mt-4 text-center text-gray-500 text-sm border-t border-gray-300 pt-2 print:absolute print:bottom-3 print:w-full print:text-center">

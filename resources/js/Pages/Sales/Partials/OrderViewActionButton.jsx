@@ -44,7 +44,7 @@ export const OrderViewActionButton = (props) => {
                         null
                 }
                 {
-                    order?.status != 'Refunded' && order?.status != 'Cancelled' ?
+                    order?.status != 'Refunded' && order?.status != 'Cancelled' && order.paid_amt > 0 ?
                         <button
                             className="bg-yellow-500 hover:bg-yellow-600 select-none rounded-lg py-1 px-2 mr-1 text-center align-middle font-sans text-xs uppercase text-black shadow-md shadow-yellow-500/20 transition-all hover:shadow-lg hover:shadow-yellow-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                             onClick={() => openModal('Refunded')}
