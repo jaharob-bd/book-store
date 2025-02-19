@@ -25,15 +25,15 @@ export default function OrderView({ auth, order }) {
     const [totalDueAmount, setTotalDueAmount] = useState(order.total_amount - order.paid_amount);
     const fileName = order.order_no;
     // payment details
-    const [paymentDetails, setPaymentDetails] = useState({
-        bankName      : '',   // Bank
-        accountNumber : '',   // Account number
-        mobileNumber  : '',   // mobile
-        transactionId : '',   // transaction ID
-        cardNumber    : '',   // Card
-        cardExpiryDate: '',
-        cardCVV       : '',
-    });
+    // const [paymentDetails, setPaymentDetails] = useState({
+    //     bankName      : '',   // Bank
+    //     accountNumber : '',   // Account number
+    //     mobileNumber  : '',   // mobile
+    //     transactionId : '',   // transaction ID
+    //     cardNumber    : '',   // Card
+    //     cardExpiryDate: '',
+    //     cardCVV       : '',
+    // });
 
     const [statusData, setStatusData] = useState({
         id            : order.id,                                         // Order ID

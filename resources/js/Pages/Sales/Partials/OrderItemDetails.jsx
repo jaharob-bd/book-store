@@ -17,7 +17,7 @@ export const OrderItemDetails = (props) => {
                     <div className="p-1">
                         <p className="font-bold">
                             INVOICE : <span className="text-red-500">{order.order_no}</span>
-                            [Grand Total : <span className="">{order.total_amount}</span>]
+                            [Grand Total : <span className="">{grandTotal}</span>]
                             <span className="text-green-600 uppercase">{grandTotal === totalPaymentAmount ? '  Full Paid' : ''}</span>
                         </p>
                     </div>
@@ -97,13 +97,26 @@ export const OrderItemDetails = (props) => {
                                         {grandTotal.toFixed(2)}
                                     </td>
                                 </tr>
+                                <tr>
+                                    <th colSpan={4} scope="row" className="pl-1 text-right">
+                                        Toal Paid:
+                                    </th>
+                                    <td className="pl-1 border-l border-r border-b border-indigo-500 text-right">
+                                        {totalPaymentAmount.toFixed(2)}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th colSpan={4} scope="row" className="pl-1 text-right">
+                                        Toal Payable:
+                                    </th>
+                                    <td className="pl-1 border-l border-r border-b border-indigo-500 text-right">
+                                        {(grandTotal - totalPaymentAmount).toFixed(2)}
+                                    </td>
+                                </tr>
                             </tfoot>
                         </table>
                         <div className="py-2 mt-4 font-bold">
                             <span className="uppercase">Payment Details: </span>
-                            <span className="text-red">
-                                [Toal Payment: {totalPaymentAmount}]
-                            </span>
                         </div>
                         {
                             order?.payment_details?.length ?
