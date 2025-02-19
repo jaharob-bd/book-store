@@ -24,7 +24,7 @@ class OrderController extends Controller
     // store the order
     public function store(Request $request)
     {
-        $data = $request->all();
+        $data      = $request->all();
         $validated = $request->validate([
             'subAmount'                   => 'required|numeric|min:0',
             'discountAmount'              => 'nullable|numeric|min:0',
@@ -41,11 +41,12 @@ class OrderController extends Controller
         try {
             // get customers information
             $customerInfo = Customer::where('user_id', '=', Auth::user()->id)->first();
+            $shippingInfo = $data['shippingAddress']['district'] . ',' . $data['shippingAddress']['city'] . ',' . $data['shippingAddress']['address'];
             // Create order
             $order = Order::create([
                 'customer_id'      => $customerInfo->id,                               // Assuming the logged-in user is the customer
                 'order_date'       => now(),
-                'shipping_address' => $request->input('shippingAddress', null),
+                'shipping_address' => $shippingInfo,
                 'billing_address'  => $request->input('billingAddress', null),
                 'sub_amount'       => $validated['subAmount'],
                 'discount_amount'  => $validated['discountAmount'] ?? 0.00,
@@ -117,9 +118,10 @@ class OrderController extends Controller
             ->first();
         if ($order) {
             $order = [
-                'id'       => $order->order_no,                               // Format ID as INV-XXXXXX
-                'date'     => date('Y-m-d', strtotime($order->order_date)),   // Format the order date
-                'customer' => [
+                'id'              => $order->order_no,
+                'shippingAddress' => $order->shipping_address,
+                'date'            => date('Y-m-d', strtotime($order->order_date)),
+                'customer'        => [
                     'name'    => $order->customer->name ?? '',
                     'email'   => $order->customer->email ?? '',
                     'phone'   => $order->customer->phone ?? '',

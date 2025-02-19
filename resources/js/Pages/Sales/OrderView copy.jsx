@@ -36,11 +36,11 @@ export default function OrderView({ auth, sales }) {
     // const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
     const handleDownload = async () => {
         setIsLoading(true);
-        const blob = await pdf(<OrderInvoiceDownload />).toBlob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName + '.pdf';
+        const blob       = await pdf(<OrderInvoiceDownload />).toBlob();
+        const url        = URL.createObjectURL(blob);
+        const a          = document.createElement('a');
+              a.href     = url;
+              a.download = fileName + '.pdf';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -54,7 +54,7 @@ export default function OrderView({ auth, sales }) {
         const clientEmail = 'mdalibd511@gmail.com';
         router.post('/send-email', { clientEmail }, {
             onSuccess: () => {
-                // SwalAlert('success', 'Email sent successfully');
+                SwalAlert('success', 'Email sent successfully');
             },
         });
     };

@@ -11,6 +11,7 @@ use Inertia\Inertia;
 // db connection
 use Illuminate\Support\Facades\DB;
 use App\Models\Setting\EmailSetup;
+use Exception;
 
 class EmailController extends Controller
 {
@@ -118,31 +119,56 @@ class EmailController extends Controller
     }
     public function sendEmail(Request $request)
     {
+        try {
+            // Validate the recipient email
+            $to = filter_var(trim($request->input('clientEmail')), FILTER_VALIDATE_EMAIL);
+            if (!$to) {
+                return redirect()->back()->with('failed', 'Invalid client email address!');
+            }
 
-        $to = $request->input('clientEmail');
-        $exit = DB::table('sa_email_setup')->first();
-        // dd($exit);
-        if ($exit->cc || $exit->bcc) {
-            // make array of email addresses
-            $ccArray = explode(',', $exit->cc);
-            $bccArray = explode(',', $exit->bcc);
-            $content = '';
+            // Fetch email setup data
+            $emailSetup = DB::table('sa_email_setup')->first();
+
+            // Check if email setup exists
+            if (!$emailSetup) {
+                return redirect()->back()->with('failed', 'Email setup not found!');
+            }
+
+            // Ensure cc and bcc values are not null before exploding
+            $ccEmails = isset($emailSetup->cc) ? explode(',', $emailSetup->cc) : [];
+            $bccEmails = isset($emailSetup->bcc) ? explode(',', $emailSetup->bcc) : [];
+
+            // Remove empty values and validate emails
+            $ccArray = $this->filterValidEmails($ccEmails);
+            $bccArray = $this->filterValidEmails($bccEmails);
+
+            // Email Content
+            $content = 'This is the email content. Modify as needed.';
 
             // Send the email
-            // Mail::to('mdalibd511@gmail.com')
-            //     ->cc(['mdalibd511@gmail.com', 'maabdullah511@gmail.com'])
-            //     ->bcc(['khokanbdtask@gmail.com', 'maabdullahbd511@gmail.com'])
-            //     ->send(new TransactionalEmail($content));
-            // dd($to, $ccArray, $bccArray);
-            // Send the email with dynamic cc and bcc
             Mail::to($to)
                 ->cc($ccArray)
                 ->bcc($bccArray)
                 ->send(new TransactionalEmail($content, $ccArray, $bccArray));
 
             return redirect()->back()->with('success', 'Email sent successfully!');
-        } else {
-            return redirect()->back()->with('failed', 'Email not found!');
+        } catch (Exception $e) {
+            \Log::error('Email Sending Error: ' . $e->getMessage());
+            return redirect()->back()->with('failed', 'Failed to send email. Please try again.');
         }
+    }
+
+    /**
+     * Helper function to filter valid email addresses
+     */
+    private function filterValidEmails($emails)
+    {
+        return array_filter(array_map(
+            function ($email) {
+                $email = trim($email);
+                return filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : null;
+            },
+            is_array($emails) ? $emails : [] // Ensure it's an array
+        ));
     }
 }

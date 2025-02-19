@@ -11,7 +11,10 @@ import { CartContext } from './context/CartContext';
 export default function Checkout({ auth }) {
     const { cart, setCart } = useContext(CartContext);
     const [paymentMethod, setPaymentMethod] = useState('');
-
+    const [district, setDistrict] = useState('');
+    const [city, setCity] = useState('');
+    const [address, setAddress] = useState('');
+    // console.log(distruct);
     // Calculate amounts using useMemo for performance optimization
     const subAmount = useMemo(() =>
         cart.reduce((total, item) => total + item.salePrice * item.quantity, 0),
@@ -35,7 +38,12 @@ export default function Checkout({ auth }) {
         shippingFee,
         totalAmount,
         paymentMethod,
-        orderDetails: cart,
+        orderDetails   : cart,
+        shippingAddress: {
+            district,
+            city,
+            address,
+        }
     };
 
     const submit = () => {
@@ -72,84 +80,97 @@ export default function Checkout({ auth }) {
             {/* wrapper */}
             <div className="container grid grid-cols-12 items-start pb-16 pt-4 gap-6">
                 <div className="col-span-8 border border-gray-200 p-4 rounded">
+                    <h3 className="text-lg font-medium capitalize mb-4">Shipping Address</h3>
+                    <div className="flex gap-4">
+                        <select name="" className="input-box" onChange={(e) => setDistrict(e.target.value)}>
+                            <option value="">-- Select distruct --</option>
+                            <option value="dhaka">Dhaka</option>
+                            <option value="chittagong">Chittagong</option>
+                            <option value="rajshahi">Rajshahi</option>
+                            <option value="sylhet">Sylhet</option>
+                            <option value="barisal">Barisal</option>
+                            <option value="khulna">Khulna</option>
+                            <option value="mymensingh">Mymensingh</option>
+                            <option value="noakhali">Noakhali</option>
+                            <option value="rangpur">Rangpur</option>
+                            <option value="comilla">Comilla</option>
+                        </select>
+                        <input type="text" className="input-box" placeholder="City or Village" onChange={(e) => setCity(e.target.value)} />
+                    </div>
+                    <div className="flex gap-4 pt-2 pb-4">
+                        <textarea className="input-box" placeholder="Address" onChange={(e) => setAddress(e.target.value)}></textarea>
+                    </div>
                     <h3 className="text-lg font-medium capitalize mb-4">Payment Method</h3>
-                    <div className="grid grid-cols-1 gap-4 space-y-4">
+                    <div className="flex gap-4">
                         {/* Cash on Delivery */}
-                        <div className="border border-primary rounded-sm px-3 py-6 flex justify-right items-right gap-5">
-                            <div className="flex items-center">
-                                <input
-                                    type="radio"
-                                    id="cod"
-                                    name="paymentMethod"
-                                    onChange={(e) => setPaymentMethod('Cash on Delivery')}
-                                    value="cash"
-                                    className="mr-3"
-                                />
-                                <label htmlFor="cod" className="flex items-center gap-3 text-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 8h6M9 12h6m-3-9a9 9 0 11-9 9 9 9 0 019-9zM16 16v2a2 2 0 01-2 2H8a2 2 0 01-2-2v-2a2 2 0 012-2h6a2 2 0 012 2zm3-1l1.5-1.5M19 15l1.5 1.5" />
-                                    </svg>
-                                    Cash on Delivery
-                                </label>
-                            </div>
+                        <div className="border border-primary rounded-sm px-3 py-6 flex items-center gap-3">
+                            <input
+                                type="radio"
+                                id="cod"
+                                name="paymentMethod"
+                                onChange={(e) => setPaymentMethod('Cash on Delivery')}
+                                value="cash"
+                                className="mr-3"
+                            />
+                            <label htmlFor="cod" className="flex items-center gap-3 text-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 8h6M9 12h6m-3-9a9 9 0 11-9 9 9 9 0 019-9zM16 16v2a2 2 0 01-2 2H8a2 2 0 01-2-2v-2a2 2 0 012-2h6a2 2 0 012 2zm3-1l1.5-1.5M19 15l1.5 1.5" />
+                                </svg>
+                                Cash on Delivery
+                            </label>
                         </div>
+
                         {/* Mobile Payment: Bikash */}
-                        <div className="border border-primary rounded-sm px-3 py-6 flex justify-right items-right gap-5">
-                            <div className="flex items-center">
-                                <input
-                                    type="radio"
-                                    id="bikash"
-                                    name="paymentMethod"
-                                    value="bikash"
-                                    onChange={(e) => setPaymentMethod('PayPal')}
-                                    className="mr-3"
-                                />
-                                <label htmlFor="bikash" className="flex items-center gap-3 text-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 2h10a2 2 0 012 2v16a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2zm7 14h3m-1-1v2m-5-4a2 2 0 100-4 2 2 0 000 4zm1-4V7m0 6h3" />
-                                    </svg>
-                                    Mobile Payment (Bkash)
-                                </label>
-                            </div>
+                        <div className="border border-primary rounded-sm px-3 py-6 flex items-center gap-3">
+                            <input
+                                type="radio"
+                                id="bikash"
+                                name="paymentMethod"
+                                value="bikash"
+                                onChange={(e) => setPaymentMethod('PayPal')}
+                                className="mr-3"
+                            />
+                            <label htmlFor="bikash" className="flex items-center gap-3 text-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 2h10a2 2 0 012 2v16a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2zm7 14h3m-1-1v2m-5-4a2 2 0 100-4 2 2 0 000 4zm1-4V7m0 6h3" />
+                                </svg>
+                                Mobile Payment (Bkash)
+                            </label>
                         </div>
                         {/* Mobile Payment: Nagad */}
-                        <div className="border border-primary rounded-sm px-3 py-6 flex justify-right items-right gap-5">
-                            <div className="flex items-center">
-                                <input
-                                    type="radio"
-                                    id="nagad"
-                                    name="paymentMethod"
-                                    onChange={(e) => setPaymentMethod('PayPal')}
-                                    value="nagad"
-                                    className="mr-3"
-                                />
-                                <label htmlFor="nagad" className="flex items-center gap-3 text-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 2h10a2 2 0 012 2v16a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2zm5 9h3l-4 4-4-4h3V7h2v4z" />
-                                    </svg>
-                                    Mobile Payment (Nagad)
-                                </label>
-                            </div>
+                        <div className="border border-primary rounded-sm px-3 py-6 flex items-center gap-3">
+                            <input
+                                type="radio"
+                                id="nagad"
+                                name="paymentMethod"
+                                onChange={(e) => setPaymentMethod('PayPal')}
+                                value="nagad"
+                                className="mr-3"
+                            />
+                            <label htmlFor="nagad" className="flex items-center gap-3 text-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 2h10a2 2 0 012 2v16a2 2 0 01-2 2H7a2 2 0 01-2-2V4a2 2 0 012-2zm5 9h3l-4 4-4-4h3V7h2v4z" />
+                                </svg>
+                                Mobile Payment (Nagad)
+                            </label>
                         </div>
 
                         {/* Credit/Debit Card */}
-                        <div className="border border-primary rounded-sm px-3 py-6 flex justify-right items-right gap-5">
-                            <div className="flex items-center">
-                                <input
-                                    type="radio"
-                                    id="card"
-                                    name="paymentMethod"
-                                    value="card"
-                                    onChange={(e) => setPaymentMethod('Credit Card')}
-                                    className="mr-3"
-                                />
-                                <label htmlFor="card" className="flex items-center gap-3 text-lg">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h18a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2zm0 4h18M7 15h2m4 0h2" />
-                                    </svg>
-                                    Credit/Debit Card
-                                </label>
-                            </div>
+                        <div className="border border-primary rounded-sm px-3 py-6 flex items-center gap-3">
+                            <input
+                                type="radio"
+                                id="card"
+                                name="paymentMethod"
+                                value="card"
+                                onChange={(e) => setPaymentMethod('Credit Card')}
+                                className="mr-3"
+                            />
+                            <label htmlFor="card" className="flex items-center gap-3 text-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5h18a2 2 0 012 2v10a2 2 0 01-2 2H3a2 2 0 01-2-2V7a2 2 0 012-2zm0 4h18M7 15h2m4 0h2" />
+                                </svg>
+                                Credit/Debit Card
+                            </label>
                         </div>
                     </div>
                 </div>

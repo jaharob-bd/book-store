@@ -26,12 +26,13 @@ class TransactionalEmail extends Mailable
 
     public function build()
     {
+        // dd($this->content, $this->ccArray, $this->bccArray);
         return $this->view('emails.transactional')
             ->with(['content' => $this->content])
-            ->attach(storage_path('app/public/invoice.pdf'), [
-                'as' => 'YourAttachment.pdf',
-                'mime' => 'application/pdf',
-            ])
+            // ->attach(storage_path('app/public/invoice.pdf'), [
+            //     'as' => 'YourAttachment.pdf',
+            //     'mime' => 'application/pdf',
+            // ])
             ->cc($this->ccArray)
             ->bcc($this->bccArray);
     }
