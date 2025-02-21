@@ -8,12 +8,13 @@ import { useContext } from 'react';
 import { CartContext } from './context/CartContext';
 
 
-export default function Checkout({ auth }) {
-    const { cart, setCart } = useContext(CartContext);
+export default function Checkout({ auth, customer }) {
+    console.log(customer)
+    const { cart, setCart }                 = useContext(CartContext);
     const [paymentMethod, setPaymentMethod] = useState('');
-    const [district, setDistrict] = useState('');
-    const [city, setCity] = useState('');
-    const [address, setAddress] = useState('');
+    const [district, setDistrict]           = useState(customer.district || '');
+    const [city, setCity]                   = useState(customer.city || '');
+    const [address, setAddress]             = useState(customer.street_address || '');
     // console.log(distruct);
     // Calculate amounts using useMemo for performance optimization
     const subAmount = useMemo(() =>
@@ -29,6 +30,22 @@ export default function Checkout({ auth }) {
         subAmount + discountAmount + taxAmount + shippingFee,
         [subAmount, discountAmount, taxAmount, shippingFee]
     );
+
+    // district array 
+    const districts = [
+        { value: "", label: "-- Select district --" },
+        { value: "dhaka", label: "Dhaka" },
+        { value: "chittagong", label: "Chittagong" },
+        { value: "rajshahi", label: "Rajshahi" },
+        { value: "sylhet", label: "Sylhet" },
+        { value: "barisal", label: "Barisal" },
+        { value: "khulna", label: "Khulna" },
+        { value: "mymensingh", label: "Mymensingh" },
+        { value: "noakhali", label: "Noakhali" },
+        { value: "rangpur", label: "Rangpur" },
+        { value: "comilla", label: "Comilla" }
+    ];
+    
 
     // Data for submission
     const data = {
@@ -83,22 +100,22 @@ export default function Checkout({ auth }) {
                     <h3 className="text-lg font-medium capitalize mb-4">Shipping Address</h3>
                     <div className="flex gap-4">
                         <select name="" className="input-box" onChange={(e) => setDistrict(e.target.value)}>
-                            <option value="">-- Select distruct --</option>
-                            <option value="dhaka">Dhaka</option>
-                            <option value="chittagong">Chittagong</option>
-                            <option value="rajshahi">Rajshahi</option>
-                            <option value="sylhet">Sylhet</option>
-                            <option value="barisal">Barisal</option>
-                            <option value="khulna">Khulna</option>
-                            <option value="mymensingh">Mymensingh</option>
-                            <option value="noakhali">Noakhali</option>
-                            <option value="rangpur">Rangpur</option>
-                            <option value="comilla">Comilla</option>
+                            {
+                                districts.map((dist) => (
+                                    <option 
+                                    key      = {dist.value}
+                                    value    = {dist.value}
+                                    selected = {dist.value === district ? 'selected' : ''}
+                                    >
+                                        {dist.label}
+                                    </option>
+                                ))
+                            }
                         </select>
-                        <input type="text" className="input-box" placeholder="City or Village" onChange={(e) => setCity(e.target.value)} />
+                        <input type="text" className="input-box" placeholder="City or Village" value={city} onChange={(e) => setCity(e.target.value)} />
                     </div>
                     <div className="flex gap-4 pt-2 pb-4">
-                        <textarea className="input-box" placeholder="Address" onChange={(e) => setAddress(e.target.value)}></textarea>
+                        <textarea className="input-box" placeholder="Street Address" onChange={(e) => setAddress(e.target.value)}>{address}</textarea>
                     </div>
                     <h3 className="text-lg font-medium capitalize mb-4">Payment Method</h3>
                     <div className="flex gap-4">

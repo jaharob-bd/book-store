@@ -40,8 +40,26 @@ class OrderController extends Controller
         DB::beginTransaction();
         try {
             // get customers information
-            $customerInfo = Customer::where('user_id', '=', Auth::user()->id)->first();
-            $shippingInfo = $data['shippingAddress']['district'] . ',' . $data['shippingAddress']['city'] . ',' . $data['shippingAddress']['address'];
+            $shippingInfo = null;
+            $customerInfo = Customer::where('user_id', Auth::user()->id)->first();
+
+            if (!empty($data['shippingAddress']['city']) || !empty($data['shippingAddress']['district']) || !empty($data['shippingAddress']['address'])) {
+                $shippingAddress = [
+                    'city'           => $data['shippingAddress']['city'] ?? '',
+                    'district'       => $data['shippingAddress']['district'] ?? '',
+                    'street_address' => $data['shippingAddress']['address'] ?? ''
+                ];
+
+                // Check if customer exists before updating
+                if ($customerInfo) {
+                    $customerInfo->update($shippingAddress);
+                }
+
+                $shippingInfo = ($data['shippingAddress']['district'] ?? '') . '@' .
+                    ($data['shippingAddress']['city'] ?? '') . '@' .
+                    ($data['shippingAddress']['address'] ?? '');
+            }
+
             // Create order
             $order = Order::create([
                 'customer_id'      => $customerInfo->id,                               // Assuming the logged-in user is the customer
@@ -116,10 +134,16 @@ class OrderController extends Controller
         $order = Order::with(['customer', 'orderDetails.product', 'paymentDetails'])
             ->where('order_no', $order_no)
             ->first();
+        $shippingAddress = explode('@', $order->shipping_address);
+        // dd($shippingAddress[0]);
         if ($order) {
             $order = [
                 'id'              => $order->order_no,
-                'shippingAddress' => $order->shipping_address,
+                'shippingAddress' => [
+                    'city'      => $shippingAddress[1],
+                    'district' => $shippingAddress[0],
+                    'address'   => $shippingAddress[2],
+                ],
                 'date'            => date('Y-m-d', strtotime($order->order_date)),
                 'customer'        => [
                     'name'    => $order->customer->name ?? '',

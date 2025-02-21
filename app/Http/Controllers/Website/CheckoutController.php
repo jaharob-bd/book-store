@@ -15,6 +15,7 @@ use App\Models\Catalog\Product;
 use App\Http\Requests\Catalog\Product\StoreProductRequest;
 use App\Http\Requests\Catalog\Product\VariantPriceRequest;
 use App\Models\Catalog\Category;
+use App\Models\Consumer\Customer;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -22,7 +23,8 @@ class CheckoutController extends Controller
 {
     function index()
     {
-        return Inertia::render('Website/Checkout');
+        $data['customer'] = Customer::where('user_id', Auth::user()->id)->first();
+        return Inertia::render('Website/Checkout', $data);
     }
     function gift()
     {

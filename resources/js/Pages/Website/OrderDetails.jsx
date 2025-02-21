@@ -5,15 +5,15 @@ import ReactToPrint from 'react-to-print';
 
 const OrderDetails = ({ auth, order }) => {
     console.log(order);
-    const componentRef        = useRef();
-    const { props }           = usePage();
-    const logo                = props.url?.base_url + '/company-logo.svg'
-    const calculateSubtotal   = () => order.items.reduce((total, item) => total + item.quantity * item.price, 0);
-    const calculateVAT        = (subtotal) => (subtotal * order.vatRate) / 100;
+    const componentRef = useRef();
+    const { props } = usePage();
+    const logo = props.url?.base_url + '/company-logo.svg'
+    const calculateSubtotal = () => order.items.reduce((total, item) => total + item.quantity * item.price, 0);
+    const calculateVAT = (subtotal) => (subtotal * order.vatRate) / 100;
     const calculateGrandTotal = (subtotal, vat, discount, fee) => subtotal - discount + vat + fee;
-    const subtotal            = calculateSubtotal();
-    const vat                 = calculateVAT(subtotal);
-    const grandTotal          = calculateGrandTotal(subtotal, vat, order.discount, order.shippingFee);
+    const subtotal = calculateSubtotal();
+    const vat = calculateVAT(subtotal);
+    const grandTotal = calculateGrandTotal(subtotal, vat, order.discount, order.shippingFee);
 
     return (
         <WebLayout auth={auth}>
@@ -35,7 +35,16 @@ const OrderDetails = ({ auth, order }) => {
                         <div className="text-right">
                             <p className="font-bold text-gray-700">Invoice No: {order.id}</p>
                             <p className="text-gray-700">Invoice date: {order.date}</p>
-                            <p className="text-gray-700">{ order.shippingAddress ? 'Shipping address:' + order.shippingAddress : ''}</p>
+                            <p className="text-gray-700">
+                                {order?.shippingAddress ? (
+                                    <>
+                                        <strong>Shipping to:</strong> {order.shippingAddress.city ?? ''}
+                                        {order.shippingAddress.district ? ',' : ''}
+                                        {order.shippingAddress.district ?? ''}
+                                    </>
+                                ) : ''}
+                            </p>
+                            <p className="text-gray-700">{order?.shippingAddress && (order?.shippingAddress?.address ?? '')}</p>
                         </div>
                     </div>
                     <div className="w-full">
