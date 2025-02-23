@@ -18,6 +18,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use App\Models\Setting\Organization;
 
 class OrderController extends Controller
 {
@@ -131,6 +132,7 @@ class OrderController extends Controller
     }
     public function details($order_no)
     {
+        $organization = Organization::first();
         $order = Order::with(['customer', 'orderDetails.product', 'paymentDetails'])
             ->where('order_no', $order_no)
             ->first();
@@ -175,6 +177,6 @@ class OrderController extends Controller
         }
 
         // return $order;
-        return Inertia::render('Website/OrderDetails', ['order' => $order]);
+        return Inertia::render('Website/OrderDetails', ['order' => $order, 'organization' => $organization]);
     }
 }

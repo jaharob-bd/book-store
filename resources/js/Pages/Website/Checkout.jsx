@@ -8,8 +8,8 @@ import { useContext } from 'react';
 import { CartContext } from './context/CartContext';
 
 
-export default function Checkout({ auth, customer }) {
-    console.log(customer)
+export default function Checkout(props) {
+    const { auth, customer }  = props;
     const { cart, setCart }                 = useContext(CartContext);
     const [paymentMethod, setPaymentMethod] = useState('');
     const [district, setDistrict]           = useState(customer.district || '');
@@ -45,7 +45,7 @@ export default function Checkout({ auth, customer }) {
         { value: "rangpur", label: "Rangpur" },
         { value: "comilla", label: "Comilla" }
     ];
-    
+
 
     // Data for submission
     const data = {
@@ -55,7 +55,7 @@ export default function Checkout({ auth, customer }) {
         shippingFee,
         totalAmount,
         paymentMethod,
-        orderDetails   : cart,
+        orderDetails: cart,
         shippingAddress: {
             district,
             city,
@@ -102,10 +102,10 @@ export default function Checkout({ auth, customer }) {
                         <select name="" className="input-box" onChange={(e) => setDistrict(e.target.value)}>
                             {
                                 districts.map((dist) => (
-                                    <option 
-                                    key      = {dist.value}
-                                    value    = {dist.value}
-                                    selected = {dist.value === district ? 'selected' : ''}
+                                    <option
+                                        key={dist.value}
+                                        value={dist.value}
+                                        selected={dist.value === district ? 'selected' : ''}
                                     >
                                         {dist.label}
                                     </option>

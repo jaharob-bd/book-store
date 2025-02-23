@@ -6,565 +6,169 @@ import SwalAlert from '@/Components/Alert/SwalAlert';
 
 const OrderCreate = (props) => {
     const auth = props.auth;
+    const [cart, setCart] = useState([]);
+    const [subTotal, setSubTotal] = useState(0);
+    const [discount, setDiscount] = useState(0);
+    const [VAT, setVAT] = useState(0);
+    const [grandTotal, setGrandTotal] = useState(0);
+    const [changeAmount, setChangeAmount] = useState(0);
+    const [dueAmount, setDueAmount] = useState(0);
+    const [store, setStore] = useState(props.stores[0]);
+    const [payments, setPayments] = useState({ cash: 0, card: 0, mobile: 0 });
+    const [customer, setCustomer] = useState({ name: "", phone: "" });
     const initial = [
         {
-            customer_id: '',
-            discount_type: 2, // 1 = percentage 2 = amount
-            vat_type: 1, // 1 = percentage 2 = amount
-            discount: '',
-            vat: '',
-            sub_total: '',
-            grand_total: '',
-            cash_in_hand: '',
-            card_in_bank: '',
-            online_banking: '',
-            change_amount: '',
-            due_amount: '',
-            items: [
-                // { variant_id: '', variant_name: '', product_id: '', product_name: '', variant_price: '', quantity: '', total_price: '' },
-            ]
+            discount      : discount,
+            VAT           : VAT,
+            subTotal     : '',
+            grand_total   : '',
+            change_amount : '',
+            due_amount    : '',
+            items         : cart,
+            payments      : payments,
+            customer      : customer,
         }
     ];
     const [data, setData] = useState(initial);
-    const [products, setProducts] = useState(props.products);
+    const [products1, setProducts1] = useState(props.products);
     const [customers, setCustomers] = useState(props.customers);
-    const [popoverVisible, setPopoverVisible] = useState(false);
-    const [popoverData, setPopoverData] = useState(null);
-    const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
-    const options = products.map((product) => ({
-        value: product.id,
-        label: product.name,
-        variant: product.variant_prices
-    }));
-    // customer options
-    const customerOptions = customers.map((customer) => ({
-        value: customer.id,
-        label: customer.name
-    }));
-    // Log data whenever it updates
-    useEffect(() => {
-        // console.log(data);
-    }, [data]);
-    // customer options
-    const handleCartItemCustomer = (selectedOption) => {
-        console.log(selectedOption);
-        setData((prevData) => {
-            const updatedData = [...prevData];
-            updatedData[0].customer_id = selectedOption ? selectedOption.value : '';
-            return updatedData;
-        });
-        console.log(data)
-        // setSearch(selectedOption ? selectedOption.value : '');
-    }
 
-    const handleMouseEnter = (event, data) => {
-        const rect = event.target.getBoundingClientRect();
-        setPopoverPosition({ top: rect.top, left: 300 });
-        setPopoverData(data);
-        setPopoverVisible(true);
-    };
 
-    const handleMouseLeave = () => {
-        setPopoverVisible(false);
-    };
+    const products = [
+        { id:1, name: "Product 1", price: 50 },
+        { id:2, name: "Product 2", price: 30 },
+        { id:3, name: "Product 3", price: 30 },
+        { id:4, name: "Product 4", price: 30 },
+        { id:6, name: "Product 5", price: 30 },
+        { id:7, name: "Product 6", price: 30 },
+        { id:8, name: "Product 7", price: 30 },
+        { id:9, name: "Product 8", price: 30 },
+        { id:10, name: "Product 9", price: 30 },
+        { id:11, name: "Product 10", price: 30 },
+        { id:12, name: "Product 11", price: 30 },
+        { id:13, name: "Product 12", price: 30 },
+        { id:14, name: "Product 13", price: 30 },
+        { id:15, name: "Product 14", price: 30 },
+        { id:5, name: "Product 15", price: 40 }
+    ];
 
-    const CustomOption = (props) => (
-        <div
-            onMouseEnter={(e) => handleMouseEnter(e, props.data)}
-            onMouseLeave={handleMouseLeave}
-            onChange={(e) => handleCartItem(e, props.data)}
-            {...props.innerProps}
-            className="p-2 cursor-pointer hover:bg-gray-100"
-        >
-            {props.data.label + ' [' + props.data.variant.length + '] '}
-            [
-            {props.data.variant.length === 1
-                ? props.data.variant[0].variant_name
-                : props.data.variant.map(variant => variant.variant_name).join(', ')
+    const addToCart = (event) => {
+        const [name, price] = event.target.value.split(",");
+        setCart((prevCart) => {
+            const existingItem = prevCart.find(item => item.name === name);
+            if (existingItem) {
+                return prevCart.map(item =>
+                    item.name === name ? { ...item, qty: item.qty + 1 } : item
+                );
             }
-            ]
-        </div>
-    );
-    const handleCartItem = (item) => {
-        if (item.variant.length !== 1) {
-            SwalAlert('warning', 'Please select product variant.');
-            return;
-        }
-
-        const variantData = item.variant[0];
-        const updatedItem = {
-            variant_id: variantData.id,
-            variant_name: variantData.variant_name,
-            product_id: item.value,
-            product_name: item.label,
-            variant_price: variantData.sale_price,
-            quantity: 1,
-            total_price: variantData.sale_price
-        };
-
-        const discount = data[0].discount || 0;
-        const vat = data[0].vat || 0;
-        const itemIndex = data[0].items.findIndex(i => i.variant_id === variantData.id);
-
-        if (itemIndex !== -1) {
-            setPopoverVisible(false);
-            SwalAlert('warning', 'Duplicate variant_id found. No update performed.');
-            return;
-        }
-
-        setData((prevData) => {
-            const updatedData = [...prevData];
-            updatedData[0].items = updatedData[0].items.filter(i => i.variant_id);
-            updatedData[0].items.push(updatedItem);
-
-            const subTotal = calculateSubTotal(updatedData[0].items);
-            updatedData[0].sub_total = subTotal;
-            const grandTotal = calculateGrandTotal(subTotal, discount, vat);
-            const cashInHand = updatedData[0].cash_in_hand || 0;
-            const onlineBanking = updatedData[0].online_banking || 0;
-            const cardInBank = updatedData[0].card_in_bank || 0;
-            updatedData[0].grand_total = grandTotal;
-            updatedData[0].change_amount = calculateChangeAmount(grandTotal, cashInHand, onlineBanking, cardInBank);
-            updatedData[0].due_amount = calculateDueAmount(grandTotal, cashInHand, onlineBanking, cardInBank);
-
-            return updatedData;
+            return [...prevCart, { name, price: parseFloat(price), qty: 1 }];
         });
-
-        console.log(data);
-        SwalAlert('success', `${item.label} ${variantData.variant_name} is Added`);
-    };
-    // ----- end variant propups -----
-    // general state change batch_no, customer_id, store_id -----
-    const calculateSubTotal = (items) => {
-        return items.reduce((a, b) => a + Number(b.total_price || 0), 0);
     };
 
-    const calculateGrandTotal = (subTotal, discount, vat) => {
-        return parseInt(subTotal) - parseInt(discount) + parseInt(vat);
-    };
-
-    const calculateDiscount = (sub_total, discount, discount_type) => {
-        if (discount_type === 2) {
-            return discount || 0;
-        }
-        return discount ? (sub_total * discount) / 100 : 0;
-    };
-
-    const calculateVAT = (sub_total, discount, vat, vat_type) => {
-        if (vat_type === 2) {
-            return vat || 0;
-        }
-        return vat ? ((sub_total - discount) * vat) / 100 : 0;
-    };
-    // calculateDueAmount for
-    const calculateDueAmount = (grandTotal, cashInHand, onlineBanking, cardInBank) => {
-        let dueAmount = (grandTotal - cashInHand - onlineBanking - cardInBank);
-        if (dueAmount < 0) return 0;
-        return dueAmount;
-    };
-    // calculateChangeAmount
-    const calculateChangeAmount = (grandTotal, cashInHand, onlineBanking, cardInBank) => {
-        const changeAmount = parseInt(cashInHand) + parseInt(onlineBanking) + parseInt(cardInBank) - parseInt(grandTotal);
-        if (changeAmount < 0) return 0;
-        return changeAmount;
-    }
-
-    const resetDiscountOrVat = (item, type, value) => {
-        if (type === 'discount_type') item.discount = value;
-        if (type === 'vat_type') item.vat = value;
-    };
-
-    const handleQuantity = (e, variant_id) => {
-        const { value } = e.target;
-        const variant = variant_id;
-        // update quantity where variant_id
-        setData((prevData) => {
-            const updatedData = [...prevData];
-            updatedData[0].items = updatedData[0].items.map((item) =>
-                item.variant_id === variant ? { ...item, quantity: value, total_price: (parseInt(item.variant_price) * value) } : item
+    const updateQty = (index, amount) => {
+        setCart((prevCart) => {
+            return prevCart.map((item, i) =>
+                i === index ? { ...item, qty: Math.max(1, item.qty + amount) } : item
             );
-
-            const subTotal = calculateSubTotal(updatedData[0].items);
-            updatedData[0].sub_total = subTotal;
-            const discount = calculateDiscount(subTotal, updatedData[0].discount, updatedData[0].discount_type);
-            const vat = calculateVAT(subTotal, discount, updatedData[0].vat, updatedData[0].vat_type);
-            const grandTotal = calculateGrandTotal(subTotal, discount, vat);
-            const cashInHand = updatedData[0].cash_in_hand || 0;
-            const onlineBanking = updatedData[0].online_banking || 0;
-            const cardInBank = updatedData[0].card_in_bank || 0;
-            updatedData[0].grand_total = grandTotal;
-            updatedData[0].change_amount = calculateChangeAmount(grandTotal, cashInHand, onlineBanking, cardInBank);
-            updatedData[0].due_amount = calculateDueAmount(grandTotal, cashInHand, onlineBanking, cardInBank);
-
-            return updatedData;
         });
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-
-        setData((prevData) => {
-            const updatedData = [...prevData];
-            const item = { ...updatedData[0], [name]: value };
-
-            const subTotal = item.sub_total || 0;
-            const discount = calculateDiscount(subTotal, item.discount, item.discount_type);
-            const vat = calculateVAT(subTotal, discount, item.vat, item.vat_type);
-            const grandTotal = calculateGrandTotal(subTotal, discount, vat);
-            const cashInHand = item.cash_in_hand || 0;
-            const onlineBanking = item.online_banking || 0;
-            const cardInBank = item.card_in_bank || 0;
-            item.grand_total = grandTotal;
-            item.change_amount = calculateChangeAmount(grandTotal, cashInHand, onlineBanking, cardInBank);
-            item.due_amount = calculateDueAmount(grandTotal, cashInHand, onlineBanking, cardInBank);
-            updatedData[0] = item;
-
-            return updatedData;
-        });
-        console.log(data)
+    const calculateTotal = () => {
+        const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+        const vat = subtotal * 0.05;
+        const total = subtotal + vat - discount;
+        setSubTotal(subtotal);
+        setVAT(vat);
+        setGrandTotal(total);
+        return { subtotal, vat, total };
     };
 
-    const handleDiscountVatTypeChange = (e) => {
-        const { name, checked } = e.target;
-        const newType = checked ? 1 : 2;
-
-        setData((prevData) => {
-            const updatedData = [...prevData];
-            const item = { ...updatedData[0], [name]: newType };
-
-            resetDiscountOrVat(item, name, '');
-
-            const subTotal = item.sub_total || 0;
-            const discount = calculateDiscount(subTotal, item.discount, item.discount_type);
-            const vat = calculateVAT(subTotal, discount, item.vat, item.vat_type);
-            const grandTotal = calculateGrandTotal(subTotal, discount, vat);
-            const cashInHand = item.cash_in_hand || 0;
-            const onlineBanking = item.online_banking || 0;
-            const cardInBank = item.card_in_bank || 0;
-            item.grand_total = grandTotal;
-            item.change_amount = calculateChangeAmount(grandTotal, cashInHand, onlineBanking, cardInBank);
-            item.due_amount = calculateDueAmount(grandTotal, cashInHand, onlineBanking, cardInBank);
-            updatedData[0] = item;
-
-            return updatedData;
-        });
+    const updatePayments = (e) => {
+        setPayments({ ...payments, [e.target.name]: parseFloat(e.target.value) || 0 });
     };
 
-    const submit = () => {
-        if (data[0].grand_total === '' || data[0].grand_total < 0) {
-            SwalAlert('warning', 'Please add to card product', 'center');
-            return;
-        }
-        if (data[0].customer_id === '') {
-            SwalAlert('warning', 'Please add to customer', 'center');
-            return;
-        }
+    const { subtotal, vat, total } = calculateTotal();
+    const totalPaid = payments.cash + payments.card + payments.mobile;
+    const due = Math.max(0, total - totalPaid);
+    const change = Math.max(0, totalPaid - total);
 
-        try {
-            router.post('/order-store', data, {
-                preserveScroll: true,
-                onSuccess: () => {
-                    SwalAlert('success', 'Add Successfully!!', 'center');
-                    setData(initial);
-                },
-                onError: (errors) => {
-                    // Handle error response
-                    // if (props.errors && Object.keys(props.errors).length > 0) {
-                    //     const errorMessages = '<ul>' + Object.values(props.errors).map(err => `<li>${err}</li>`).join('') + '</ul>';
-                    //     Swal.fire({
-                    //         title: 'Error!',
-                    //         html: errorMessages,
-                    //         icon: 'error',
-                    //         confirmButtonText: 'Cool'
-                    //     });
-                    // }
-                    console.error('Failed price insert:', props.errors);
-                },
-            });
-        } catch (error) {
-            console.error('Failed :', error);
-        }
-    }
     return (
         <AuthenticatedLayout user={auth.user} header={'Purchases Invoice'}>
             <Head title="Sales Order" />
             <div className="flex flex-col md:flex-row w-full h-full">
-                {/* Section 1 */}
-                <div className="w-full md:w-7/12 flex-grow flex">
-                    <div className="flex flex-col bg-blue-gray-50 h-full w-full py-4">
-                        <div className="flex px-2 flex-row relative">
-                            <Select
-                                options={options}
-                                // onChange={(option) => console.log(option)}
-                                onChange={handleCartItem}
-                                classNamePrefix="react-select"
-                                className="bg-white shadow text-lg w-full h-10 transition-shadow focus:shadow-2xl focus:outline-none"
-                                placeholder="Select or Type Name ..."
-                                components={{ Option: CustomOption }}
-                            />
-                            <div className="flex-1 w-full opacity-25 select-none flex flex-col flex-wrap content-center justify-center">
-                                <div className="pl-2 text-left text-lg relative">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                    <div className="text-center absolute bg-cyan-500 text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-0">
-                                        {data[0].items.length || 0}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {popoverVisible && popoverData.variant.length > 1 && (
-                            <div
-                                id="popover-content"
-                                role="tooltip"
-                                className="absolute z-50 text-sm text-gray-500 bg-white border border-indigo-600 rounded-lg shadow-sm w-70 dark:text-gray-400 dark:bg-gray-800 dark:border-indigo-600"
-                                style={{ top: popoverPosition.top, left: popoverPosition.left }}
-                            >
-                                <div className="p-3">
-                                    <div className="flex">
-                                        <div>
-                                            <p className="mb-1 text-base font-semibold leading-none text-gray-900 dark:text-white">
-                                                <a href="#" className="hover:underline">
-                                                    {popoverData.value + ' . ' + popoverData.label}
-                                                </a>
-                                                <button className="close"
-                                                    onClick={handleMouseLeave}
-                                                    aria-label="Close">X</button>
+                {/* Main Content */}
+                <div className="w-4/5 p-6">
+                    {/* <h2 className="text-xl font-semibold mb-4">Select Product</h2> */}
+                    <select className="border p-2 w-full rounded" onChange={addToCart}>
+                        <option value="" disabled selected>Select an item</option>
+                        {products.map((product, index) => (
+                            <option key={index} value={`${product.name},${product.price}`}>{product.name} - ${product.price}</option>
+                        ))}
+                    </select>
 
-                                            </p>
-                                            <table className="w-full">
-                                                <thead>
-                                                    <tr className="bg-indigo-500 h-6 border border-indigo-500 text-white">
-                                                        <th></th>
-                                                        <th className="border-l border-r border-b border-indigo-500">Sl. No</th>
-                                                        <th className="border-l border-r border-b border-indigo-500">Variant</th>
-                                                        <th className="border-l border-r border-b border-indigo-500">Price</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {
-                                                        popoverData.variant.map((variant, i) => {
-                                                            const productData = {
-                                                                value: popoverData.value,
-                                                                label: popoverData.label,
-                                                                variant: [variant]
-                                                            };
-
-                                                            return (
-                                                                <tr key={variant.id} className="font-bold h-4">
-                                                                    <td
-                                                                        className="border-l border-r border-b border-indigo-500"
-                                                                    >
-                                                                        <input
-                                                                            type="checkbox"
-                                                                            onChange={(e) => handleCartItem(productData)}
-                                                                        />
-                                                                    </td>
-                                                                    <td className="pl-1 border-l border-r border-b border-indigo-500">{i + 1}</td>
-                                                                    <td className="pl-1 border-l border-r border-b border-indigo-500">{variant.variant_name}</td>
-                                                                    <td className="pl-1 border-l border-r border-b border-indigo-500">{variant.sale_price}</td>
-                                                                </tr>
-                                                            );
-                                                        })
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div data-popper-arrow />
-                            </div>
-                        )}
-
-                        <div className="h-full overflow-hidden mt-4">
-                            <div className="h-full overflow-y-auto px-2">
-                                {data[0].items.length > 0 ? (
-                                    <table className="w-full">
-                                        <thead>
-                                            <tr className="bg-indigo-500 h-6 border border-indigo-500 text-white">
-                                                <th className="border-l border-r border-b border-indigo-500">Sl. No</th>
-                                                <th className="border-l border-r border-b border-indigo-500">Name [Variant Name]</th>
-                                                <th className="border-l border-r border-b border-indigo-500">Unit Price</th>
-                                                <th className="border-l border-r border-b border-indigo-500">Quantity</th>
-                                                <th className="border-l border-r border-b border-indigo-500">Total Price</th>
-                                                <th className="p-2"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {data[0].items.map((item, i) => (
-                                                <tr key={item.variant_id} className="font-bold h-4">
-                                                    <td className="pl-1 border-l border-r border-b border-indigo-500">{i + 1}</td>
-                                                    <td className="pl-1 border-l border-r border-b border-indigo-500">{item.product_name + ' [' + item.variant_name + ']'}</td>
-                                                    <td className="pl-1 border-l border-r border-b border-indigo-500 text-right">{item.variant_price}</td>
-                                                    <td className="w-11 border-l border-r border-b border-indigo-500 text-center">
-                                                        <input
-                                                            type="text"
-                                                            name="quantity"
-                                                            className="w-full h-6 border-none text-center"
-                                                            value={item.quantity}
-                                                            onChange={(e) => handleQuantity(e, item.variant_id)}
-                                                        />
-                                                    </td>
-                                                    <td className="pl-1 border-l border-r border-b border-indigo-500">{item.total_price}</td>
-                                                    <td className="pl-1 border-l border-r border-b border-indigo-500">x</td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                ) : (
-                                    <div className="select-none bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
-                                        <div className="w-full text-center">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                            </svg>
-                                            <p className="text-xl">
-                                                CART IS EMPTY !!
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                    {/* Cart Table */}
+                    <div className="mt-0 bg-white shadow-lg rounded-lg p-6">
+                        <h2 className="text-xl font-semibold mb-4">Shopping Cart</h2>
+                        <table className="w-full border-collapse bg-gray-100 rounded-md">
+                            <thead className="bg-gray-200">
+                                <tr className="bg-indigo-500 h-6 border border-indigo-500 text-white">
+                                    <th className="p-2 text-left w-1">#</th>
+                                    <th className="p-2 text-left">Product</th>
+                                    <th className="p-2 text-left">Price</th>
+                                    <th className="p-2 text-center">Qty</th>
+                                    <th className="p-2 text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    cart.map((item, index) => (
+                                        <tr key={index} className="border-t">
+                                            <td className="p-2 border-l border-r border-b border-indigo-500 w-1">{index + 1}</td>
+                                            <td className="p-2 border-l border-r border-b border-indigo-500">{item.name}</td>
+                                            <td className="p-2 border-l border-r border-b border-indigo-500">${item.price.toFixed(2)}</td>
+                                            <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
+                                                <button onClick={() => updateQty(index, -1)} className="bg-gray-300 px-2 rounded">-</button>
+                                                <span className="px-2">{item.qty}</span>
+                                                <button onClick={() => updateQty(index, 1)} className="bg-gray-300 px-2 rounded">+</button>
+                                            </td>
+                                            <td className="p-3 text-right border-l border-r border-b border-indigo-500">${(item.price * item.qty).toFixed(2)}</td>
+                                        </tr>
+                                    ))
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                {/* Section 2 */}
-                <div className="w-full md:w-5/12 flex-grow flex px-3">
-                    <div className="bg-white rounded-3xl flex flex-col w-full">
-                        {/* {data[0].items.length > 0 ? (
-                            <div>
-                                <div className="flex-1 w-full opacity-25 select-none flex flex-col flex-wrap content-center justify-center">
-                                    <div className="pl-8 text-left text-lg py-4 relative">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-10 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                        </svg>
-                                        <div className="text-center absolute bg-cyan-500 text-white w-5 h-5 text-xs p-0 leading-5 rounded-full -right-2 top-3">
-                                            {data[0].items.length || 0}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ) : (
-                            <div>
-                                <div className="flex-1 w-full p-4 opacity-25 select-none flex flex-col flex-wrap content-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                    <p>
-                                        CART EMPTY!
-                                    </p>
-                                </div>
-                            </div>
-                        )} */}
-                        {/* general information */}
-                        <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-                            <div className="sm:col-span-2 pb-2">
-                                <Select
-                                    name="customer_id"
-                                    type="text"
-                                    options={customerOptions}
-                                    onChange={handleCartItemCustomer}
-                                    classNamePrefix="react-select"
-                                    placeholder="Select customer"
-                                    className="block w-full mt-1 text-gray-900 bg-white border border-gray-300 rounded-md dark:text-gray-300 dark:border-gray-600 focus:border-blue-100 dark:focus:border-blue-100 focus:outline-none focus:ring"
-                                />
 
-                            </div>
-                        </div>
-                        <table className="w-full totalCalculation">
-                            <thead>
-                                <tr className="bg-slate-600 h-10 border border-indigo-500 text-white">
-                                    <th className="text-left w-2/5">Sub Total</th>
-                                    <th className="text-left">:</th>
-                                    <th className="text-right pr-7"> {data[0].sub_total}</th>
-                                </tr>
-                                <tr className="bg-slate-600 h-10 border border-indigo-500 text-white">
-                                    <th className="text-left w-2/5">
-                                        (-) Discount
-                                        <label className="inline-flex items-center cursor-pointer pl-3 pt-2">
-                                            <input
-                                                type="checkbox"
-                                                name="discount_type"
-                                                className="sr-only peer p-8"
-                                                checked={data[0].discount_type === 1}
-                                                onChange={handleDiscountVatTypeChange}
-                                            />
-                                            <div className="relative w-11 h-4 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 pr-4" />
-                                            <span className="ms-3 text-sm font-medium text-white dark:text-gray-300">{data[0].discount_type == 1 ? '(%)' : '($)'}</span>
-                                        </label>
+                {/* Right Section */}
+                <div className="w-1/5 bg-white p-6 shadow-2xl rounded-lg">
+                    <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Customer Details</h2>
+                    <input type="text" placeholder="Customer Name" className="border p-3 w-full rounded-lg mb-3"
+                        onChange={(e) => setCustomer({ ...customer, name: e.target.value })} />
+                    <input type="text" placeholder="Phone Number" className="border p-3 w-full rounded-lg mb-3"
+                        onChange={(e) => setCustomer({ ...customer, phone: e.target.value })} />
 
-                                    </th>
-                                    <th className="text-left">:</th>
-                                    <th className="text-right"><input type="number" name="discount" className="bg-slate-600 text-right" value={data[0].discount} onChange={handleChange} /></th>
-                                </tr>
-                                <tr className="bg-slate-600 h-10 border border-indigo-500 text-white">
-                                    <th className="text-left w-2/5">
-                                        (+) VAT
-                                        <label className="inline-flex items-center cursor-pointer pl-3 pt-2">
-                                            <input type="checkbox"
-                                                name="vat_type"
-                                                className="sr-only peer p-8"
-                                                checked={data[0].vat_type === 1}
-                                                onChange={handleDiscountVatTypeChange}
-                                            />
-                                            <div className="relative w-11 h-4 bg-gray-200 rounded-full peer peer-focus:ring-2 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 pr-4" />
-                                            <span className="ms-3 text-sm font-medium text-white dark:text-gray-300">{data[0].vat_type == 1 ? '(%)' : '($)'}</span>
-                                        </label>
-                                    </th>
-                                    <th className="text-left">:</th>
-                                    <th className="text-right"><input type="number" name="vat" className="bg-slate-600 text-right" value={data[0].vat} onChange={handleChange} /></th>
-                                </tr>
-                                <tr className="bg-slate-600 h-10 border border-indigo-500 text-white">
-                                    <th className="text-left w-2/5">Grand Total</th>
-                                    <th className="text-left">:</th>
-                                    <th className="text-right pr-7">{data[0].grand_total}</th>
-                                </tr>
-                            </thead>
-                        </table>
-                        <table className="w-full totalCalculation pl-2">
-                            <thead>
-                                <tr>
-                                    <th className="border border-slate-500 text-left w-2/5">Cash Received</th>
-                                    <th className="border border-slate-500 text-right">
-                                        <input type="number" name="cash_in_hand" value={data[0].cash_in_hand} className="w-full text-right border-none pr-4" onChange={handleChange} />
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th className="border border-slate-500 text-left w-2/5">Online Banking</th>
-                                    <th className="border border-slate-500 text-right">
-                                        <input type="number" name="online_banking" value={data[0].online_banking} className="w-full text-right border-none pr-4" onChange={handleChange} />
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th className="border border-slate-500 text-left w-2/5">VISA/Master Card</th>
-                                    <th className="border border-slate-500 text-right">
-                                        <input type="number" name="card_in_bank" value={data[0].card_in_bank} className="w-full text-right border-none pr-4" onChange={handleChange} />
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th className="border border-slate-500 text-left w-2/5">Change Amount </th>
-                                    <th className="border border-slate-500 text-right bg-indigo-500 text-white">{data[0].change_amount}</th>
-                                </tr>
-                                <tr>
-                                    <th className="border border-slate-500 text-left w-2/5">Due Amount </th>
-                                    <th className="border border-slate-500 text-right bg-red-400 text-white">{data[0].due_amount}</th>
-                                </tr>
-                            </thead>
-                        </table>
-
-                        <div className="select-none h-auto w-full text-center pt-1 pb-2 px-2">
-                            <div className="flex justify-center mb-3 text-lg font-semibold bg-cyan-50 text-cyan-700 py-2 px-3">
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-                                </svg>
-                            </div>
-                            <button onClick={() => submit()} className={"text-white text-lg w-full py-2 bg-indigo-500"}>
-                                SUBMIT
-                            </button>
-                            {/* <button onClick={() => submit()} disabled={change < 0 || cartItems.length <= 0} className={"text-white rounded-2xl text-lg w-full py-3 focus:outline-none " + (change >= 0 && cartItems.length > 0 ? "bg-cyan-500 hover:bg-cyan-600" : "bg-blue-gray-200")}>
-                                SUBMIT
-                            </button> */}
-                        </div>
+                    <div className="mt-6 bg-gray-100 p-5 rounded-lg">
+                        <h3 className="text-lg font-semibold border-b pb-2">Order Summary</h3>
+                        <div className="flex justify-between p-2"><span>Subtotal:</span><span>${subtotal.toFixed(2)}</span></div>
+                        <div className="flex justify-between p-2"><span>Discount:</span><input type="number" className="w-16 p-1 border rounded text-right" value={discount} onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)} /></div>
+                        <div className="flex justify-between p-2"><span>VAT (5%):</span><span>${vat.toFixed(2)}</span></div>
+                        <div className="flex justify-between p-2 font-semibold text-lg"><span>Total:</span><span>${total.toFixed(2)}</span></div>
                     </div>
+
+                    <div className="mt-6 bg-gray-100 p-5 rounded-lg">
+                        <h3 className="text-lg font-semibold border-b pb-2">Payment Method</h3>
+                        {Object.keys(payments).map((method) => (
+                            <div className="flex justify-between p-2" key={method}>
+                                <span>{method.charAt(0).toUpperCase() + method.slice(1)}:</span>
+                                <input type="number" name={method} value={payments[method]} onChange={updatePayments} className="w-16 p-1 border rounded text-right" />
+                            </div>
+                        ))}
+                        <div className="flex justify-between p-2"><span>Change:</span><span>${change.toFixed(2)}</span></div>
+                        <div className="flex justify-between p-2"><span>Due:</span><span>${due.toFixed(2)}</span></div>
+                    </div>
+
+                    <button className="mt-6 bg-purple-600 text-white p-3 w-full rounded-lg">Order</button>
                 </div>
             </div>
         </AuthenticatedLayout>

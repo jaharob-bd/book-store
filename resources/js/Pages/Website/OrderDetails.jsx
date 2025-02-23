@@ -3,17 +3,17 @@ import { usePage } from '@inertiajs/react';
 import WebLayout from "./Layout/WebLayout";
 import ReactToPrint from 'react-to-print';
 
-const OrderDetails = ({ auth, order }) => {
-    console.log(order);
-    const componentRef = useRef();
-    const { props } = usePage();
-    const logo = props.url?.base_url + '/company-logo.svg'
-    const calculateSubtotal = () => order.items.reduce((total, item) => total + item.quantity * item.price, 0);
-    const calculateVAT = (subtotal) => (subtotal * order.vatRate) / 100;
+const OrderDetails = ({ auth, order, organization }) => {
+    // console.log(order);
+    const componentRef        = useRef();
+    const { props }           = usePage();
+    const logo                = props.url?.base_url + '/company-logo.svg'
+    const calculateSubtotal   = () => order.items.reduce((total, item) => total + item.quantity * item.price, 0);
+    const calculateVAT        = (subtotal) => (subtotal * order.vatRate) / 100;
     const calculateGrandTotal = (subtotal, vat, discount, fee) => subtotal - discount + vat + fee;
-    const subtotal = calculateSubtotal();
-    const vat = calculateVAT(subtotal);
-    const grandTotal = calculateGrandTotal(subtotal, vat, order.discount, order.shippingFee);
+    const subtotal            = calculateSubtotal();
+    const vat                 = calculateVAT(subtotal);
+    const grandTotal          = calculateGrandTotal(subtotal, vat, order.discount, order.shippingFee);
 
     return (
         <WebLayout auth={auth}>
@@ -21,9 +21,9 @@ const OrderDetails = ({ auth, order }) => {
                 <div ref={componentRef} className="max-w-4xl mx-auto p-8 bg-white rounded-lg">
                     <div className="flex flex-col items-center border-b border-gray-400 pb-4 mb-4">
                         <div className="flex items-center mb-1">
-                            <h1 className="text-lg font-bold ml-2 text-center">Moriyam Paper Ltd</h1>
+                            <h1 className="text-lg font-bold ml-2 text-center">{organization.org_name}</h1>
                         </div>
-                        <p className="text-gray-600 text-sm text-center">Road: 5, House:16, Sector:10, Dhaka.</p>
+                        <p className="text-gray-600 text-sm text-center">{organization.addr1}</p>
                     </div>
                     <div className="flex justify-between mb-4">
                         <div>

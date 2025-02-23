@@ -53,6 +53,9 @@ class RegisteredUserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'phone' => $request->phone,
+                'street_address' => '',
+                'city' => '',
+                'district' => '',
                 'status' => 1,
                 'created_by' => $user->id,
             ]);
