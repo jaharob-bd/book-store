@@ -24,41 +24,43 @@ const OrderCreate = (props) => {
             changeAmount: changeAmount,
             dueAmount   : dueAmount,
             items       : cart,
-            payments    : payments,
-            customer    : customer,
+            payments,
+            customer,
         }
     ];
     const [data, setData] = useState(initial);
-    console.log(data);
-    // const [products1, setProducts1] = useState(props.products);
+    const [products, setProducts] = useState(props.products);
     // const [customers, setCustomers] = useState(props.customers);
     useEffect(() => {
         const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
         const vat = subtotal * 0.05;
         const total = subtotal + vat - discount;
-
+        const totalPaid = payments.cash + payments.card + payments.mobile;
+        const due = Math.max(0, total - totalPaid);
+        const change = Math.max(0, totalPaid - total);
+    
         setSubtotal(subtotal);
         setVAT(vat);
         setGrandTotal(total);
-    }, [cart, discount]); // Runs when cart or discount changes
-
-    const products = [
-        { id: 1, name: "Product 1", price: 50 },
-        { id: 2, name: "Product 2", price: 30 },
-        { id: 3, name: "Product 3", price: 30 },
-        { id: 4, name: "Product 4", price: 30 },
-        { id: 6, name: "Product 5", price: 30 },
-        { id: 7, name: "Product 6", price: 30 },
-        { id: 8, name: "Product 7", price: 30 },
-        { id: 9, name: "Product 8", price: 30 },
-        { id: 10, name: "Product 9", price: 30 },
-        { id: 11, name: "Product 10", price: 30 },
-        { id: 12, name: "Product 11", price: 30 },
-        { id: 13, name: "Product 12", price: 30 },
-        { id: 14, name: "Product 13", price: 30 },
-        { id: 15, name: "Product 14", price: 30 },
-        { id: 5, name: "Product 15", price: 40 }
-    ];
+        setDueAmount(due);
+        setChangeAmount(change);
+    
+        // Update data state
+        setData([
+            {
+                discount,
+                VAT: vat,
+                subTotal: subtotal,
+                grandTotal: total,
+                changeAmount: change,
+                dueAmount: due,
+                items: cart,
+                payments,
+                customer,
+            }
+        ]);
+    
+    }, [cart, discount, payments, customer]);
 
     const addToCart = (event) => {
         const [id, name, price] = event.target.value.split(",");
@@ -92,7 +94,8 @@ const OrderCreate = (props) => {
     // };
 
     const updatePayments = (e) => {
-        setPayments({ ...payments, [e.target.name]: parseFloat(e.target.value) || 0 });
+        const updatedPayments = { ...payments, [e.target.name]: parseFloat(e.target.value) || 0 };
+        setPayments(updatedPayments);
     };
 
     const totalPaid = payments.cash + payments.card + payments.mobile;
@@ -109,7 +112,7 @@ const OrderCreate = (props) => {
                     <select className="border p-2 w-full rounded" onChange={addToCart}>
                         <option value="" disabled selected>Select an item</option>
                         {products.map((product, index) => (
-                            <option key={index} value={`${product.id},${product.name},${product.price}`}>{product.name} - ${product.price}</option>
+                            <option key={index} value={`${product.id},${product.name},${product.sale_price}`}>{product.name} - ${product.sale_price}</option>
                         ))}
                     </select>
 

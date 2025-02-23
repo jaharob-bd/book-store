@@ -77,7 +77,9 @@ class SalesController extends Controller
     // order status update
     function create()
     {
-        $data['products'] = Product::with('variantPrices')->get();
+        $data['products'] = Product::get();
+        // return $data['products'];
+        // $data['products'] = Product::with('variantPrices')->get();
         // return $data['products'];
         $data['customers'] = Customer::all();
         return Inertia::render('Sales/OrderCreate', $data);
