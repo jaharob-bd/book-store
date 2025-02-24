@@ -5,61 +5,73 @@ import Select from 'react-select';
 import SwalAlert from '@/Components/Alert/SwalAlert';
 
 const OrderCreate = (props) => {
-    const auth = props.auth;
-    const [cart, setCart] = useState([]);
-    const [subtotal, setSubtotal] = useState(0); // Initialize subtotal
-    const [discount, setDiscount] = useState(0);
-    const [VAT, setVAT] = useState(0);
-    const [grandTotal, setGrandTotal] = useState(0);
+    const auth                            = props.auth;
+    const [cart, setCart]                 = useState([]);
+    const [subtotal, setSubtotal]         = useState(0);                                // Initialize subtotal
+    const [discount, setDiscount]         = useState(0);
+    const [VAT, setVAT]                   = useState(0);
+    const [grandTotal, setGrandTotal]     = useState(0);
     const [changeAmount, setChangeAmount] = useState(0);
-    const [dueAmount, setDueAmount] = useState(0);
-    const [payments, setPayments] = useState({ cash: 0, card: 0, mobile: 0 });
-    const [customer, setCustomer] = useState({ name: "", phone: "" });
-    const initial = [
+    const [dueAmount, setDueAmount]       = useState(0);
+    const [payments, setPayments]         = useState({ cash: 0, card: 0, mobile: 0 });
+    const [customer, setCustomer]         = useState({ name: "", phone: "" });
+    const initial                         = [
         {
-            discount    : discount,
-            VAT         : VAT,
-            subTotal    : subtotal,
-            grandTotal  : grandTotal,
-            changeAmount: changeAmount,
-            dueAmount   : dueAmount,
-            items       : cart,
-            payments,
+            invoicFrom    : 'panel',
+            discountAmount: discount,
+            vatAmount     : VAT,
+            subAmount     : subtotal,
+            totalAmount   : grandTotal,
+            changeAmount  : changeAmount,
+            dueAmount     : dueAmount,
+            orderDetails  : cart,
+            paymentMethod : payments,
             customer,
+            shippingAddress: {
+                district: '',
+                city: '',
+                address: '',
+            },
         }
     ];
     const [data, setData] = useState(initial);
+    console.log(data);
     const [products, setProducts] = useState(props.products);
     // const [customers, setCustomers] = useState(props.customers);
     useEffect(() => {
-        const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-        const vat = subtotal * 0.05;
-        const total = subtotal + vat - discount;
+        const subtotal  = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const vat       = subtotal * 0.05;
+        const total     = subtotal + vat - discount;
         const totalPaid = payments.cash + payments.card + payments.mobile;
-        const due = Math.max(0, total - totalPaid);
-        const change = Math.max(0, totalPaid - total);
-    
+        const due       = Math.max(0, total - totalPaid);
+        const change    = Math.max(0, totalPaid - total);
         setSubtotal(subtotal);
         setVAT(vat);
         setGrandTotal(total);
         setDueAmount(due);
         setChangeAmount(change);
-    
+
         // Update data state
         setData([
             {
-                discount,
-                VAT: vat,
-                subTotal: subtotal,
-                grandTotal: total,
-                changeAmount: change,
-                dueAmount: due,
-                items: cart,
-                payments,
+                invoicFrom    : 'panel',
+                discountAmount: discount,
+                vatAmount     : vat,
+                subAmount     : subtotal,
+                totalAmount   : total,
+                changeAmount  : change,
+                dueAmount     : due,
+                orderDetails  : cart,
+                paymentMethod : payments,
                 customer,
+                shippingAddress: {
+                    district: '',
+                    city    : '',
+                    address : '',
+                },
             }
         ]);
-    
+
     }, [cart, discount, payments, customer]);
 
     const addToCart = (event) => {
@@ -68,40 +80,57 @@ const OrderCreate = (props) => {
             const existingItem = prevCart.find(item => item.id === id);
             if (existingItem) {
                 return prevCart.map(item =>
-                    item.name === name ? { ...item, qty: item.qty + 1 } : item
+                    item.name === name ? { ...item, quantity: item.quantity + 1 } : item
                 );
             }
-            return [...prevCart, { id, name, price: parseFloat(price), qty: 1 }];
+            return [...prevCart, { id, name, price: parseFloat(price), quantity: 1 }];
         });
     };
 
-    const updateQty = (index, amount) => {
+    const updatequantity = (index, amount) => {
         setCart((prevCart) => {
             return prevCart.map((item, i) =>
-                i === index ? { ...item, qty: Math.max(1, item.qty + amount) } : item
+                i === index ? { ...item, quantity: Math.max(1, item.quantity + amount) } : item
             );
         });
     };
-
-    // const calculateTotal = () => {
-    //     const subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
-    //     const vat = subtotal * 0.05;
-    //     const total = subtotal + vat - discount;
-    //     setSubTotal(subtotal);
-    //     setVAT(vat);
-    //     setGrandTotal(total);
-    //     return { subtotal, vat, total };
-    // };
 
     const updatePayments = (e) => {
         const updatedPayments = { ...payments, [e.target.name]: parseFloat(e.target.value) || 0 };
         setPayments(updatedPayments);
     };
 
-    const totalPaid = payments.cash + payments.card + payments.mobile;
-    const due = Math.max(0, grandTotal - totalPaid);
-    const change = Math.max(0, totalPaid - grandTotal);
+    const submit = () => {
+        try {
+            if (data.grandTotal === '' || data.grandTotal < 0) {
+                SwalAlert('warning', 'Please add to card product', 'center');
+                return;
+            }
+            if (data.customer.phone === '') {
+                SwalAlert('warning', 'Please add to customer', 'center');
+                return;
+            }
 
+            
+            router.post('/order-store', data, {
+                preserveScroll: true,
+                onSuccess: ({ props }) => {
+                    if (props.flash.success) {
+                        SwalAlert('success', props.flash.success, 'center');
+                        setCart([]);
+                    } else if (props.flash.failed) {
+                        SwalAlert('warning', props.flash.failed, 'center');
+                    }
+                },
+                onError: (errors) => {
+                    console.error('Failed to place order:', errors);
+                    SwalAlert('error', 'Failed to place order. Please try again.', 'center');
+                },
+            });
+        } catch (error) {
+            console.error('An unexpected error occurred:', error);
+        }
+    };
     return (
         <AuthenticatedLayout user={auth.user} header={'Purchases Invoice'}>
             <Head title="Sales Order" />
@@ -127,7 +156,7 @@ const OrderCreate = (props) => {
                                             <th className="p-2 text-left w-1">#</th>
                                             <th className="p-2 text-left">Product</th>
                                             <th className="p-2 text-left">Price</th>
-                                            <th className="p-2 text-center">Qty</th>
+                                            <th className="p-2 text-center">quantity</th>
                                             <th className="p-2 text-right">Total</th>
                                         </tr>
                                     </thead>
@@ -139,11 +168,11 @@ const OrderCreate = (props) => {
                                                     <td className="p-2 border-l border-r border-b border-indigo-500">{item.name}</td>
                                                     <td className="p-2 border-l border-r border-b border-indigo-500">${item.price.toFixed(2)}</td>
                                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
-                                                        <button onClick={() => updateQty(index, -1)} className="bg-gray-300 px-2 rounded">-</button>
-                                                        <span className="px-2">{item.qty}</span>
-                                                        <button onClick={() => updateQty(index, 1)} className="bg-gray-300 px-2 rounded">+</button>
+                                                        <button onClick={() => updatequantity(index, -1)} className="bg-gray-300 px-2 rounded">-</button>
+                                                        <span className="px-2">{item.quantity}</span>
+                                                        <button onClick={() => updatequantity(index, 1)} className="bg-gray-300 px-2 rounded">+</button>
                                                     </td>
-                                                    <td className="p-3 text-right border-l border-r border-b border-indigo-500">${(item.price * item.qty).toFixed(2)}</td>
+                                                    <td className="p-3 text-right border-l border-r border-b border-indigo-500">${(item.price * item.quantity).toFixed(2)}</td>
                                                 </tr>
                                             ))
                                         }
@@ -168,9 +197,15 @@ const OrderCreate = (props) => {
                 {/* Right Section */}
                 <div className="w-1/5 bg-white p-6 shadow-2xl rounded-lg">
                     <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Customer Details</h2>
-                    <input type="text" placeholder="Customer Name" className="border p-3 w-full rounded-lg mb-3"
+                    <input
+                        type="text"
+                        placeholder="Customer Name"
+                        className="border p-3 w-full rounded-lg mb-3"
                         onChange={(e) => setCustomer({ ...customer, name: e.target.value })} />
-                    <input type="text" placeholder="Phone Number" className="border p-3 w-full rounded-lg mb-3"
+                    <input
+                        type="text"
+                        placeholder="Phone Number"
+                        className="border p-3 w-full rounded-lg mb-3"
                         onChange={(e) => setCustomer({ ...customer, phone: e.target.value })} />
 
                     <div className="mt-6 bg-gray-100 p-5 rounded-lg">
@@ -180,7 +215,6 @@ const OrderCreate = (props) => {
                         <div className="flex justify-between p-2"><span>VAT (5%):</span><span>${VAT.toFixed(2)}</span></div>
                         <div className="flex justify-between p-2 font-semibold text-lg"><span>Total:</span><span>${grandTotal.toFixed(2)}</span></div>
                     </div>
-
                     <div className="mt-6 bg-gray-100 p-5 rounded-lg">
                         <h3 className="text-lg font-semibold border-b pb-2">Payment Method</h3>
                         {Object.keys(payments).map((method) => (
@@ -192,8 +226,7 @@ const OrderCreate = (props) => {
                         <div className="flex justify-between p-2"><span>Change:</span><span>${changeAmount.toFixed(2)}</span></div>
                         <div className="flex justify-between p-2"><span>Due:</span><span>${dueAmount.toFixed(2)}</span></div>
                     </div>
-
-                    <button className="mt-6 bg-purple-600 text-white p-3 w-full rounded-lg">Order</button>
+                    <button onClick={() => submit()} className={"text-white text-lg w-full py-2 bg-indigo-500"}>Order</button>
                 </div>
             </div>
         </AuthenticatedLayout>

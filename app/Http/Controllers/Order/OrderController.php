@@ -27,15 +27,15 @@ class OrderController extends Controller
     {
         $data      = $request->all();
         $validated = $request->validate([
-            'subAmount'                   => 'required|numeric|min:0',
-            'discountAmount'              => 'nullable|numeric|min:0',
-            'taxAmount'                   => 'nullable|numeric|min:0',
-            'shippingFee'                 => 'nullable|numeric|min:0',
-            'totalAmount'                 => 'required|numeric|min:0',
-            'orderDetails'                => 'required|array',
-            'orderDetails.*.id'           => 'required|exists:products,id', // product id
-            'orderDetails.*.salePrice'    => 'required|numeric|min:0',
-            'orderDetails.*.quantity'     => 'required|integer|min:1',
+            'subAmount'               => 'required|numeric|min:0',
+            'discountAmount'          => 'nullable|numeric|min:0',
+            'vatAmount'               => 'nullable|numeric|min:0',
+            'shippingFee'             => 'nullable|numeric|min:0',
+            'totalAmount'             => 'required|numeric|min:0',
+            'orderDetails'            => 'required|array',
+            'orderDetails.*.id'       => 'required|exists:products,id',   // product id
+            'orderDetails.*.price'    => 'required|numeric|min:0',
+            'orderDetails.*.quantity' => 'required|integer|min:1',
         ]);
         // Start DB Transaction
         DB::beginTransaction();
@@ -69,7 +69,7 @@ class OrderController extends Controller
                 'billing_address'  => $request->input('billingAddress', null),
                 'sub_amount'       => $validated['subAmount'],
                 'discount_amount'  => $validated['discountAmount'] ?? 0.00,
-                'tax_amount'       => $validated['taxAmount'] ?? 0.00,
+                'tax_amount'       => $validated['vatAmount'] ?? 0.00,
                 'shipping_fee'     => $validated['shippingFee'] ?? 0.00,
                 'total_amount'     => $validated['totalAmount'],
                 'status'           => 'Pending',
@@ -90,7 +90,7 @@ class OrderController extends Controller
                     'order_id'   => $order->id,
                     'product_id' => $detail['id'],
                     'quantity'   => $detail['quantity'],
-                    'price'      => $detail['salePrice'],
+                    'price'      => $detail['price'],
                 ]);
 
                 // Decrement stock

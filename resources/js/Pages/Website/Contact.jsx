@@ -107,7 +107,7 @@ const Contact = ({ auth }) => {
                         <option value="careers">Careers</option>
                         <option value="another">Another category</option>
                     </select>
-                    <textarea className="border px-4 py-2 w-full" placeholder="Write a commentary..." defaultValue={""} />
+                    <textarea className="border px-4 py-2 w-full" placeholder="Write a commentary..." />
                     <div className="container flex flex-col justify-between lg:flex-row lg:items:center mt-4">
                         <div className="flex items-center">
                             <input className="mr-3" type="checkbox" />

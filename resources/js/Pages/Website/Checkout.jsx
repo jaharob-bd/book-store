@@ -18,17 +18,17 @@ export default function Checkout(props) {
     // console.log(distruct);
     // Calculate amounts using useMemo for performance optimization
     const subAmount = useMemo(() =>
-        cart.reduce((total, item) => total + item.salePrice * item.quantity, 0),
+        cart.reduce((total, item) => total + item.price * item.quantity, 0),
         [cart]
     );
 
     const shippingFee = 50;
     const discountAmount = 0;
-    const taxAmount = 0;
+    const vatAmount = 0;
 
     const totalAmount = useMemo(() =>
-        subAmount + discountAmount + taxAmount + shippingFee,
-        [subAmount, discountAmount, taxAmount, shippingFee]
+        subAmount + discountAmount + vatAmount + shippingFee,
+        [subAmount, discountAmount, vatAmount, shippingFee]
     );
 
     // district array 
@@ -51,7 +51,7 @@ export default function Checkout(props) {
     const data = {
         subAmount,
         discountAmount,
-        taxAmount,
+        vatAmount,
         shippingFee,
         totalAmount,
         paymentMethod,
