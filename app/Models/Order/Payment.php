@@ -3,6 +3,7 @@
 namespace App\Models\Order;
 
 use App\Models\Order\Order;
+use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -62,5 +63,21 @@ class Payment extends Model
             }
         }
         return true;
+    }
+    public static function paymentSave($paymentMethods, $order_id)
+    {
+        foreach ($paymentMethods as $method => $amount) {
+            $payment                   = new Payment();
+            $payment->order_id         = $$order_id;
+            $payment->payment_date     = Carbon::now();
+            $payment->transaction_id   = date('YmdHis');
+            $payment->payment_method   = ucfirst($method);
+            $payment->amount           = old($method, $amount);
+            // $payment->mobile_number    = $data['mobileNumber'];
+            $payment->status           = 1;
+            $payment->created_by       = auth()->id();
+            $insert = $payment->save();
+        }
+        return $insert ? true: false;
     }
 }

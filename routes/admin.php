@@ -76,6 +76,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/sales/order/shipments', [SalesController::class,'shipments'])->name('order.shipments');
     Route::post('/status-update', [SalesController::class, 'statusUpdate'])->name('order.status-update');
 
-    Route::post('/order-store', [SalesController::class, 'store'])->name('order-store');
+    // Route::post('/order-store', [SalesController::class, 'store'])->name('order-store');
     // Route::post('/invoice-store', [ProfileController::class, 'store'])->name('invoice-store');
 });

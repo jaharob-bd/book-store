@@ -8,6 +8,7 @@ use App\Models\Consumer\Customer;
 use App\Models\Inventory\Stock\Stock;
 use App\Models\Order\Order;
 use App\Models\Order\OrderDetail;
+use App\Models\Order\Payment;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\RedirectResponse;
@@ -26,6 +27,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $data      = $request->all();
+        $panel     = ($data['submitFrom'] == 'panel') ? true : false;
         $validated = $request->validate([
             'subAmount'               => 'required|numeric|min:0',
             'discountAmount'          => 'nullable|numeric|min:0',
@@ -42,9 +44,14 @@ class OrderController extends Controller
         try {
             // get customers information
             $shippingInfo = null;
-            $customerInfo = Customer::where('user_id', Auth::user()->id)->first();
+            $customerInfo = $panel == false ? Customer::where('user_id', Auth::user()->id)->first() : '';
 
-            if (!empty($data['shippingAddress']['city']) || !empty($data['shippingAddress']['district']) || !empty($data['shippingAddress']['address'])) {
+            if (
+                $panel == false &&
+                !empty($data['shippingAddress']['city']) ||
+                !empty($data['shippingAddress']['district']) ||
+                !empty($data['shippingAddress']['address'])
+            ) {
                 $shippingAddress = [
                     'city'           => $data['shippingAddress']['city'] ?? '',
                     'district'       => $data['shippingAddress']['district'] ?? '',
@@ -63,7 +70,7 @@ class OrderController extends Controller
 
             // Create order
             $order = Order::create([
-                'customer_id'      => $customerInfo->id,                               // Assuming the logged-in user is the customer
+                'customer_id'      => $panel ? 31 : $customerInfo->id,                         // Assuming the logged-in user is the customer
                 'order_date'       => now(),
                 'shipping_address' => $shippingInfo,
                 'billing_address'  => $request->input('billingAddress', null),
@@ -72,7 +79,8 @@ class OrderController extends Controller
                 'tax_amount'       => $validated['vatAmount'] ?? 0.00,
                 'shipping_fee'     => $validated['shippingFee'] ?? 0.00,
                 'total_amount'     => $validated['totalAmount'],
-                'status'           => 'Pending',
+                'paid_amount'      => $panel ? array_sum($data['paymentMethods']) : 0,
+                'status'           => $panel ? 'Delivered' : 'Pending',
                 'created_by'       => Auth::user()->id,
             ]);
 
@@ -97,11 +105,25 @@ class OrderController extends Controller
                 $product->stock->decrement('quantity', $detail['quantity']);
             }
 
+            // payment method
+            if (isset($data['paymentMethods'])) {
+                Payment::paymentSave($data['paymentMethods'], $order->id); 
+            }
+
+            // if($customer->email){
+            //     // Send email notification
+            //     Mail::send('emails.order', ['order' => $order], function ($message) use ($order) {
+            //         $message->to($order->customer->email)
+            //             ->subject('Order Confirmation - '. $order->order_no);
+            //     });
+            // }
+
             // Commit transaction
             DB::commit();
 
             Session::flash('success', 'Order Place successfully!');
-            return redirect()->route('order-success', ['order_no' => (string)$order->order_no]);
+            $redirectRoute = $panel ? route('sales/order/create') : route('order-success', ['order_no' => (string)$order->order_no]);
+            return redirect()->$redirectRoute;
         } catch (\Exception $e) {
             // Rollback transaction on error
             DB::rollBack();

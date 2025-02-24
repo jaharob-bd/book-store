@@ -13,10 +13,9 @@ const OrderCreate = (props) => {
     const [grandTotal, setGrandTotal]     = useState(0);
     const [changeAmount, setChangeAmount] = useState(0);
     const [dueAmount, setDueAmount]       = useState(0);
-    const [payments, setPayments]         = useState({ cash: 0, card: 0, mobile: 0 });
+    const [payments, setPayments]         = useState({ Cash: 0, Card: 0, Mobile: 0 });
     const [customer, setCustomer]         = useState({ name: "", phone: "" });
-    const initial                         = [
-        {
+    const initial                         = {
             invoicFrom    : 'panel',
             discountAmount: discount,
             vatAmount     : VAT,
@@ -29,11 +28,10 @@ const OrderCreate = (props) => {
             customer,
             shippingAddress: {
                 district: '',
-                city: '',
-                address: '',
+                city    : '',
+                address : '',
             },
-        }
-    ];
+        };
     const [data, setData] = useState(initial);
     console.log(data);
     const [products, setProducts] = useState(props.products);
@@ -42,7 +40,7 @@ const OrderCreate = (props) => {
         const subtotal  = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
         const vat       = subtotal * 0.05;
         const total     = subtotal + vat - discount;
-        const totalPaid = payments.cash + payments.card + payments.mobile;
+        const totalPaid = payments.Cash + payments.Card + payments.Mobile;
         const due       = Math.max(0, total - totalPaid);
         const change    = Math.max(0, totalPaid - total);
         setSubtotal(subtotal);
@@ -52,9 +50,8 @@ const OrderCreate = (props) => {
         setChangeAmount(change);
 
         // Update data state
-        setData([
-            {
-                invoicFrom    : 'panel',
+        setData({
+                submitFrom    : 'panel',
                 discountAmount: discount,
                 vatAmount     : vat,
                 subAmount     : subtotal,
@@ -62,7 +59,7 @@ const OrderCreate = (props) => {
                 changeAmount  : change,
                 dueAmount     : due,
                 orderDetails  : cart,
-                paymentMethod : payments,
+                paymentMethods: payments,
                 customer,
                 shippingAddress: {
                     district: '',
@@ -70,7 +67,7 @@ const OrderCreate = (props) => {
                     address : '',
                 },
             }
-        ]);
+        );
 
     }, [cart, discount, payments, customer]);
 
@@ -103,13 +100,13 @@ const OrderCreate = (props) => {
     const submit = () => {
         try {
             if (data.grandTotal === '' || data.grandTotal < 0) {
-                SwalAlert('warning', 'Please add to card product', 'center');
+                SwalAlert('warning', 'Please add to cart product', 'center');
                 return;
             }
-            if (data.customer.phone === '') {
-                SwalAlert('warning', 'Please add to customer', 'center');
-                return;
-            }
+            // if (customer.phone === '') {
+            //     SwalAlert('warning', 'Please add to customer', 'center');
+            //     return;
+            // }
 
             
             router.post('/order-store', data, {

@@ -49,13 +49,14 @@ export default function Checkout(props) {
 
     // Data for submission
     const data = {
+        submitFrom: 'website',
         subAmount,
         discountAmount,
         vatAmount,
         shippingFee,
         totalAmount,
-        paymentMethod,
-        orderDetails: cart,
+        paymentMethods : paymentMethod,
+        orderDetails   : cart,
         shippingAddress: {
             district,
             city,
