@@ -38,7 +38,7 @@ export const CartProvider = ({ children }) => {
                         id: product.id,
                         name: product.name,
                         price: product.sale_price,
-                        mrpPrice: product.mrp_price,
+                        // mrpPrice: product.mrp_price,
                         categoryName: product.category_name,
                         quantity: 1, // Set initial quantity
                     },

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Dflydev\DotAccessData\Data;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Payment extends Model
 {
@@ -64,20 +65,69 @@ class Payment extends Model
         }
         return true;
     }
-    public static function paymentSave($paymentMethods, $order_id)
+    public static function paymentSave1($paymentMethods, $order_id)
     {
-        foreach ($paymentMethods as $method => $amount) {
+        $payments = array_map(function ($key, $value) {
+            return [$key => ($value)];
+        }, array_keys($paymentMethods), $paymentMethods);
+        $totalPaidAmout = array_sum(array_merge(...$payments));
+        // dd($totalPaidAmout);
+        // dd(array_merge(...$payments));
+        foreach (array_merge(...$payments) as $method => $amount) {
             $payment                   = new Payment();
-            $payment->order_id         = $$order_id;
+            $payment->order_id         = $order_id;
             $payment->payment_date     = Carbon::now();
             $payment->transaction_id   = date('YmdHis');
             $payment->payment_method   = ucfirst($method);
             $payment->amount           = old($method, $amount);
-            // $payment->mobile_number    = $data['mobileNumber'];
             $payment->status           = 1;
             $payment->created_by       = auth()->id();
             $insert = $payment->save();
         }
-        return $insert ? true: false;
+        $updateOrder = false;
+        if ($insert) {
+            $updateData = [
+                'paid_amount' => $totalPaidAmout,
+            ];
+            $updateOrder = Order::where('id', $order_id)->update($updateData);
+        }
+        return $updateOrder ? true : false;
+    }
+
+    public static function paymentSave(array $paymentMethods, int $order_id): bool
+    {
+        try {
+            DB::beginTransaction();
+
+            $totalPaidAmount = array_sum($paymentMethods);
+            $paymentsData = [];
+
+            foreach ($paymentMethods as $method => $amount) {
+                if ($amount > 0) {
+                    $paymentsData[] = [
+                        'order_id'       => $order_id,
+                        'payment_date'   => Carbon::now(),
+                        'transaction_id' => now()->format('YmdHis'),
+                        'payment_method' => ucfirst($method),
+                        'amount'         => $amount,
+                        'status'         => 1,
+                        'created_by'     => auth()->id(),
+                        'created_at'     => now(),
+                        'updated_at'     => now(),
+                    ];
+                }
+            }
+            // paymentsData aray greather than 1
+            if (count($paymentsData) > 0) {
+                Payment::insert($paymentsData); // branches inerted data.
+                Order::where('id', $order_id)->update(['paid_amount' => $totalPaidAmount]);
+            }
+            DB::commit(); // if no payment i will confirm order.
+            return true;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Payment save failed: ' . $e->getMessage());
+            return false;
+        }
     }
 }

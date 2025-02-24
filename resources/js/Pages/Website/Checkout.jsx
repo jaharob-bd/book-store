@@ -11,6 +11,7 @@ import { CartContext } from './context/CartContext';
 export default function Checkout(props) {
     const { auth, customer }  = props;
     const { cart, setCart }                 = useContext(CartContext);
+    // console.log(cart);
     const [paymentMethod, setPaymentMethod] = useState('');
     const [district, setDistrict]           = useState(customer.district || '');
     const [city, setCity]                   = useState(customer.city || '');

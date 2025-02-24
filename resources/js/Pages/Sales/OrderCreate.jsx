@@ -33,7 +33,7 @@ const OrderCreate = (props) => {
             },
         };
     const [data, setData] = useState(initial);
-    console.log(data);
+    // console.log(data);
     const [products, setProducts] = useState(props.products);
     // const [customers, setCustomers] = useState(props.customers);
     useEffect(() => {
@@ -115,6 +115,7 @@ const OrderCreate = (props) => {
                     if (props.flash.success) {
                         SwalAlert('success', props.flash.success, 'center');
                         setCart([]);
+                        setPayments({ Cash: 0, Card: 0, Mobile: 0 });
                     } else if (props.flash.failed) {
                         SwalAlert('warning', props.flash.failed, 'center');
                     }
@@ -138,7 +139,7 @@ const OrderCreate = (props) => {
                     <select className="border p-2 w-full rounded" onChange={addToCart}>
                         <option value="" disabled selected>Select an item</option>
                         {products.map((product, index) => (
-                            <option key={index} value={`${product.id},${product.name},${product.sale_price}`}>{product.name} - ${product.sale_price}</option>
+                            <option key={index} value={`${product.id},${product.name},${product.sale_price}`}>{product.id} - {product.name} - ${product.sale_price}</option>
                         ))}
                     </select>
 

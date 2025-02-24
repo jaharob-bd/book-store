@@ -5,21 +5,21 @@ namespace App\Http\Controllers\Order;
 use App\Http\Controllers\Controller;
 use App\Models\Catalog\Product;
 use App\Models\Consumer\Customer;
-use App\Models\Inventory\Stock\Stock;
 use App\Models\Order\Order;
 use App\Models\Order\OrderDetail;
-use App\Models\Order\Payment;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use Inertia\Response;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use App\Models\Setting\Organization;
+use App\Models\Inventory\Stock\Stock;
+use App\Models\Order\Payment;
+use App\Providers\RouteServiceProvider;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Route;
+use Inertia\Response;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -27,6 +27,7 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         $data      = $request->all();
+        // Create Order
         $panel     = ($data['submitFrom'] == 'panel') ? true : false;
         $validated = $request->validate([
             'subAmount'               => 'required|numeric|min:0',
@@ -43,44 +44,23 @@ class OrderController extends Controller
         DB::beginTransaction();
         try {
             // get customers information
-            $shippingInfo = null;
             $customerInfo = $panel == false ? Customer::where('user_id', Auth::user()->id)->first() : '';
-
-            if (
-                $panel == false &&
-                !empty($data['shippingAddress']['city']) ||
-                !empty($data['shippingAddress']['district']) ||
-                !empty($data['shippingAddress']['address'])
-            ) {
-                $shippingAddress = [
-                    'city'           => $data['shippingAddress']['city'] ?? '',
-                    'district'       => $data['shippingAddress']['district'] ?? '',
-                    'street_address' => $data['shippingAddress']['address'] ?? ''
-                ];
-
-                // Check if customer exists before updating
-                if ($customerInfo) {
-                    $customerInfo->update($shippingAddress);
-                }
-
-                $shippingInfo = ($data['shippingAddress']['district'] ?? '') . '@' .
-                    ($data['shippingAddress']['city'] ?? '') . '@' .
-                    ($data['shippingAddress']['address'] ?? '');
-            }
+            $shippingInfo = $this->shippingValidation($panel, $data, $customerInfo);
 
             // Create order
             $order = Order::create([
-                'customer_id'      => $panel ? 31 : $customerInfo->id,                         // Assuming the logged-in user is the customer
+                'customer_id'      => $panel ? 31 : $customerInfo->id,           // Assuming the logged-in user is the customer
                 'order_date'       => now(),
                 'shipping_address' => $shippingInfo,
-                'billing_address'  => $request->input('billingAddress', null),
+                // 'billing_address'  => $request->input('billingAddress', null),
                 'sub_amount'       => $validated['subAmount'],
                 'discount_amount'  => $validated['discountAmount'] ?? 0.00,
                 'tax_amount'       => $validated['vatAmount'] ?? 0.00,
                 'shipping_fee'     => $validated['shippingFee'] ?? 0.00,
                 'total_amount'     => $validated['totalAmount'],
-                'paid_amount'      => $panel ? array_sum($data['paymentMethods']) : 0,
+                // 'paid_amount'      => $panel ? $paidAmount : 0, // when payment confirmed then paid updated.
                 'status'           => $panel ? 'Delivered' : 'Pending',
+                'invoice_status'   => $panel ? '2' : '1', // here 1 = website and 2 = admin panel
                 'created_by'       => Auth::user()->id,
             ]);
 
@@ -106,29 +86,51 @@ class OrderController extends Controller
             }
 
             // payment method
-            if (isset($data['paymentMethods'])) {
-                Payment::paymentSave($data['paymentMethods'], $order->id); 
+            if ($panel && isset($data['paymentMethods'])) {
+                Payment::paymentSave($data['paymentMethods'], $order->id);
             }
-
-            // if($customer->email){
-            //     // Send email notification
-            //     Mail::send('emails.order', ['order' => $order], function ($message) use ($order) {
-            //         $message->to($order->customer->email)
-            //             ->subject('Order Confirmation - '. $order->order_no);
-            //     });
-            // }
-
             // Commit transaction
             DB::commit();
 
             Session::flash('success', 'Order Place successfully!');
-            $redirectRoute = $panel ? route('sales/order/create') : route('order-success', ['order_no' => (string)$order->order_no]);
-            return redirect()->$redirectRoute;
+            if ($panel) {
+                // return redirect()->route('sales/order/create');
+                return redirect()->route('order-success', ['order_no' => (string)$order->order_no]);
+            } else {
+                return redirect()->route('order-success', ['order_no' => (string)$order->order_no]);
+            }
         } catch (\Exception $e) {
             // Rollback transaction on error
             DB::rollBack();
             Session::flash('failed', $e->getMessage());
         }
+    }
+
+    private function shippingValidation($panel, $data, $customerInfo)
+    {
+        $shippingInfo = null;
+        if (
+            $panel == false &&
+            !empty($data['shippingAddress']['city']) ||
+            !empty($data['shippingAddress']['district']) ||
+            !empty($data['shippingAddress']['address'])
+        ) {
+            $shippingAddress = [
+                'city'           => $data['shippingAddress']['city'] ?? '',
+                'district'       => $data['shippingAddress']['district'] ?? '',
+                'street_address' => $data['shippingAddress']['address'] ?? ''
+            ];
+
+            // Check if customer exists before updating
+            if ($customerInfo) {
+                $customerInfo->update($shippingAddress);
+            }
+
+            $shippingInfo = ($data['shippingAddress']['district'] ?? '') . '@' .
+                ($data['shippingAddress']['city'] ?? '') . '@' .
+                ($data['shippingAddress']['address'] ?? '');
+        }
+        return $shippingInfo;
     }
 
     // success order back to other page

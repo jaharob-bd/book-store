@@ -52,8 +52,8 @@ export default function Cart({ auth, products }) {
                                                         <path d="M416 208H272V64c0-17.67-14.33-32-32-32h-32c-17.67 0-32 14.33-32 32v144H32c-17.67 0-32 14.33-32 32v32c0 17.67 14.33 32 32 32h144v144c0 17.67 14.33 32 32 32h32c17.67 0 32-14.33 32-32V304h144c17.67 0 32-14.33 32-32v-32c0-17.67-14.33-32-32-32z" />
                                                     </svg>
                                                 </div>
-                                                <span className="text-center w-1/5 font-semibold text-sm">{item.salePrice}</span>
-                                                <span className="text-center w-1/5 font-semibold text-sm">{item.salePrice * item.quantity}</span>
+                                                <span className="text-center w-1/5 font-semibold text-sm">{item.price}</span>
+                                                <span className="text-center w-1/5 font-semibold text-sm">{item.price * item.quantity}</span>
                                             </div>
                                         ))
                                     }
@@ -69,7 +69,7 @@ export default function Cart({ auth, products }) {
                             <p className="font-bold">ORDER SUMMARY</p>
                             <div className="flex justify-between mt-10 mb-5">
                                 <p className="font-semibold text-sm uppercase">Subtotal</p>
-                                <p className="font-semibold text-sm">${cart.reduce((total, item) => total + item.salePrice * item.quantity, 0)}</p>
+                                <p className="font-semibold text-sm">${cart.reduce((total, item) => total + item.price * item.quantity, 0)}</p>
                             </div>
                             <div className="flex justify-between border-b py-5">
                                 <p className="font-semibold text-sm uppercase">Delivery Fee</p>
@@ -86,7 +86,7 @@ export default function Cart({ auth, products }) {
                             <div class="border-t mt-8">
                                 <div class="flex font-semibold justify-between py-6 text-sm uppercase">
                                     <span>Total cost</span>
-                                    <span>${cart.reduce((total, item) => total + item.salePrice * item.quantity, 0) + 50}</span>
+                                    <span>${cart.reduce((total, item) => total + item.price * item.quantity, 0) + 50}</span>
                                 </div>
                                 <Link href={route('checkout')}>
                                     <button class="bg-indigo-600 font-semibold hover:bg-indigo-500 py-3 text-sm text-white uppercase w-full mb-4">Checkout</button>
