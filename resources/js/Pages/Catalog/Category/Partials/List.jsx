@@ -21,47 +21,49 @@ export const List = ({ openModal, categories }) => {
             </div>
             <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                 <div className="inline-block min-w-full shadow-md overflow-hidden">
-                    <table className="min-w-full leading-normal">
-                        <thead>
-                            <tr>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                    <table className="w-full border-collapse bg-gray-100 rounded-md">
+                        <thead className="bg-gray-200">
+                            <tr className="bg-indigo-500 h-6 border border-indigo-500 text-white">
+                                <th className="p-2 text-center">
                                     <input type="checkbox" />
                                 </th>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                <th className="p-2 px-3 text-left">
                                     Name
                                 </th>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                <th className="p-2 text-center">
                                     Category Code
                                 </th>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                <th className="p-2 text-center">
                                     Notes
                                 </th>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                <th className="p-2 text-center">
                                     Status
                                 </th>
-                                <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100" />
+                                <th className="p-2 text-center" />
                             </tr>
                         </thead>
                         <tbody>
                             {categories?.map((category) => (
                                 <tr key={category.id} className="category">
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm"><input type="checkbox" className="form-control" /></td>
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
+                                        <input type="checkbox" className="form-control" />
+                                    </td>
+                                    <td className="p-2 px-3 border-l border-r border-b border-indigo-500 text-left">
                                         {category.name}
                                     </td>
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <td className="p-2 px-3 border-l border-r border-b border-indigo-500 text-center">
                                         <p className="text-gray-900 whitespace-no-wrap">{category.cat_code}</p>
                                     </td>
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <td className="p-2 px-3 border-l border-r border-b border-indigo-500 text-left">
                                         <p className="text-gray-900 whitespace-no-wrap">{category.notes}</p>
                                     </td>
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                    <td className="p-2 px-3 border-l border-r border-b border-indigo-500 text-center">
                                         <span className={`relative inline-block px-3 py-1 font-semibold leading-tight ${category.status === 1 ? 'text-green-900' : 'text-red-900'}`}>
                                             <span aria-hidden className={`absolute inset-0 ${category.status === 1 ? 'bg-green-200' : 'bg-red-200'} opacity-50 rounded-full`} />
                                             <span className="relative">{category.status === 1 ? 'Active' : 'Inactive'}</span>
                                         </span>
                                     </td>
-                                    <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm text-right">
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                         <button onClick={() => openModal(category)} type="button" className="inline-block text-gray-500 hover:text-gray-700">
                                             <i className="ri-edit-circle-line"></i>
                                         </button>

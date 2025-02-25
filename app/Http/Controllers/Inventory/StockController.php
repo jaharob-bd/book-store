@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inventory;
 
 use App\Http\Controllers\Controller;
 use App\Models\Catalog\Product;
+use App\Models\Inventory\Stock\StockMovement;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -72,40 +73,37 @@ class StockController extends Controller
 
     public function stockMovement()
     {
-        $stocks = StockChd::with('productVariantPrice')->get();
+        $stocks = StockMovement::with('product')->get();
+        // return response()->json($stocks);
         $data['stock_movements'] = $stocks->map(function ($purchase) {
             return [
-                'id' => $purchase->id,
-                'product_id' => $purchase->product_id,
-                'product_name' => $purchase->product_name,
-                'product_v_id' => $purchase->product_v_id,
-                'variant_name' => $purchase->variant_name,
-                'quantity' => $purchase->quantity,
-                'movement_type' => $purchase->movement_type,
-                'created_by' => $purchase->created_by,
-                'updated_by' => $purchase->updated_by,
-                'created_at' => $purchase->created_at,
-                'updated_at' => $purchase->updated_at,
+                'id'            => $purchase->id,
+                'product_id'    => $purchase->product_id,
+                'product_name'  => $purchase->product->name,
+                'quantity'      => $purchase->quantity,
+                'movement_type' => $purchase->type,
+                'created_by'    => $purchase->created_by,
+                'updated_by'    => $purchase->updated_by,
+                'created_at'    => $purchase->created_at,
+                'updated_at'    => $purchase->updated_at,
             ];
         });
         return Inertia::render('Inventory/Stock/StockMovement', $data);
     }
     public function getStockMovement()
     {
-        $stocks = StockChd::with('productVariantPrice')->get();
+        $stocks = StockMovement::with('product')->get();
         $data['stock_movements'] = $stocks->map(function ($purchase) {
             return [
-                'id' => $purchase->id,
-                'product_id' => $purchase->product_id,
-                'product_name' => $purchase->product_name,
-                'product_v_id' => $purchase->product_v_id,
-                'variant_name' => $purchase->variant_name,
-                'quantity' => $purchase->quantity,
-                'movement_type' => $purchase->movement_type,
-                'created_by' => $purchase->created_by,
-                'updated_by' => $purchase->updated_by,
-                'created_at' => $purchase->created_at,
-                'updated_at' => $purchase->updated_at,
+                'id'            => $purchase->id,
+                'product_id'    => $purchase->product_id,
+                'product_name'  => $purchase->product->name,
+                'quantity'      => $purchase->quantity,
+                'movement_type' => $purchase->type,
+                'created_by'    => $purchase->created_by,
+                'updated_by'    => $purchase->updated_by,
+                'created_at'    => $purchase->created_at,
+                'updated_at'    => $purchase->updated_at,
             ];
         });
         return response()->json($data['stock_movements']);

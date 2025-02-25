@@ -8,7 +8,7 @@ export default function StockMovement({ auth, stock_movements }) {
     const componentRef = useRef();
     const { t } = useTranslation();
     const [stockLists, setStockLists] = useState(stock_movements);
-
+    console.log(stockLists);
     // useEffect(() => {
     //     fetchStockInfo();
     //     console.log('Updated stockLists:', stockLists); // Log the updated stockLists
@@ -25,13 +25,13 @@ export default function StockMovement({ auth, stock_movements }) {
         }
     };
 
-    const groupedStocks = stockLists.reduce((acc, stock) => {
-        if (!acc[stock.product_name]) {
-            acc[stock.product_name] = [];
-        }
-        acc[stock.product_name].push(stock);
-        return acc;
-    }, {});
+    // const groupedStocks = stockLists.reduce((acc, stock) => {
+    //     if (!acc[stock.product.name]) {
+    //         acc[stock.product.name] = [];
+    //     }
+    //     acc[stock.product.name].push(stock);
+    //     return acc;
+    // }, {});
 
     return (
         <AuthenticatedLayout user={auth.user} header={'stocks List'}>
@@ -64,57 +64,49 @@ export default function StockMovement({ auth, stock_movements }) {
                 </div>
                 <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                     <div className="inline-block min-w-full shadow-md overflow-hidden">
-                        <table ref={componentRef} className="min-w-full leading-normal border-collapse border border-black">
-                            <thead>
-                                <tr>
-                                    <th className="px-2 py-2 border border-black bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <table ref={componentRef} className="w-full border-collapse rounded-md">
+                            <thead className="bg-gray-200">
+                                <tr className="bg-indigo-500 h-6 border border-indigo-500 text-white">
+                                    <th className="p-2 text-left w-1">
                                         Sl
                                     </th>
-                                    <th className="px-2 py-2 border border-black bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th className="p-2 text-left">
                                         Product
                                     </th>
-                                    <th className="px-2 py-2 border border-black bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    {/* <th className="p-2 text-left">
                                         Variant
-                                    </th>
-                                    <th className="px-2 py-2 border border-black bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    </th> */}
+                                    <th className="p-2 text-center">
                                         Quantity
                                     </th>
-                                    <th className="px-2 py-2 border border-black bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th className="p-2 text-center">
                                         Stock Type
                                     </th>
-                                    <th className="px-2 py-2 border border-black bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th className="p-2 text-center">
                                         Stock at
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {Object.keys(groupedStocks).map((productName, productIndex) => {
-                                    const stocks = groupedStocks[productName];
-                                    const rowspan = stocks.length;
-
-                                    return stocks.map((stock, index) => (
-                                        <tr key={stock.id}>
-                                            <td className="border border-black bg-white text-sm text-nowrap">
-                                                {productIndex + 1}
-                                            </td>
-                                            <td className="border border-black bg-white text-sm text-nowrap">
-                                                {stock.product_name}
-                                            </td>
-                                            <td className="border border-black bg-white text-sm text-nowrap">
-                                                {stock.variant_name}
-                                            </td>
-                                            <td className="border border-black bg-white text-sm text-nowrap">
-                                                {stock.quantity}
-                                            </td>
-                                            <td className="border border-black bg-white text-sm text-nowrap">
-                                                {stock.movement_type}
-                                            </td>
-                                            <td className="border border-black bg-white text-sm">
-                                                {stock.created_at}
-                                            </td>
-                                        </tr>
-                                    ));
-                                })}
+                                {stockLists.map((stock, index) => (
+                                    <tr key={stock.id}>
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 w-1">
+                                            {index + 1}
+                                        </td>
+                                        <td className="p-2 border-l border-r border-b border-indigo-500">
+                                            {stock.product_name}
+                                        </td>
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
+                                            {stock.quantity}
+                                        </td>
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
+                                            {stock.movement_type || "N/A"}
+                                        </td>
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
+                                            {new Date(stock.created_at).toLocaleDateString()}
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>

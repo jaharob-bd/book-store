@@ -49,43 +49,43 @@ export default function OrderLists({ auth, orders }) {
                 </div>
                 <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
                     <div className="inline-block min-w-full shadow-md overflow-hidden">
-                        <table className="min-w-full leading-normal">
-                            <thead>
-                                <tr>
-                                    <th className="border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-
+                        <table className="w-full border-collapse bg-gray-100 rounded-md">
+                            <thead className="bg-gray-200">
+                                <tr className="bg-indigo-500 h-6 border border-indigo-500 text-white">
+                                    <th className="p-2 text-left w-1">
+                                        #
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="p-2 text-left">
                                         Invoice No
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="p-2 text-center">
                                         Customer
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="p-2 text-center">
                                         Date
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider text-nowrap">
+                                    <th className="p-2 text-center text-nowrap">
                                         Sub Total
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="p-2 text-center">
                                         Discount
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="p-2 text-center">
                                         VAT
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider text-nowrap">
+                                    <th className="p-2 text-center text-nowrap">
                                         Shipping Fee
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider text-nowrap">
+                                    <th className="p-2 text-center text-nowrap">
                                         Grand Total
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="p-2 text-center">
                                         Paid
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="p-2 text-center">
                                         Due
                                     </th>
-                                    <th className="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
+                                    <th className="p-2 text-center">
                                         Status
                                     </th>
                                 </tr>
@@ -93,7 +93,7 @@ export default function OrderLists({ auth, orders }) {
                             <tbody>
                                 {orders.map((order) => (
                                     <tr key={order.id}>
-                                        <td className="border-b border-gray-200 bg-white text-sm text-center text-nowrap">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500">
                                             <Link href={`/sales/order/view/${order.id}`}
                                                 className="select-none rounded-lg bg-blue-500 py-1 px-1 mr-1 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-blue-500/20 transition-all hover:shadow-lg hover:shadow-blue-500/40 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                                                 type="button"
@@ -101,37 +101,37 @@ export default function OrderLists({ auth, orders }) {
                                                 <i class="ri-apps-2-add-fill"></i>
                                             </Link>
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm text-nowrap">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500">
                                             {order.order_no}
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm text-nowrap">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                             {order.customer.name}
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm text-nowrap">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                             {order.order_date}
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                             {order.sub_amount}
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                             {order.discount_amount}
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                             {order.tax_amount}
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                             {order.shipping_fee}
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                             {order.total_amount}
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                             {order.paid_amt}
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text-sm">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                             {order.due_amt}
                                         </td>
-                                        <td className="px-2 py-2 border-b border-gray-200 bg-white text">
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                             {order.status}
                                         </td>
                                     </tr>

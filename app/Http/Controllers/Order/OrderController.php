@@ -161,14 +161,14 @@ class OrderController extends Controller
             ->where('order_no', $order_no)
             ->first();
         $shippingAddress = explode('@', $order->shipping_address);
-        // dd($shippingAddress[0]);
+        // dd($shippingAddress);
         if ($order) {
             $order = [
                 'id'              => $order->order_no,
                 'shippingAddress' => [
-                    'city'      => $shippingAddress[1],
-                    'district' => $shippingAddress[0],
-                    'address'   => $shippingAddress[2],
+                    'city'     => isset($shippingAddress[1]) ? $shippingAddress[1] : '',
+                    'district' => isset($shippingAddress[0]) ? $shippingAddress[0] : '',
+                    'address'  => isset($shippingAddress[2]) ? $shippingAddress[2] : '',
                 ],
                 'date'            => date('Y-m-d', strtotime($order->order_date)),
                 'customer'        => [
