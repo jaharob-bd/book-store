@@ -18,6 +18,7 @@ use App\Models\Purchase\PurchaseMst;
 use App\Models\Purchase\PurchaseChd;
 use App\Models\Purchase\StockMst;
 use App\Models\Purchase\StockChd;
+use App\Models\Inventory\Stock\Stock;
 use App\Models\Purchase\PurPayDetail;
 use App\Models\Supplier\Supplier;
 use Carbon\Carbon;
@@ -29,14 +30,12 @@ class StockController extends Controller
 {
     public function index()
     {
-        $stocks = StockMst::with('productVariantPrice')->get();
+        $stocks = Stock::with('product')->get();
         $data['stocks'] = $stocks->map(function ($purchase) {
             return [
                 'id' => $purchase->id,
                 'product_id' => $purchase->product_id,
-                'product_name' => $purchase->product_name,
-                'product_v_id' => $purchase->product_v_id,
-                'variant_name' => $purchase->variant_name,
+                'product_name' => $purchase->product->name,
                 'quantity' => $purchase->quantity,
                 'last_updated' => $purchase->last_updated,
                 'created_by' => $purchase->created_by,
@@ -45,21 +44,19 @@ class StockController extends Controller
                 'updated_at' => $purchase->updated_at,
             ];
         });
-
-        // return Inertia::render('Inventory/Index', $data);
+        // return $data;
         return Inertia::render('Inventory/Stock/Stock', $data);
     }
 
     public function getStock()
     {
-        $stocks = StockMst::with('productVariantPrice')->get();
+        // dd(777);
+        $stocks = Stock::with('product')->get();
         $data['stocks'] = $stocks->map(function ($purchase) {
             return [
                 'id' => $purchase->id,
                 'product_id' => $purchase->product_id,
-                'product_name' => $purchase->product_name,
-                'product_v_id' => $purchase->product_v_id,
-                'variant_name' => $purchase->variant_name,
+                'product_name' => $purchase->product->name,
                 'quantity' => $purchase->quantity,
                 'last_updated' => $purchase->last_updated,
                 'created_by' => $purchase->created_by,

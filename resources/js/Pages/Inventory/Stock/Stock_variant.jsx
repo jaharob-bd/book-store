@@ -69,9 +69,9 @@ export default function Stock({ auth, stocks }) {
                                     <th className="px-2 py-2 border-b-2 border-black bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Product
                                     </th>
-                                    {/* <th className="px-2 py-2 border-b-2 border-black bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    <th className="px-2 py-2 border-b-2 border-black bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Variant
-                                    </th> */}
+                                    </th>
                                     <th className="px-2 py-2 border-b-2 border-black bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Quantity
                                     </th>
@@ -81,19 +81,23 @@ export default function Stock({ auth, stocks }) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {
+                                {Object.keys(groupedStocks).map((productName) => {
+                                    const stocks = groupedStocks[productName];
+                                    const rowspan = stocks.length;
 
-                                    stockLists.map((stock, index) => (
+                                    return stocks.map((stock, index) => (
                                         <tr key={stock.id}>
-
-                                            <td
-                                                className="border-b border-black bg-white text-sm text-nowrap"
-                                            >
-                                                {stock.product_name}
-                                            </td>
-                                            {/* <td className="border border-black bg-white text-sm text-nowrap">
+                                            {index === 0 && (
+                                                <td
+                                                    className="border-b border-black bg-white text-sm text-nowrap"
+                                                    rowSpan={rowspan}
+                                                >
+                                                    {productName}
+                                                </td>
+                                            )}
+                                            <td className="border border-black bg-white text-sm text-nowrap">
                                                 {stock.variant_name}
-                                            </td> */}
+                                            </td>
                                             <td className="border border-black bg-white text-sm text-nowrap">
                                                 {stock.quantity}
                                             </td>
@@ -101,8 +105,8 @@ export default function Stock({ auth, stocks }) {
                                                 {stock.last_updated}
                                             </td>
                                         </tr>
-                                    ))
-                                }
+                                    ));
+                                })}
                             </tbody>
                         </table>
                     </div>

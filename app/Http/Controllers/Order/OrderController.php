@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Session;
 use App\Models\Setting\Organization;
-use App\Models\Inventory\Stock\StockMovement;
+use App\Models\Inventory\Stock\Stock;
 use App\Models\Order\Payment;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
@@ -42,29 +42,62 @@ class OrderController extends Controller
         // Start DB Transaction
         DB::beginTransaction();
         try {
-            $order = Order::saveOrder($validated, $panel);
-            if ($order) {
-                foreach ($validated['orderDetails'] as $detail) {
-                    $product = Product::with('stock')->find($detail['id']);
-                    // Check if enough stock is available
-                    if ($product->stock && $product->stock->quantity < $detail['quantity']) {
-                        throw new \Exception("Insufficient stock for product ID: {$detail['id']}");
-                    }
-                    $createOrder    = OrderDetail::saveOrderDetails($detail, $order->id);
-                    $stockDecrement = $product->stock->decrement('quantity', $detail['quantity']);
-                    $stockMovement = ($stockDecrement) ? StockMovement::saveStockMovement($detail, $order->id) : '';
+            // get customers information
+            $customerInfo = $panel == false ? Customer::where('user_id', Auth::user()->id)->first() : '';
+            $shippingInfo = $this->shippingValidation($panel, $data, $customerInfo);
+
+            // Create order
+            $order = Order::create([
+                'customer_id'      => $panel ? 31 : $customerInfo->id,           // Assuming the logged-in user is the customer
+                'order_date'       => now(),
+                'shipping_address' => $shippingInfo,
+                // 'billing_address'  => $request->input('billingAddress', null),
+                'sub_amount'       => $validated['subAmount'],
+                'discount_amount'  => $validated['discountAmount'] ?? 0.00,
+                'tax_amount'       => $validated['vatAmount'] ?? 0.00,
+                'shipping_fee'     => $validated['shippingFee'] ?? 0.00,
+                'total_amount'     => $validated['totalAmount'],
+                // 'paid_amount'      => $panel ? $paidAmount : 0, // when payment confirmed then paid updated.
+                'status'           => $panel ? 'Delivered' : 'Pending',
+                'invoice_status'   => $panel ? '2' : '1', // here 1 = website and 2 = admin panel
+                'created_by'       => Auth::user()->id,
+            ]);
+
+            // Create order details
+            foreach ($validated['orderDetails'] as $detail) {
+                $product = Product::with('stock')->find($detail['id']);
+
+                // Check if enough stock is available
+                if ($product->stock && $product->stock->quantity < $detail['quantity']) {
+                    throw new \Exception("Insufficient stock for product ID: {$detail['id']}");
                 }
-                // payment method
-                ($panel && isset($data['paymentMethods'])) ? Payment::savePayment($data['paymentMethods'], $order->id) : '';
-                // Send email to customer
+
+                // Create order detail record
+                OrderDetail::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $detail['id'],
+                    'quantity'   => $detail['quantity'],
+                    'price'      => $detail['price'],
+                ]);
+
+                // Decrement stock
+                $product->stock->decrement('quantity', $detail['quantity']);
+            }
+
+            // payment method
+            if ($panel && isset($data['paymentMethods'])) {
+                Payment::paymentSave($data['paymentMethods'], $order->id);
             }
             // Commit transaction
             DB::commit();
 
             Session::flash('success', 'Order Place successfully!');
-            return $panel 
-            ? redirect()->route('sales.order.create') 
-            : redirect()->route('order-success', ['order_no' => (string) $order->order_no]);
+            if ($panel) {
+                // return redirect()->route('sales/order/create');
+                return redirect()->route('order-success', ['order_no' => (string)$order->order_no]);
+            } else {
+                return redirect()->route('order-success', ['order_no' => (string)$order->order_no]);
+            }
         } catch (\Exception $e) {
             // Rollback transaction on error
             DB::rollBack();
