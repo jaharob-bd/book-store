@@ -5,10 +5,11 @@ namespace App\Models\Inventory\Stock;
 use App\Models\Catalog\Product;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StockMovement extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'stock_movements';
     protected $fillable = [
@@ -28,19 +29,17 @@ class StockMovement extends Model
 
     public static function saveStockMovement($data, $addIn = null)
     {
-        foreach ($data['items'] as $chd) {
-            StockChd::create([
-                'product_id'    => $chd['variant_id'],
-                'quantity'        => $chd['quantity'],
-                'type'   => 'In',
-                'add_id' =>       $addIn,
-                'created_by'      => $chd['created_by'] ?? auth()->id(),
-                'updated_by'      => $chd['updated_by'] ?? auth()->id(),
-            ]);
-        }
+        $stockMovement = StockMovement::create([
+            'product_id' => $data['id'],
+            'quantity'   => $data['quantity'],
+            'type'       => 'In',
+            'add_id'     => $addIn,
+            'created_by' => $data['created_by'] ?? auth()->id(),
+        ]);
+        return $stockMovement;
     }
 
-
+    
 
     // public function productVariantPrice()
     // {

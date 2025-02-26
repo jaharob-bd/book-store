@@ -34,28 +34,21 @@ class OrderDetail extends Model
     }
 
     // save order details static function
-    public static function saveOrderDetails($data)
+    public static function saveOrderDetails(array $data, int $id)
     {
+        $createOrder = OrderDetail::create([
+            'order_id'   => $id,
+            'product_id' => $data['id'],
+            'quantity'   => $data['quantity'],
+            'price'      => $data['price'],
+        ]);
 
-        // // for loop order details
-        // foreach ($variant_ids as $variant_id) {
-        //     self::saveOrderDetail($order_id, $product_id, $variant_id, $quantity, $price);
-        // }
-        // // return;  // return immediately if no variants are provided.
-
-        // // single variant order detail
-
-        // $orderDetail = new OrderDetail();
-        // $orderDetail->order_id = $order_id;
-        // $orderDetail->product_id = $product_id;
-        // // $orderDetail->variant_id = $variant_id;
-        // $orderDetail->quantity = $quantity;
-        // $orderDetail->price = $price;
-        // $orderDetail->save();
-
-        // return $orderDetail;  // return the saved order detail model instance for further operations.
+        if ($createOrder) {
+            return $createOrder;
+        } else {
+            return false;
+        }
     }
-
 
     public function order()
     {
@@ -69,13 +62,4 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(Product::class);
     }
-
-    /**
-     * Get the variant associated with the detail.
-     */
-
-    // public function variant()
-    // {
-    //     return $this->belongsTo(Variant::class);
-    // }
 }

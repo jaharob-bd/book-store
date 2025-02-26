@@ -94,7 +94,7 @@ class Payment extends Model
         return $updateOrder ? true : false;
     }
 
-    public static function paymentSave(array $paymentMethods, int $order_id): bool
+    public static function savePayment(array $paymentMethods, int $order_id): bool
     {
         try {
             DB::beginTransaction();

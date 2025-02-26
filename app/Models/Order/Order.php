@@ -8,6 +8,7 @@ use App\Models\Order\Payment;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Order extends Model
 {
@@ -25,9 +26,55 @@ class Order extends Model
         'order_no',
     ];
 
+    public static function saveOrder(array $data, string $panel)
+    {
+        $customerInfo = ($panel == false) ? Customer::where('user_id', Auth::user()->id)->first() : '';
+        $shippingInfo = self::shippingValidation($data, $panel, $customerInfo);
+        $order = Order::create([
+            'customer_id'      => $panel ? 31 : $customerInfo->id,
+            'order_date'       => now(),
+            'shipping_address' => $shippingInfo,
+            'sub_amount'       => $data['subAmount'],
+            'discount_amount'  => $data['discountAmount'] ?? 0.00,
+            'tax_amount'       => $data['vatAmount'] ?? 0.00,
+            'shipping_fee'     => $data['shippingFee'] ?? 0.00,
+            'total_amount'     => $data['totalAmount'],
+            'status'           => $panel ? 'Delivered' : 'Pending',
+            'invoice_status'   => $panel ? '2' : '1',
+            'created_by'       => Auth::user()->id,
+        ]);
+        return $order;
+    }
+
+    public static function shippingValidation(array $data, string $panel, $customerInfo)
+    {
+        $shippingInfo = null;
+        if (
+            $panel == false &&
+            !empty($data['shippingAddress']['city']) ||
+            !empty($data['shippingAddress']['district']) ||
+            !empty($data['shippingAddress']['address'])
+        ) {
+            $shippingAddress = [
+                'city'           => $data['shippingAddress']['city'] ?? '',
+                'district'       => $data['shippingAddress']['district'] ?? '',
+                'street_address' => $data['shippingAddress']['address'] ?? ''
+            ];
+
+            // Check if customer exists before updating
+            if ($customerInfo) {
+                $customerInfo->update($shippingAddress);
+            }
+
+            $shippingInfo = ($data['shippingAddress']['district'] ?? '') . '@' .
+                ($data['shippingAddress']['city'] ?? '') . '@' .
+                ($data['shippingAddress']['address'] ?? '');
+        }
+        return $shippingInfo;
+    }
+
     public static function orderStatusUpdate($data)
     {
-        // dd(isset($data['id']));
         // Validate that 'status' and 'id' keys are present
         if (!isset($data['status']) || !isset($data['id'])) {
             // redirect to view controller
@@ -38,9 +85,7 @@ class Order extends Model
             'status' => $data['status'],
             'updated_at' => Carbon::now(), // explicitly setting the updated_at timestamp
         ];
-
         $updateOrder = Order::where('id', $data['id'])->update($updateData);
-
         // Check if the update was successful
         if (!$updateOrder) {
             throw new \Exception('Order update failed.');
@@ -66,10 +111,10 @@ class Order extends Model
     {
         return $this->hasMany(Payment::class);
     }
-    public static function saveOrder($data)
-    {
-        // return $this->belongsTo(Brand::class);
-    }
+    // public static function saveOrder($data)
+    // {
+    //     // return $this->belongsTo(Brand::class);
+    // }
 
     public function categories()
     {
