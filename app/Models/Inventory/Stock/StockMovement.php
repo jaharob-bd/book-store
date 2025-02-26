@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class StockMovement extends Model
 {
-    use HasFactory, SoftDeletes;
+    // use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $table = 'stock_movements';
     protected $fillable = [
@@ -57,23 +58,4 @@ class StockMovement extends Model
     // {
     //     return $this->productVariantPrice->variant_name;
     // }
-
-    public function productVariantPrice()
-    {
-        return $this->belongsTo(Product::class, 'product_id');
-    }
-    public function getProductNameAttribute()
-    {
-        return $this->productVariantPrice->product->name;
-    }
-    // only product name can be joined
-    public function getProductIdAttribute()
-    {
-        return $this->productVariantPrice->product->id;
-    }
-    // only variant name can be joined
-    public function getVariantNameAttribute()
-    {
-        return $this->productVariantPrice->variant_name;
-    }
 }

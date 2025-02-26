@@ -28,8 +28,10 @@ class Order extends Model
 
     public static function saveOrder(array $data, string $panel)
     {
+        // dd($data);
         $customerInfo = ($panel == false) ? Customer::where('user_id', Auth::user()->id)->first() : '';
         $shippingInfo = self::shippingValidation($data, $panel, $customerInfo);
+        // dd($shippingInfo);
         $order = Order::create([
             'customer_id'      => $panel ? 31 : $customerInfo->id,
             'order_date'       => now(),

@@ -34,6 +34,7 @@ class OrderController extends Controller
             'vatAmount'               => 'nullable|numeric|min:0',
             'shippingFee'             => 'nullable|numeric|min:0',
             'totalAmount'             => 'required|numeric|min:0',
+            'shippingAddress'         => 'nullable|array',
             'orderDetails'            => 'required|array',
             'orderDetails.*.id'       => 'required|exists:products,id',   // product id
             'orderDetails.*.price'    => 'required|numeric|min:0',
@@ -131,7 +132,8 @@ class OrderController extends Controller
                     ];
                 })->toArray(),
                 'vatRate'     => 0,                                   // Example VAT rate, you can calculate it dynamically if needed
-                'shippingFee' => 50,                                  // Example VAT rate, you can calculate it dynamically if needed
+                'vatAmount'   => $order->tax_amount ?? 0,                  // Example VAT rate, you can calculate it dynamically if needed
+                'shippingFee' => $order->shipping_fee,                // Example VAT rate, you can calculate it dynamically if needed
                 'discount'    => floatval($order->discount_amount),   // Use discount amount from the order
             ];
         } else {
