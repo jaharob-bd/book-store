@@ -112,13 +112,6 @@ export const modules = [
                 controller_name: "",
                 route: "order.shipments"
             },
-            // {
-            //     id: 4,
-            //     parent_id: 5,
-            //     menu_name: "invoices",
-            //     controller_name: "",
-            //     route: "order.create"
-            // },
             {
                 id: 5,
                 parent_id: 5,
@@ -168,14 +161,21 @@ export const modules = [
                 parent_id: 6,
                 menu_name: "employee",
                 controller_name: "",
-                route: "stocks"
+                route: "employees"
             },
             {
-                id: 6,
-                parent_id: 3,
-                menu_name: "position",
+                id: 2,
+                parent_id: 6,
+                menu_name: "Department",
                 controller_name: "",
-                route: "stock-movements"
+                route: "positions"
+            },
+            {
+                id: 3,
+                parent_id: 6,
+                menu_name: "Position",
+                controller_name: "",
+                route: "positions"
             }
         ]
     },

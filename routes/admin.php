@@ -5,6 +5,7 @@ use App\Http\Controllers\Catalog\ProductController;
 use App\Http\Controllers\Catalog\ProductCommonController;
 use App\Http\Controllers\Consumer\CustomerController;
 use App\Http\Controllers\Consumer\CustomerCommonController;
+use App\Http\Controllers\HRM\HRMController;
 use App\Http\Controllers\Purchase\PurchaseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Supplier\SupplierController;
@@ -75,6 +76,22 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/sales/order/view/{id}', [SalesController::class, 'show'])->name('order.view');
     Route::get('/sales/order/shipments', [SalesController::class,'shipments'])->name('order.shipments');
     Route::post('/status-update', [SalesController::class, 'statusUpdate'])->name('order.status-update');
+
+    // Human Resources Management (HRM)
+    Route::get('/employees', [HRMController::class, 'index'])->name('employees');
+    Route::post('/employee-store', [HRMController::class,'storeEmployee'])->name('employee-store');
+    Route::get('/employee-edit/{id}', [HRMController::class, 'editEmployee'])->name('employee.edit');
+    Route::patch('/employee-update/{id}', [HRMController::class, 'updateEmployee'])->name('employee.update');
+    Route::get('/employee-delete/{id}', [HRMController::class, 'deleteEmployee'])->name('employee.delete');
+    // department
+    Route::get('/departments', [HRMController::class, 'departments'])->name('departments');
+    Route::post('/department-store', [HRMController::class,'storeDepartment'])->name('department-store');
+    Route::get('/department-edit/{id}', [HRMController::class, 'editDepartment'])->name('department.edit');
+    Route::patch('/department-update/{id}', [HRMController::class, 'updateDepartment'])->name('department.update');
+    Route::get('/department-delete/{id}', [HRMController::class, 'deleteDepartment'])->name('department.delete');
+    // position
+    Route::get('/positions', [HRMController::class, 'positions'])->name('positions');
+    Route::post('/position-store', [HRMController::class,'storePosition'])->name('position-store');
 
     // Route::post('/order-store', [SalesController::class, 'store'])->name('order-store');
     // Route::post('/invoice-store', [ProfileController::class, 'store'])->name('invoice-store');

@@ -26,10 +26,10 @@ export const List = ({ openModal, suppliers }) => {
                                 <th className="p-2 text-center w-10">
                                     <input type="checkbox" />
                                 </th>
-                                <th className="p-2 text-center">
+                                <th className="p-2 text-left">
                                     Name
                                 </th>
-                                <th className="p-2 text-center">
+                                <th className="p-2 text-left">
                                     Contact Person
                                 </th>
                                 <th className="p-2 text-center">
@@ -53,10 +53,10 @@ export const List = ({ openModal, suppliers }) => {
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center w-10">
                                         <input type="checkbox" className="form-control" />
                                     </td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
+                                    <td className="p-2 px-3 border-l border-r border-b border-indigo-500 text-left">
                                         {supplier.name}
                                     </td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
+                                    <td className="p-2 px-3 border-l border-r border-b border-indigo-500 text-left">
                                         {supplier.contact_person}
                                     </td>
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">

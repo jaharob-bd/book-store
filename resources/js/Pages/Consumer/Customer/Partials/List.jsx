@@ -23,7 +23,7 @@ export const List = ({ openModal, customers }) => {
                     <table className="w-full border-collapse bg-gray-100 rounded-md">
                         <thead className="bg-gray-200">
                             <tr className="bg-indigo-500 h-6 border border-indigo-500 text-white">
-                                <th className="p-2 text-center">
+                                <th className="p-2 text-center w-10">
                                     <input type="checkbox" />
                                 </th>
                                 <th className="p-2 text-left">
@@ -50,10 +50,10 @@ export const List = ({ openModal, customers }) => {
                         <tbody>
                             {customers?.map((customer) => (
                                 <tr key={customer.id} className="customer">
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center w-10">
                                         <input type="checkbox" className="form-control" />
                                     </td>
-                                    <td className="p-2 px-5 border-l border-r border-b border-indigo-500">
+                                    <td className="p-2 px-3 border-l border-r border-b border-indigo-500">
                                         {customer.name}
                                     </td>
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
