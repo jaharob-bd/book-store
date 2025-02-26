@@ -14,6 +14,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Session;
 use App\Models\Setting\Organization;
 use App\Models\Inventory\Stock\Stock;
+use App\Models\Inventory\Stock\StockMovement;
 use App\Models\Order\Payment;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
@@ -83,8 +84,9 @@ class OrderController extends Controller
 
                 // Decrement stock
                 $product->stock->decrement('quantity', $detail['quantity']);
+                // stock movement
             }
-
+            // StockMovement::saveStockMovement($validated['orderDetails'], $order->id);
             // payment method
             if ($panel && isset($data['paymentMethods'])) {
                 Payment::paymentSave($data['paymentMethods'], $order->id);
@@ -94,8 +96,8 @@ class OrderController extends Controller
 
             Session::flash('success', 'Order Place successfully!');
             if ($panel) {
-                // return redirect()->route('sales/order/create');
-                return redirect()->route('order-success', ['order_no' => (string)$order->order_no]);
+                return redirect()->route('sales/order/create');
+                // return redirect()->route('order-success', ['order_no' => (string)$order->order_no]);
             } else {
                 return redirect()->route('order-success', ['order_no' => (string)$order->order_no]);
             }

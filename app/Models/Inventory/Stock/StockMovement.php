@@ -28,19 +28,17 @@ class StockMovement extends Model
 
     public static function saveStockMovement($data, $addIn = null)
     {
-        foreach ($data['items'] as $chd) {
-            StockChd::create([
-                'product_id'    => $chd['variant_id'],
-                'quantity'        => $chd['quantity'],
-                'type'   => 'In',
-                'add_id' =>       $addIn,
-                'created_by'      => $chd['created_by'] ?? auth()->id(),
-                'updated_by'      => $chd['updated_by'] ?? auth()->id(),
+        foreach ($data as $chd) {
+            StockMovement::create([
+                'product_id' => $chd['variant_id'],
+                'quantity'   => $chd['quantity'],
+                'type'       => 'In',
+                'add_id'     => $addIn,
+                'created_by' => $chd['created_by'] ?? auth()->id(),
+                'updated_by' => $chd['updated_by'] ?? auth()->id(),
             ]);
         }
     }
-
-
 
     // public function productVariantPrice()
     // {
@@ -60,4 +58,23 @@ class StockMovement extends Model
     // {
     //     return $this->productVariantPrice->variant_name;
     // }
+
+    public function productVariantPrice()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
+    }
+    public function getProductNameAttribute()
+    {
+        return $this->productVariantPrice->product->name;
+    }
+    // only product name can be joined
+    public function getProductIdAttribute()
+    {
+        return $this->productVariantPrice->product->id;
+    }
+    // only variant name can be joined
+    public function getVariantNameAttribute()
+    {
+        return $this->productVariantPrice->variant_name;
+    }
 }
