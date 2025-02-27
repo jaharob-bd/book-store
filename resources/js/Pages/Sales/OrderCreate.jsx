@@ -3,46 +3,47 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router, useForm } from '@inertiajs/react';
 import Select from 'react-select';
 import SwalAlert from '@/Components/Alert/SwalAlert';
+import OrderPrint from './OrderPrint';
 
 const OrderCreate = (props) => {
-    const auth                            = props.auth;
-    const [cart, setCart]                 = useState([]);
-    const [subtotal, setSubtotal]         = useState(0);                                // Initialize subtotal
-    const [discount, setDiscount]         = useState(0);
-    const [VAT, setVAT]                   = useState(0);
-    const [grandTotal, setGrandTotal]     = useState(0);
+    const auth = props.auth;
+    const [cart, setCart] = useState([]);
+    const [subtotal, setSubtotal] = useState(0);                                // Initialize subtotal
+    const [discount, setDiscount] = useState(0);
+    const [VAT, setVAT] = useState(0);
+    const [grandTotal, setGrandTotal] = useState(0);
     const [changeAmount, setChangeAmount] = useState(0);
-    const [dueAmount, setDueAmount]       = useState(0);
-    const [payments, setPayments]         = useState({ Cash: 0, Card: 0, Mobile: 0 });
-    const [customer, setCustomer]         = useState({ name: "", phone: "" });
-    const initial                         = {
-            invoicFrom    : 'panel',
-            discountAmount: discount,
-            vatAmount     : VAT,
-            subAmount     : subtotal,
-            totalAmount   : grandTotal,
-            changeAmount  : changeAmount,
-            dueAmount     : dueAmount,
-            orderDetails  : cart,
-            paymentMethod : payments,
-            customer,
-            shippingAddress: {
-                district: '',
-                city    : '',
-                address : '',
-            },
-        };
+    const [dueAmount, setDueAmount] = useState(0);
+    const [payments, setPayments] = useState({ Cash: 0, Card: 0, Mobile: 0 });
+    const [customer, setCustomer] = useState({ name: "", phone: "" });
+    const initial = {
+        invoicFrom: 'panel',
+        discountAmount: discount,
+        vatAmount: VAT,
+        subAmount: subtotal,
+        totalAmount: grandTotal,
+        changeAmount: changeAmount,
+        dueAmount: dueAmount,
+        orderDetails: cart,
+        paymentMethod: payments,
+        customer,
+        shippingAddress: {
+            district: '',
+            city: '',
+            address: '',
+        },
+    };
     const [data, setData] = useState(initial);
     // console.log(data);
     const [products, setProducts] = useState(props.products);
     // const [customers, setCustomers] = useState(props.customers);
     useEffect(() => {
-        const subtotal  = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        const vat       = subtotal * 0.05;
-        const total     = subtotal + vat - discount;
+        const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const vat = subtotal * 0.05;
+        const total = subtotal + vat - discount;
         const totalPaid = payments.Cash + payments.Card + payments.Mobile;
-        const due       = Math.max(0, total - totalPaid);
-        const change    = Math.max(0, totalPaid - total);
+        const due = Math.max(0, total - totalPaid);
+        const change = Math.max(0, totalPaid - total);
         setSubtotal(subtotal);
         setVAT(vat);
         setGrandTotal(total);
@@ -51,22 +52,22 @@ const OrderCreate = (props) => {
 
         // Update data state
         setData({
-                submitFrom    : 'panel',
-                discountAmount: discount,
-                vatAmount     : vat,
-                subAmount     : subtotal,
-                totalAmount   : total,
-                changeAmount  : change,
-                dueAmount     : due,
-                orderDetails  : cart,
-                paymentMethods: payments,
-                customer,
-                shippingAddress: {
-                    district: '',
-                    city    : '',
-                    address : '',
-                },
-            }
+            submitFrom: 'panel',
+            discountAmount: discount,
+            vatAmount: vat,
+            subAmount: subtotal,
+            totalAmount: total,
+            changeAmount: change,
+            dueAmount: due,
+            orderDetails: cart,
+            paymentMethods: payments,
+            customer,
+            shippingAddress: {
+                district: '',
+                city: '',
+                address: '',
+            },
+        }
         );
 
     }, [cart, discount, payments, customer]);
@@ -108,7 +109,6 @@ const OrderCreate = (props) => {
             //     return;
             // }
 
-            
             router.post('/order-store', data, {
                 preserveScroll: true,
                 onSuccess: ({ props }) => {
@@ -227,6 +227,7 @@ const OrderCreate = (props) => {
                     <button onClick={() => submit()} className={"text-white text-lg w-full py-2 bg-indigo-500"}>Order</button>
                 </div>
             </div>
+            <OrderPrint {... { cart, subtotal, discount, VAT, grandTotal, payments, changeAmount, dueAmount }} />
         </AuthenticatedLayout>
     );
 };

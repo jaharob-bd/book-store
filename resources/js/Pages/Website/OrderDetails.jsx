@@ -5,17 +5,16 @@ import ReactToPrint from 'react-to-print';
 
 const OrderDetails = ({ auth, order, organization }) => {
     // console.log(order);
-    const componentRef        = useRef();
-    const { props }           = usePage();
-    const logo                = props.url?.base_url + '/company-logo.svg'
-    const calculateSubtotal   = () => order.items.reduce((total, item) => total + item.quantity * item.price, 0);
-    const calculateVAT        = (subtotal) => (subtotal * order.vatRate) / 100;
-    const calculateGrandTotal = (subtotal, vat, discount, fee) =>  subtotal - discount + vat + fee;
-    const subtotal            = calculateSubtotal();
-    const vat                 = Number(order.vatAmount) || 0;
-    const discount            = Number(order.discount) || 0;                                                       // Ensure discount is a number
-    const shippingFee         = Number(order.shippingFee) || 0;                                                    // Ensure shipping fee is a number
-    
+    const componentRef = useRef();
+    const { props } = usePage();
+    const logo = props.url?.base_url + '/company-logo.svg'
+    const calculateSubtotal = () => order.items.reduce((total, item) => total + item.quantity * item.price, 0);
+    const calculateGrandTotal = (subtotal, vat, discount, fee) => subtotal - discount + vat + fee;
+    const subtotal = calculateSubtotal();
+    const vat = Number(order.vatAmount) || 0;
+    const discount = Number(order.discount) || 0;                                                       // Ensure discount is a number
+    const shippingFee = Number(order.shippingFee) || 0;                                                    // Ensure shipping fee is a number
+
     const grandTotal = calculateGrandTotal(subtotal, vat, discount, shippingFee);
 
     return (
@@ -152,8 +151,6 @@ const OrderDetails = ({ auth, order, organization }) => {
                             <p className="text-gray-700">2. All products are subject to 5% sales tax.</p>
                             <p className="text-gray-700">3. Please provide the invoice copy along with the payment receipt.</p>
                             <p className="text-gray-700">4. If you have any questions or need additional information, please contact us at {order.customer.email}.</p>
-                            {/* <p className="text-gray-700">5. You will be charged a 10% service fee on the invoice amount.</p>
-                            <p className="text-gray-700">6. Please ensure that all necessary documents are attached in the invoice.</p> */}
                         </div>
                     </div>
                     <div className="mt-4 text-center text-gray-500 text-sm border-t border-gray-300 pt-2 print:absolute print:bottom-3 print:w-full print:text-center">
