@@ -66,4 +66,16 @@ class CustomerController extends Controller
         Session::flash('success', 'Customer updated successfully!');
         return redirect()->route('customers');
     }
+
+    // getCustomer phone wise get information
+    public function getCustomerByPhone($phone){
+        // $phone = request('phone');
+        $customer = Customer::where('phone', $phone)->first();
+        // dd($customer);
+        if($customer){
+            echo json_encode($customer);
+        }else{
+            echo json_encode(['message' => 'No customer found with this phone'], 404);
+        }
+    }
 }

@@ -264,3 +264,18 @@
 .close:hover {
   background: darkred;
 }
+
+/* print invoice */
+.print-area {
+  display: none;
+}
+
+@media print {
+  .print-area {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+    text-align: center;
+  }
+}

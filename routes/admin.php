@@ -47,6 +47,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/customers', [CustomerController::class, 'index'])->name('customers');
     Route::post('/customer-store', [CustomerController::class, 'store'])->name('customer-store');
     Route::post('/customer-update/{id}', [CustomerController::class, 'update'])->name('customer-update');
+    Route::get('/get-customer-data/{phone}', [CustomerController::class, 'getCustomerByPhone'])->name('get-customer-data');
     // customer group
     Route::get('/customer-groups', [CustomerCommonController::class, 'customer_group_index'])->name('customer-groups');
     Route::post('/customer-group-store', [CustomerCommonController::class, 'customer_group_store'])->name('customer-group-store');

@@ -6,7 +6,7 @@ import SwalAlert from '@/Components/Alert/SwalAlert';
 import OrderPrint from './OrderPrint';
 
 const OrderCreate = (props) => {
-    const auth = props.auth;
+    const auth = props?.auth;
     const [cart, setCart] = useState([]);
     const [subtotal, setSubtotal] = useState(0);                                // Initialize subtotal
     const [discount, setDiscount] = useState(0);
@@ -15,7 +15,8 @@ const OrderCreate = (props) => {
     const [changeAmount, setChangeAmount] = useState(0);
     const [dueAmount, setDueAmount] = useState(0);
     const [payments, setPayments] = useState({ Cash: 0, Card: 0, Mobile: 0 });
-    const [customer, setCustomer] = useState({ name: "", phone: "" });
+    const [customer, setCustomer] = useState({ id:"", name: "", phone: "" });
+    const [isPrint, setIsPrint] = useState(false);
     const initial = {
         invoicFrom: 'panel',
         discountAmount: discount,
@@ -71,6 +72,64 @@ const OrderCreate = (props) => {
         );
 
     }, [cart, discount, payments, customer]);
+    
+    const removeFromCart = (id) => {
+        setCart(cart.filter((item) => item.id!== id));
+    };
+
+    const handleCustomerChange = async (event) => {
+        try {
+            const phone = event.target.value;
+            const response = await fetch(`/get-customer-data/${phone}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch data');
+            }
+
+            const resData = await response.json();
+            if(resData.id){
+                setCustomer({ id:resData.id, name: resData.name, phone });
+            }else{
+                setCustomer({ id: '', name: '', phone });
+            }
+
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    };
+    
+    const handleCustomerChange_22 = (event) => {
+        const phone = event.target.value;
+// use fetch instead
+        fetch('/get-customer-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ phone }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            setCustomer({ name: data.name, phone });
+        })
+        .catch(error => {
+            console.error('Failed to fetch customer data:', error);
+        });
+return false;
+        router.get('/get-customer-data', {phone}, {
+            preserveScroll: true,
+            onSuccess: ({ props }) => {
+                console.log(props);
+                // alert(props);
+                // setCustomer({ name: props.name, phone });
+            },
+            onError: (errors) => {
+                console.error('Failed to place order:', errors);
+                SwalAlert('error', 'Failed to place order. Please try again.', 'center');
+            },
+        });
+
+        setCustomer(event.target.value);
+    };
 
     const addToCart = (event) => {
         const [id, name, price] = event.target.value.split(",");
@@ -100,7 +159,7 @@ const OrderCreate = (props) => {
 
     const submit = () => {
         try {
-            if (data.grandTotal === '' || data.grandTotal < 0) {
+            if (cart.length === 0) {
                 SwalAlert('warning', 'Please add to cart product', 'center');
                 return;
             }
@@ -114,8 +173,9 @@ const OrderCreate = (props) => {
                 onSuccess: ({ props }) => {
                     if (props.flash.success) {
                         SwalAlert('success', props.flash.success, 'center');
-                        setCart([]);
-                        setPayments({ Cash: 0, Card: 0, Mobile: 0 });
+                        setIsPrint(true);
+                        // setCart([]);
+                        // setPayments({ Cash: 0, Card: 0, Mobile: 0 });
                     } else if (props.flash.failed) {
                         SwalAlert('warning', props.flash.failed, 'center');
                     }
@@ -179,7 +239,7 @@ const OrderCreate = (props) => {
                             ) : (
                                 <div className="select-none bg-blue-gray-100 rounded-3xl flex flex-wrap content-center justify-center h-full opacity-25">
                                     <div className="w-full text-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-16 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-40 inline-block" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                                         </svg>
                                         <p className="text-xl">
@@ -195,16 +255,18 @@ const OrderCreate = (props) => {
                 {/* Right Section */}
                 <div className="w-1/5 bg-white p-6 shadow-2xl rounded-lg">
                     <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Customer Details</h2>
-                    <input
-                        type="text"
-                        placeholder="Customer Name"
-                        className="border p-3 w-full rounded-lg mb-3"
-                        onChange={(e) => setCustomer({ ...customer, name: e.target.value })} />
+
                     <input
                         type="text"
                         placeholder="Phone Number"
                         className="border p-3 w-full rounded-lg mb-3"
-                        onChange={(e) => setCustomer({ ...customer, phone: e.target.value })} />
+                        onChange={handleCustomerChange} />
+                    <input
+                        type="text"
+                        placeholder="Customer Name"
+                        className="border p-3 w-full rounded-lg mb-3"
+                        value={customer.name}
+                        readOnly/>
 
                     <div className="mt-6 bg-gray-100 p-5 rounded-lg">
                         <h3 className="text-lg font-semibold border-b pb-2">Order Summary</h3>
@@ -227,7 +289,10 @@ const OrderCreate = (props) => {
                     <button onClick={() => submit()} className={"text-white text-lg w-full py-2 bg-indigo-500"}>Order</button>
                 </div>
             </div>
-            <OrderPrint {... { cart, subtotal, discount, VAT, grandTotal, payments, changeAmount, dueAmount }} />
+            {
+                isPrint && <OrderPrint {... { cart, subtotal, discount, VAT, grandTotal, payments, changeAmount, dueAmount, isPrint, setIsPrint, setCart, setPayments }} />
+            }
+
         </AuthenticatedLayout>
     );
 };
