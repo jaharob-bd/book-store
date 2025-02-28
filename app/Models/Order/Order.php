@@ -26,14 +26,14 @@ class Order extends Model
         'order_no',
     ];
 
-    public static function saveOrder(array $data, string $panel)
+    public static function saveOrder(array $data, string $panel, int $customerId)
     {
         // dd($data);
         $customerInfo = ($panel == false) ? Customer::where('user_id', Auth::user()->id)->first() : '';
         $shippingInfo = self::shippingValidation($data, $panel, $customerInfo);
         // dd($shippingInfo);
         $order = Order::create([
-            'customer_id'      => $panel ? 31 : $customerInfo->id,
+            'customer_id'      => $customerId,
             'order_date'       => now(),
             'shipping_address' => $shippingInfo,
             'sub_amount'       => $data['subAmount'],

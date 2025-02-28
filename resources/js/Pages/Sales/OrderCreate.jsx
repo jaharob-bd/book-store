@@ -15,7 +15,7 @@ const OrderCreate = (props) => {
     const [changeAmount, setChangeAmount] = useState(0);
     const [dueAmount, setDueAmount] = useState(0);
     const [payments, setPayments] = useState({ Cash: 0, Card: 0, Mobile: 0 });
-    const [customer, setCustomer] = useState({ id:"", name: "", phone: "" });
+    const [customer, setCustomer] = useState({ id: "", name: "", phone: "" });
     const [isPrint, setIsPrint] = useState(false);
     const initial = {
         invoicFrom: 'panel',
@@ -72,9 +72,9 @@ const OrderCreate = (props) => {
         );
 
     }, [cart, discount, payments, customer]);
-    
+
     const removeFromCart = (id) => {
-        setCart(cart.filter((item) => item.id!== id));
+        setCart(cart.filter((item) => item.id !== id));
     };
 
     const handleCustomerChange = async (event) => {
@@ -86,49 +86,15 @@ const OrderCreate = (props) => {
             }
 
             const resData = await response.json();
-            if(resData.id){
-                setCustomer({ id:resData.id, name: resData.name, phone });
-            }else{
-                setCustomer({ id: '', name: '', phone });
+            if (resData.id) {
+                setCustomer({ id: resData.id, name: resData.name, phone });
+            } else {
+                setCustomer({ id: '', phone });
             }
 
         } catch (error) {
             console.error('Error fetching data:', error);
         }
-    };
-    
-    const handleCustomerChange_22 = (event) => {
-        const phone = event.target.value;
-// use fetch instead
-        fetch('/get-customer-data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ phone }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            setCustomer({ name: data.name, phone });
-        })
-        .catch(error => {
-            console.error('Failed to fetch customer data:', error);
-        });
-return false;
-        router.get('/get-customer-data', {phone}, {
-            preserveScroll: true,
-            onSuccess: ({ props }) => {
-                console.log(props);
-                // alert(props);
-                // setCustomer({ name: props.name, phone });
-            },
-            onError: (errors) => {
-                console.error('Failed to place order:', errors);
-                SwalAlert('error', 'Failed to place order. Please try again.', 'center');
-            },
-        });
-
-        setCustomer(event.target.value);
     };
 
     const addToCart = (event) => {
@@ -265,8 +231,11 @@ return false;
                         type="text"
                         placeholder="Customer Name"
                         className="border p-3 w-full rounded-lg mb-3"
-                        value={customer.name}
-                        readOnly/>
+                        style={customer.id ? { backgroundColor: 'green', color: 'white' } : {}}
+                        value={customer.name || ''}
+                        onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
+                        readOnly={!!customer.id}  // Makes the input read-only if customer.id is not null
+                    />
 
                     <div className="mt-6 bg-gray-100 p-5 rounded-lg">
                         <h3 className="text-lg font-semibold border-b pb-2">Order Summary</h3>
@@ -290,9 +259,8 @@ return false;
                 </div>
             </div>
             {
-                isPrint && <OrderPrint {... { cart, subtotal, discount, VAT, grandTotal, payments, changeAmount, dueAmount, isPrint, setIsPrint, setCart, setPayments }} />
+                isPrint && <OrderPrint {... { cart, subtotal, discount, VAT, grandTotal, payments, changeAmount, dueAmount, isPrint, setIsPrint, setCart, setPayments, setCustomer }} />
             }
-
         </AuthenticatedLayout>
     );
 };

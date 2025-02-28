@@ -2,7 +2,7 @@ import React, { forwardRef, useRef, useEffect } from 'react';
 import ReactToPrint from 'react-to-print';
 
 const OrderPrint = forwardRef((props, ref) => {
-    const { cart, subtotal, discount, VAT, grandTotal, payments, changeAmount, dueAmount, isPrint, setIsPrint, setCart, setPayments } = props;
+    const { cart, subtotal, discount, VAT, grandTotal, payments, changeAmount, dueAmount, isPrint, setIsPrint, setCart, setPayments, setCustomer } = props;
     const componentRef = useRef();
     const printRef = useRef();
 
@@ -21,6 +21,7 @@ const OrderPrint = forwardRef((props, ref) => {
                     setIsPrint(false); // Reset print state
                     setCart([]); // Clear cart
                     setPayments({ Cash: 0, Card: 0, Mobile: 0 }); // Reset payments
+                    setCustomer({ id: "", name: "", phone: "" })
                 }}
             />
             {/* div center */}

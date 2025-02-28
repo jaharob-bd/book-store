@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Order;
 
 use App\Http\Controllers\Controller;
 use App\Models\Catalog\Product;
+use App\Models\Consumer\Customer;
 use App\Models\Order\Order;
 use App\Models\Order\OrderDetail;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +44,10 @@ class OrderController extends Controller
         // Start DB Transaction
         DB::beginTransaction();
         try {
-            $order = Order::saveOrder($validated, $panel);
+            // customer data
+            $customerId = Customer::saveCustomerFromOrder($data['customer'], $panel);
+            // dd($customerId);
+            $order = Order::saveOrder($validated, $panel, $customerId);
             if ($order) {
                 foreach ($validated['orderDetails'] as $detail) {
                     $product = Product::with('stock')->find($detail['id']);
