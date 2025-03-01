@@ -223,7 +223,7 @@ const OrderCreate = (props) => {
                 {/* Header */}
                 <div className="bg-gray-200 p-2 flex justify-between items-center">
                     <div className="flex items-center gap-4">
-                        <img src="/company-logo.svg" alt="Outlet Logo" className="h-10 w-[400px]" />
+                        <img src="/abdullah_logo.png" alt="Outlet Logo" className="h-10 w-[180px]" />
                     </div>
                     <div className="text-xl font-bold">Outlet: Uttra 10 Outlet</div>
                     <div className="text-sm">User: {auth?.user?.uid}</div>
