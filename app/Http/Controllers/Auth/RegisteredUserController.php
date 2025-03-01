@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Str;
 
 class RegisteredUserController extends Controller
 {
@@ -44,7 +45,8 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => Hash::make($request->password),
-            'user_type' => $isWeb ? '2' : '1'
+            'user_type' => $isWeb ? '2' : '1',
+            'uid' =>  strtoupper(Str::random(2)). str_pad(User::max('id') + 1, 4, '0', STR_PAD_LEFT),
         ]);
 
         if ($isWeb && $user) {

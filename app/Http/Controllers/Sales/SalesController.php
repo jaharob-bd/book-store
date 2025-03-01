@@ -22,9 +22,11 @@ use App\Models\Sales\SalPayDetail;
 use App\Models\Supplier\Supplier;
 use App\Models\Sales\SaleMst;
 use App\Models\Sales\SaleChd;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
 class SalesController extends Controller
 {
@@ -73,14 +75,12 @@ class SalesController extends Controller
         return Inertia::render('Sales/OrderShipments', $data);
     }
 
-
     // order status update
     function create()
     {
+        // dd(Auth::user());
+        $data['lastOrderNo'] = Order::orderBy('created_at','desc')->get()->value('order_no');
         $data['products'] = Product::get();
-        // return $data['products'];
-        // $data['products'] = Product::with('variantPrices')->get();
-        // return $data['products'];
         $data['customers'] = Customer::all();
         return Inertia::render('Sales/OrderCreate', $data);
     }

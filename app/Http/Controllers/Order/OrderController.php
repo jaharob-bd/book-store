@@ -64,11 +64,14 @@ class OrderController extends Controller
             }
             // Commit transaction
             DB::commit();
-            Session::flash('success', 'Order Place successfully!');
-
-            return $panel
-                ? redirect()->route('sales.order.create')
-                : redirect()->route('order-success', ['order_no' => (string) $order->order_no]);
+            if ($panel) {
+                echo json_encode(['status' => true, 'message' => 'Order place successfully', 'orderNo' => $order->order_no], 200);
+            } else {
+                Session::flash('success', 'Order Place successfully!');
+                redirect()->route('order-success', ['order_no' => (string) $order->order_no]);
+            }
+            // return $panel ? redirect()->route('sales.order.create')
+            //     : redirect()->route('order-success', ['order_no' => (string) $order->order_no]);
         } catch (\Exception $e) {
             // Rollback transaction on error
             DB::rollBack();

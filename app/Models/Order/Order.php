@@ -127,10 +127,16 @@ class Order extends Model
     protected static function boot()
     {
         parent::boot();
-
         static::creating(function ($order) {
-            $dateTime = now()->format('dmYHis'); // Current date and time in DDMMYYYYHHMMSS format
-            $order->order_no = sprintf('%s0%d', $dateTime, $order->customer_id);
+            $currentDate = date('dmy');
+            $record = Order::latest()->first();
+            if ($record) {
+                $lastNumber = (int) $record->id;
+                $nextOrderNumber = ($currentDate . '0' . $lastNumber + 1);
+            } else {
+                $nextOrderNumber = $currentDate . '01';
+            }
+            $order->order_no = $nextOrderNumber;
         });
     }
 }
