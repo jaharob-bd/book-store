@@ -21,6 +21,7 @@ const OrderCreate = (props) => {
     const [payments, setPayments] = useState({ Cash: 0, Card: 0, Mobile: 0 });
     const [customer, setCustomer] = useState({ id: "", name: "", phone: "" });
     const [isPrint, setIsPrint] = useState(false);
+    const [barcode, setBarcode] = useState("");
     console.log(cart);
     const initial = {
         invoicFrom: 'panel',
@@ -91,6 +92,7 @@ const OrderCreate = (props) => {
         setDueAmount(0);
         setChangeAmount(0);
         setCustomer({ id: '', name: '', phone: '' });
+        setBarcode('');
     };
 
     const handleCustomerChange = async (event) => {
@@ -107,15 +109,25 @@ const OrderCreate = (props) => {
         } catch (error) {
             console.error('Error fetching data:', error);
         }
+    }
+    const handleInputChange = (event) => {
+        setBarcode(event.target.value.trim());
     };
 
+    // Function to handle Enter key press
+    const handleKeyUp = (event) => {
+        if (event.keyCode === 13) { // Check if Enter key is pressed
+            event.preventDefault(); // Prevent default action (e.g., form submission)
+            addCartFromBarcode(); // Call the function to add to cart
+            setBarcode(''); // Clear the barcode input field
+        }
+    };
     // barcode scran add cart
-    const addCartFromBarcode = (event) => {
-        const barcode = event.target.value.trim(); // Trim to remove any spaces
+    const addCartFromBarcode = () => {
         const product = products.find((product) => product.barcode === barcode);
 
         if (!product) {
-            console.log("Product not found");
+            SwalAlert('warning', 'Product not found');
             return false;
         }
 
@@ -244,7 +256,14 @@ const OrderCreate = (props) => {
                                     <option key={index} value={`${product.id},${product.name},${product.sale_price}`}>{product.id} - {product.name} - ${product.sale_price}</option>
                                 ))}
                             </select>
-                            <input type="text" className="border p-2 w-1/2" placeholder="Scan barcode or enter product ID" onChange={addCartFromBarcode} />
+                            <input
+                                type="text"
+                                className="border p-2 w-1/2"
+                                placeholder="Scan barcode or enter product ID"
+                                value={barcode}
+                                onChange={handleInputChange}
+                                onKeyUp={handleKeyUp} // Attach the keyup event handler
+                            />
                         </div>
 
                         {/* section 2== Cart items */}
