@@ -244,6 +244,15 @@ const OrderCreate = (props) => {
                         <br />
                         <span className="text-gray-600 font-bold text-xl">Last Order No: {lastOrderNo}</span>
                     </div>
+                    <Link
+                        href={route('logout')}
+                        method="post"
+                        as="button"
+                        className="bg-indigo-500 rounded-sm m-1 p-2 text-sm"
+                        title="Logout"
+                    >
+                        <i class="ri-contract-right-line"></i>
+                    </Link>
                 </div>
                 <div className="flex flex-col md:flex-row w-full h-full">
                     {/* Main Content */}

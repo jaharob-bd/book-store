@@ -1,231 +1,189 @@
 import React, { useState, useEffect } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import Swal from 'sweetalert2';
-import EditSideBar from './Partials/EditSideBar';
-import { EditImageUpload } from './Partials/EditImageUpload';
-import EditPrice from './Partials/EditPrice';
-import { EditSetting } from './Partials/EditSetting';
-import { CategoriesDropDrown } from './Partials/CategoriesDropDrown';
-
-const COUNTRIES = [
-    "Austria",
-    "Belgium",
-    "Croatia",
-    "Bulgaria",
-    "Cyprus",
-    "Czech Republic",
-    "Denmark",
-    "Estonia",
-    "Finland",
-    "France",
-    "Germany",
-    "Greece",
-    "Hungary",
-    "Ireland",
-    "Italy",
-    "Latvia",
-    "Lithuania",
-    "Luxembourg",
-    "Malta",
-    "Netherlands",
-    "Poland",
-    "Portugal",
-    "Romania",
-    "Slovakia",
-    "Slovenia",
-    "Spain",
-    "Sweden",
-    "Ukraine",
-];
-// import EditOthers from './Partials/EditOthers';
-// import EditVideo from './Partials/EditVideo';
-
 const Edit = (props) => {
+    const [activeTab, setActiveTab] = useState("general");
     const [user, setUser] = useState(props.auth.user);
     const [initial, setInitial] = useState(props.product);
     const { data, setData, reset, post } = useForm(initial);
 
-    const createSlug = (name) => {
-        return name
-            .toLowerCase()  // Convert to lowercase
-            .replace(/ /g, '-')  // Replace spaces with hyphens
-            .replace(/[^\w-]+/g, '');  // Remove all non-word characters
-    }
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        let updatedData = { ...data, [name]: value };
-        if (name === 'name' || name === 'url_key') {
-            updatedData.url_key = createSlug(value);
-        }
-        setData(updatedData);
-    }
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        router.patch(`/product-update/${props.product.id}`, data, {
-            preserveScroll: true,
-            onSuccess: () => { // successfully msg
-                setData(data);
-            },
-            onError: (errors) => { // error msg
-
-            },
-        });
-    };
-
     return (
-        <AuthenticatedLayout user={user} header={'Product List'}>
+        <>
             <Head title={`Edit - ` + data.name} />
-            <div className="container w-full flex flex-wrap mx-auto px-1 pt-1 lg:pt-1">
-                <EditSideBar />
-                <section className="w-full lg:w-5/6">
-                    <h2 id="general" className="font-sans font-bold break-normal text-gray-700 px-2 pb-3 text-xl">General </h2>
-                    <form onSubmit={handleSubmit}>
-                        <div className="p-8 mt-6 lg:mt-0 leading-normal rounded shadow bg-gray-100">
-                            <div className="md:flex mb-2">
-                                <div className="md:w-1/3">
-                                    <label className="block text-gray-600 font-bold md:text-left mb-3 md:mb-0 pr-4" htmlFor="my-textfield">
-                                        Name <span className="text-red-600">*</span>
-                                    </label>
-                                </div>
-                                <div className="md:w-2/3">
-                                    <input
-                                        className="form-input block w-full focus:bg-white p-1"
-                                        type="text"
-                                        name="name"
-                                        value={data?.name || ''}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-                            <div className="md:flex mb-2">
-                                <div className="md:w-1/3">
-                                    <label className="block text-gray-600 font-bold md:text-left mb-3 md:mb-0 pr-4" htmlFor="my-textfield">
-                                        Url Key <span className="text-red-600">*</span>
-                                    </label>
-                                </div>
-                                <div className="md:w-2/3">
-                                    <input className="form-input block w-full focus:bg-white p-1"
-                                        type="text"
-                                        name="url_key"
-                                        value={data?.url_key || ''}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-                            <div className="md:flex mb-2">
-                                <div className="md:w-1/3">
-                                    <label className="block text-gray-600 font-bold md:text-left mb-3 md:mb-0 pr-4" htmlFor="my-textfield">
-                                        SKU <span className="text-red-600">*</span>
-                                    </label>
-                                </div>
-                                <div className="md:w-2/3">
-                                    <input
-                                        className="form-input block w-full focus:bg-white p-1"
-                                        type="text"
-                                        name="sku"
-                                        value={data?.sku || ''}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-                            <div className="md:flex mb-2">
-                                <div className="md:w-1/3">
-                                    <label className="block text-gray-600 font-bold md:text-left mb-3 md:mb-0 pr-4" htmlFor="my-textfield">
-                                        Product Code <span className="text-red-600">*</span>
-                                    </label>
-                                </div>
-                                <div className="md:w-2/3">
-                                    <input
-                                        className="form-input block w-full focus:bg-white p-1"
-                                        name="product_code"
-                                        type="text"
-                                        value={data?.product_code || ''}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-                            {/* multi categories start */}
-                            <div className="md:flex mb-2">
-                                <div className="md:w-1/3">
-                                    <label className="block text-gray-600 font-bold md:text-left mb-3 md:mb-0 pr-4" htmlFor="my-textfield">
-                                        Product Categories <span className="text-red-600">*</span>
-                                    </label>
-                                </div>
-                                <div className="md:w-2/3">
-                                    <CategoriesDropDrown
-                                        formFieldName={"countries"}
-                                        options={props.categories}
-                                        onChange={(selectedCountries) => {
-                                            console.debug("selectedCategories", selectedCountries);
-                                        }}
-                                        prompt="Select one or more categories"
-                                    />
-                                </div>
-                            </div>
-                           
-                            {/* end */}
-                        </div>
-                        <hr className="bg-gray-300 my-3" />
-                        <h2 id="description" className="font-sans font-bold break-normal text-gray-700 px-2 pb-3 text-xl">Description</h2>
-                        <div className="p-8 mt-6 lg:mt-0 rounded shadow bg-gray-100">
-                            <div className="md:flex mb-2">
-                                <div className="md:w-1/3">
-                                    <label className="block text-gray-600 font-bold md:text-left mb-3 md:mb-0 pr-4" htmlFor="my-textarea">
-                                        Short Description
-                                    </label>
-                                </div>
-                                <div className="md:w-2/3">
-                                    <textarea
-                                        className="form-textarea block w-full focus:bg-white"
-                                        name="short_description"
-                                        value={data?.short_description || ''} rows={4}
-                                        onChange={handleChange}
-                                    />
-                                    <p className="py-2 text-sm text-gray-600">add notes about populating the field</p>
-                                </div>
-                            </div>
-                            <div className="md:flex mb-2">
-                                <div className="md:w-1/3">
-                                    <label className="block text-gray-600 font-bold md:text-left mb-3 md:mb-0 pr-4" htmlFor="my-textarea">
-                                        Description
-                                    </label>
-                                </div>
-                                <div className="md:w-2/3">
-                                    <textarea
-                                        className="form-textarea block w-full focus:bg-white"
-                                        name="description"
-                                        value={data?.description || ''} rows={8}
-                                        onChange={handleChange}
-                                    />
-                                    <p className="py-2 text-sm text-gray-600">add notes about populating the field</p>
-                                </div>
-                            </div>
-                            <div className="md:flex md:datas-center">
-                                <div className="md:w-1/3" />
-                                <div className="md:w-2/3">
-                                    <button className="shadow bg-indigo-700 hover:bg-indigo-500 focus:shadow-outline focus:outline-none text-white font-bold py-1 px-4 rounded">
-                                        Save
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                    <EditImageUpload {...props} />
-                    <EditPrice {...props} />
-                    {/* <EditOthers /> */}
-                    {/* <EditVideo /> */}
-                    <EditSetting product={props.product} />
+            <div className="bg-gray-100 h-screen">
+                {/* Header */}
+                {/* <div className="bg-gray-800 text-white">
+                    <div className="max-w-6xl mx-auto flex justify-between items-center">
+                        <h1 className="text-2xl font-bold">Product Management</h1>
+                        <a href="#" className="text-white hover:underline">Logout</a>
+                    </div>
+                </div> */}
 
-                </section>
-                <div className="w-full lg:w-5/6 lg:ml-auto text-base md:text-sm text-gray-600 px-4 py-24 mb-12">
-                    <span className="text-base text-indigo-600 font-bold">&lt;</span> <a href="#" className="text-base md:text-sm text-indigo-600 font-bold no-underline hover:underline">Back link</a>
+                <div className="mx-auto flex">
+                    {/* Main Section (70%) */}
+                    <section className="w-3/4 bg-white shadow-lg p-3">
+                        {/* <div className="flex justify-between mb-6">
+                            <h2 className="text-2xl font-bold">Edit Product</h2>
+                            <button className="bg-blue-600 text-white py-2 px-4 hover:bg-blue-700">Add New</button>
+                        </div> */}
+                        {/* product name, description */}
+                        <div className="mb-4">
+                            <label className="block text-gray-700 font-medium">Product Name</label>
+                            <input type="text" className="w-full p-2 border border-gray-300" placeholder="Enter product name" defaultValue="Moriyam Paper" />
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-700 font-medium">Description</label>
+                            <textarea className="w-full p-2 border border-gray-300" placeholder="Enter product description" defaultValue="Moriyam Paper is a high-quality, durable paper, suitable for various purposes." />
+                        </div>
+
+                        <div className="flex pb-3">
+                            {/* Sidebar (Tabs) */}
+                            <div className="w-1/4 bg-gray-200 p-6">
+                                <h3 className="text-lg font-bold mb-4">Product Data</h3>
+                                <ul className="space-y-2">
+                                    {['general', 'inventory', 'linked-products', 'attributes', 'advanced'].map(tab => (
+                                        <li key={tab}>
+                                            <button
+                                                className={`block py-2 px-4 w-full text-left ${activeTab === tab ? 'bg-blue-600 text-white' : 'hover:bg-gray-300'}`}
+                                                onClick={() => setActiveTab(tab)}
+                                            >
+                                                {tab.replace("-", " ").replace(/\b\w/g, c => c.toUpperCase())}
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            {/* Content */}
+                            <div className="w-3/4 p-6">
+                                {activeTab === "general" && (
+                                    <div>
+                                        <form>
+                                            <div className="mb-4">
+                                                <label className="block text-gray-700 font-medium">Product URL</label>
+                                                <input type="url" className="w-full p-2 border border-gray-300" placeholder="Enter external URL" defaultValue="https://mercantile.wordpress.org/product/wordpress" />
+                                            </div>
+                                            <div className="mb-4">
+                                                <label className="block text-gray-700 font-medium">Button Text</label>
+                                                <input type="text" className="w-full p-2 border border-gray-300" placeholder="Enter button text" defaultValue="Buy on the WordPress swag store!" />
+                                            </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">Regular Price ($)</label>
+                                                    <input type="number" className="w-full p-2 border border-gray-300" defaultValue="11.55" />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-gray-700 font-medium">Sale Price ($)</label>
+                                                    <input type="number" className="w-full p-2 border border-gray-300" placeholder="Enter sale price" />
+                                                </div>
+                                            </div>
+                                            <div className="mb-4 mt-4">
+                                                <label className="block text-gray-700 font-medium">Tax Status</label>
+                                                <select className="w-full p-2 border border-gray-300">
+                                                    <option selected>Taxable</option>
+                                                    <option>None</option>
+                                                </select>
+                                            </div>
+                                            <div className="mb-4">
+                                                <label className="block text-gray-700 font-medium">Tax Class</label>
+                                                <select className="w-full p-2 border border-gray-300">
+                                                    <option selected>Standard</option>
+                                                    <option>Reduced Rate</option>
+                                                    <option>Zero Rate</option>
+                                                </select>
+                                            </div>
+                                            {/* <div className="flex justify-end pb-2">
+                                                <button className="w-20 bg-green-600 text-white py-1 hover:bg-green-700">
+                                                    save
+                                                </button>
+                                            </div> */}
+                                        </form>
+                                    </div>
+                                )}
+                                {activeTab === "inventory" && <div><h3 className="text-xl font-semibold">Inventory Settings</h3><p className="text-gray-700">Manage stock, SKU, and inventory settings here.</p></div>}
+                                {activeTab === "linked-products" && <div><h3 className="text-xl font-semibold">Linked Products</h3><p className="text-gray-700">Configure upsells, cross-sells, and grouping here.</p></div>}
+                                {activeTab === "attributes" && <div><h3 className="text-xl font-semibold">Product Attributes</h3><p className="text-gray-700">Manage product attributes such as size and color.</p></div>}
+                                {activeTab === "advanced" && <div><h3 className="text-xl font-semibold">Advanced Options</h3><p className="text-gray-700">Configure advanced product settings here.</p></div>}
+                            </div>
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-gray-700 font-medium">Short Description</label>
+                            <textarea className="w-full p-2 border border-gray-300" placeholder="Enter product description" defaultValue="Moriyam Paper is a high-quality, durable paper, suitable for various purposes." />
+                        </div>
+                    </section>
+
+                    {/* Right Section (30%) */}
+                    <section className="w-1/4 bg-white shadow-lg p-6">
+                        <div className="flex justify-center pb-2">
+                            <button className="w-[80%] bg-green-600 text-white py-1 hover:bg-green-700">
+                                Update
+                            </button>
+                            <button className="w-[20%] bg-gray-600 text-white py-1 hover:bg-green-700 ml-2">
+                                Add New 
+                            </button>
+                        </div>
+
+                        {/* // div publish with border */}
+                        <div className="border p-4 mb-4">
+                            <h3 className="text-xl font-bold">Publish</h3>
+                            {/* radio visible */}
+                            <div className="flex items-center mt-4">
+                                <input type="checkbox" name="visibility" id="visibility" className="mr-2" />
+                                <label for="visibility">Visibility: Public</label>
+                            </div>
+                            {/* radio publish */}
+                            <div className="flex items-center mt-4">
+                                <input type="checkbox" name="visibility" id="visibility" className="mr-2" />
+                                <label for="visibility">Status: Published</label>
+                            </div>
+                            {/* published on */}
+                            <div className="flex items-center mt-4">
+                                <label className="mr-2">Published on:</label>
+                                <input type="date" className="p-1" value="" />
+                            </div>
+                        </div>
+                        <div className="border p-4 mb-4">
+                            <h3 className="text-xl font-bold">Product Categories</h3>
+                            <p className="text-gray-700 mt-2">Select product categories here.</p>
+                        </div>
+                        <div className="border p-4 mb-4">
+                            <h3 className="text-xl font-bold">Product Tags</h3>
+                            <p className="text-gray-700 mt-2">Add product tags here.</p>
+                        </div>
+                        {/* <div className="border p-4 mb-4">
+                            <h3 className="text-xl font-bold">Product Attributes</h3>
+                            <p className="text-gray-700 mt-2">Add product attributes here.</p>
+                        </div> */}
+                        <div className="border p-4 mb-4">
+                            <h3 className="text-xl font-bold">Product Variations</h3>
+                            <p className="text-gray-700 mt-2">Add product variations here.</p>
+                        </div>
+                        {/* <div className="border p-4 mb-4">
+                            <h3 className="text-xl font-bold">Product Downloads</h3>
+                            <p className="text-gray-700 mt-2">Add product downloads here.</p>
+                        </div> */}
+                        {/* <div className="border p-4 mb-4">
+                            <h3 className="text-xl font-bold">Product Reviews</h3>
+                            <p className="text-gray-700 mt-2">Add product reviews here.</p>
+                        </div> */}
+                        <div className="border p-4 mb-4">
+                            <h3 className="text-xl font-bold">Product Images</h3>
+                            <p className="text-gray-700 mt-2">Add product images here.</p>
+                        </div>
+                        <div className="border p-4 mb-4">
+                            <h3 className="text-xl font-bold">Product Meta</h3>
+                            <p className="text-gray-700 mt-2">Add product meta here.</p>
+                        </div>
+                        <div className="border p-4 mb-4">
+                            <h3 className="text-xl font-bold">Product Settings</h3>
+                            <p className="text-gray-700 mt-2">Configure product settings here.</p>
+                        </div>
+
+                    </section>
                 </div>
             </div>
-        </AuthenticatedLayout>
-    )
-}
+        </>
+    );
+};
 
-export default Edit
+export default Edit;
