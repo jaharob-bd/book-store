@@ -63,6 +63,10 @@ const Edit = (props) => {
             setNewTag("");
         }
     };
+    // remove tag
+    const removeTag = (index) => {
+        setTags(prevTags => prevTags.filter((_, i) => i !== index));
+    }
 
 
     return (
@@ -177,7 +181,7 @@ const Edit = (props) => {
                             </button>
                         </div>
                         {/* // div publish with border */}
-                        <div className="border p-4 mb-4 mx-auto bg-white dark:bg-gray-900 overflow-hidden shadow-lg">
+                        <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
                             <h3 className="font-bold border-b">Publish</h3>
                             {/* radio visible */}
                             <div className="flex items-center mt-4">
@@ -196,7 +200,7 @@ const Edit = (props) => {
                                 {/* <input type="date" className="p-1" value="" /> */}
                             </div>
                         </div>
-                        <div className="border p-4 mb-4 mx-auto bg-white dark:bg-gray-900 overflow-hidden shadow-lg">
+                        <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
                             <h3 className="font-bold border-b pb-2">Product Images</h3>
                             <div
                                 className="border-dashed border-2 border-gray-300 p-6 mt-2 text-center cursor-pointer rounded-md"
@@ -228,7 +232,7 @@ const Edit = (props) => {
                                 ))}
                             </div>
                         </div>
-                        <div className="border p-4 mb-4 mx-auto bg-white dark:bg-gray-900 overflow-hidden shadow-lg">
+                        <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
                             <h3 className="font-bold border-b">Product Categories</h3>
                             <div className="max-h-40 overflow-y-auto mt-2">
                                 {categories.map((category, index) => (
@@ -260,11 +264,13 @@ const Edit = (props) => {
                                 </button>
                             </div>
                         </div>
-                        <div className="border p-4 mb-4 mx-auto bg-white dark:bg-gray-900 overflow-hidden shadow-lg">
+                        <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
                             <h3 className="font-bold border-b pb-2">Product Tags</h3>
                             <div className="flex flex-wrap gap-2 mt-2">
                                 {tags.map((tag, index) => (
-                                    <span key={index} className="bg-gray-200 px-2 py-1 rounded">{tag}</span>
+                                    <span key={index} className="bg-gray-200 px-2 py-1 rounded">
+                                        {tag} <span className="bg-red-500 text-white px-2 py-1 ml-2 rounded" onClick={() => removeTag(index)}>✕</span>
+                                    </span>
                                 ))}
                             </div>
                             <div className="mt-4 flex items-center space-x-2">
