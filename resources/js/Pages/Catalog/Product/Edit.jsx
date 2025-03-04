@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
+import SwalAlert from '@/Components/Alert/SwalAlert';
 const Edit = (props) => {
     const [activeTab, setActiveTab] = useState("general");
     const [user, setUser] = useState(props.auth.user);
@@ -53,6 +54,8 @@ const Edit = (props) => {
         if (newCategory && !categories.includes(newCategory)) {
             setCategories([...categories, newCategory]);
             setNewCategory("");
+        } else {
+            SwalAlert('warning', 'Category are already existing');
         }
     };
 
@@ -61,13 +64,28 @@ const Edit = (props) => {
         if (newTag && !tags.includes(newTag)) {
             setTags([...tags, newTag]);
             setNewTag("");
+        } else {
+            SwalAlert('warning', 'Tags are already existing');
         }
     };
     // remove tag
     const removeTag = (index) => {
         setTags(prevTags => prevTags.filter((_, i) => i !== index));
     }
+    // specipication
+    const [specifications, setSpecifications] = useState([]);
+    const [specInput, setSpecInput] = useState('');
 
+    const addSpecification = () => {
+        if (specInput.trim() !== '') {
+            setSpecifications([...specifications, specInput]);
+            setSpecInput('');
+        }
+    };
+
+    const removeSpecification = (index) => {
+        setSpecifications(specifications.filter((_, i) => i !== index));
+    };
 
     return (
         <AuthenticatedLayout user={user} header={'Product List'}>
@@ -91,7 +109,7 @@ const Edit = (props) => {
                             <div className="w-1/4 bg-gray-200 p-6">
                                 {/* <h3 className="text-lg font-bold mb-4">Product Data</h3> */}
                                 <ul className="space-y-2">
-                                    {['general', 'inventory', 'linked-products', 'attributes', 'advanced'].map(tab => (
+                                    {['general', 'inventory', 'attributes', 'specification', 'linked-products'].map(tab => (
                                         <li key={tab}>
                                             <button
                                                 className={`block py-2 px-4 w-full text-left ${activeTab === tab ? 'bg-blue-600 text-white' : 'hover:bg-gray-300'}`}
@@ -146,10 +164,108 @@ const Edit = (props) => {
                                         </form>
                                     </div>
                                 )}
-                                {activeTab === "inventory" && <div><h3 className="text-xl font-semibold">Inventory Settings</h3><p className="text-gray-700">Manage stock, SKU, and inventory settings here.</p></div>}
+                                {activeTab === "inventory" && <div>
+                                    <form>
+                                        <div className="mb-4">
+                                            <label className="block text-gray-700 font-medium">SKU</label>
+                                            <input type="url" className="w-full p-2 border border-gray-300" placeholder="Enter external URL" defaultValue="https://mercantile.wordpress.org/product/wordpress" />
+                                        </div>
+                                        <div className="mb-4 flex items-center">
+                                            <input type="checkbox" id="manage-stock" className="mr-2" />
+                                            <label htmlFor="manage-stock" className="text-gray-700">Enable stock management at product level</label>
+                                        </div>
+                                        <div className="mb-4">
+                                            <label className="block text-gray-700 font-semibold">Stock status</label>
+                                            <select className="w-full p-2 border focus:ring focus:ring-blue-300">
+                                                <option>In stock</option>
+                                                <option>Out of stock</option>
+                                                <option>On backorder</option>
+                                            </select>
+                                        </div>
+                                        <div className="mb-4 flex items-center">
+                                            <input type="checkbox" id="sold-individually" className="mr-2" />
+                                            <label htmlFor="sold-individually" className="text-gray-700">Enable this to only allow one of this item to be bought in a single order</label>
+                                        </div>
+                                    </form>
+                                </div>}
                                 {activeTab === "linked-products" && <div><h3 className="text-xl font-semibold">Linked Products</h3><p className="text-gray-700">Configure upsells, cross-sells, and grouping here.</p></div>}
-                                {activeTab === "attributes" && <div><h3 className="text-xl font-semibold">Product Attributes</h3><p className="text-gray-700">Manage product attributes such as size and color.</p></div>}
-                                {activeTab === "advanced" && <div><h3 className="text-xl font-semibold">Advanced Options</h3><p className="text-gray-700">Configure advanced product settings here.</p></div>}
+                                {activeTab === "attributes" && <div>
+                                    <form>
+                                        <div classname="mb-4">
+                                            <label className="block text-gray-700 font-semibold">Product data</label>
+                                            <select className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300">
+                                                <option>Variable product</option>
+                                            </select>
+                                        </div>
+                                        <div className="flex space-x-2 mb-4 pt-2">
+                                            <button className="px-2 py-2 bg-blue-600 text-white hover:bg-blue-700">Add new</button>
+                                            <button className="px-2 py-2 bg-gray-200 text-gray-700 cursor-not-allowed">Add existing</button>
+                                        </div>
+                                        <div className="mb-4">
+                                            <label className="block text-gray-700 font-semibold">Color</label>
+                                            <div className="flex flex-wrap gap-2 p-2 border rounded-md bg-gray-100">
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Blue</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Gray</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Green</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Red</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Yellow</span>
+                                            </div>
+                                            <div className="flex space-x-2 mt-2">
+                                                <button className="text-blue-600">Select all</button>
+                                                <button className="text-blue-600">Select none</button>
+                                                <button className="px-2 py-1 bg-gray-200 rounded-md">Create value</button>
+                                            </div>
+                                        </div>
+                                        <div className="mb-4">
+                                            <label className="block text-gray-700 font-semibold">Size</label>
+                                            <div className="flex flex-wrap gap-2 p-2 border rounded-md bg-gray-100">
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Large</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Medium</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Small</span>
+                                            </div>
+                                            <div className="flex space-x-2 mt-2">
+                                                <button className="text-blue-600">Select all</button>
+                                                <button className="text-blue-600">Select none</button>
+                                                <button className="px-2 py-1 bg-gray-200 rounded-md">Create value</button>
+                                            </div>
+                                        </div>
+                                        <button className="w-100 p-2 bg-blue-600 flex items-end text-white hover:bg-blue-700">Save</button>
+                                    </form>
+                                </div>}
+                                {activeTab === "specification" && <div>
+                                    <div className="mb-4">
+                                        <label className="block text-gray-700 font-semibold">Product Specification</label>
+                                        <div className="flex space-x-2">
+                                            <textarea
+                                                className="w-full p-2 border focus:ring focus:ring-blue-300"
+                                                rows="2"
+                                                placeholder="Enter product specifications..."
+                                                value={specInput}
+                                                onChange={(e) => setSpecInput(e.target.value)}
+                                            ></textarea>
+                                            <button
+                                                className="px-4 py-2 bg-blue-600 text-white rounded-sm hover:bg-blue-700"
+                                                onClick={addSpecification}
+                                            >
+                                                Add
+                                            </button>
+                                        </div>
+                                        <div className="mt-2">
+                                            {specifications.map((spec, index) => (
+                                                <div key={index} className="flex justify-between items-center text-gray-700 bg-gray-100 p-2 rounded-sm mt-1">
+                                                    <span>{index +1}. {spec}</span>
+                                                    <button
+                                                        className="ml-2 bg-red-600 text-white p-1 rounded-sm hover:text-white-700"
+                                                        onClick={() => removeSpecification(index)}
+                                                    >
+                                                        X
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                </div>}
                             </div>
                         </div>
                         <div className="mb-4">
@@ -180,7 +296,7 @@ const Edit = (props) => {
                                 Add New
                             </button>
                         </div>
-                        {/* // div publish with border */}
+                        {/* div publish with border */}
                         <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
                             <h3 className="font-bold border-b">Publish</h3>
                             {/* radio visible */}
@@ -197,7 +313,6 @@ const Edit = (props) => {
                             <div className="flex items-center mt-4">
                                 <label className="mr-2">Published on: {today} </label>
                                 <i class="ri-edit-2-fill"></i>
-                                {/* <input type="date" className="p-1" value="" /> */}
                             </div>
                         </div>
                         <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
@@ -223,7 +338,7 @@ const Edit = (props) => {
                                     <div key={index} className="relative">
                                         <img src={image.preview} alt="Preview" className="w-full h-24 object-cover rounded" />
                                         <button
-                                            className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                                            className="absolute top-0 right-0 bg-red-500 text-white p-1"
                                             onClick={() => removeImage(index)}
                                         >
                                             ✕
@@ -269,7 +384,7 @@ const Edit = (props) => {
                             <div className="flex flex-wrap gap-2 mt-2">
                                 {tags.map((tag, index) => (
                                     <span key={index} className="bg-gray-200 px-2 py-1 rounded">
-                                        {tag} <span className="bg-red-500 text-white px-2 py-1 ml-2 rounded" onClick={() => removeTag(index)}>✕</span>
+                                        {tag} <button className="bg-red-500 text-white px-1 ml-1 rounded" onClick={() => removeTag(index)}>✕</button>
                                     </span>
                                 ))}
                             </div>
