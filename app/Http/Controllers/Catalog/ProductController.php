@@ -18,6 +18,7 @@ use App\Http\Requests\Catalog\Product\VariantPriceRequest;
 use App\Models\Catalog\Category;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use PhpParser\Node\Stmt\TryCatch;
 
 class ProductController extends Controller
 {
@@ -55,16 +56,52 @@ class ProductController extends Controller
 
     function update(Request $request, $id)
     {
-        $product = Product::findOrFail($id);
-        $product->name = $request->name;
-        $product->url_key = $request->url_key;
-        $product->sku = $request->sku;
-        $product->product_code = $request->product_code;
-        $product->short_description = $request->short_description;
-        $product->description = $request->description;
-        $product->save();
-        Session::flash('success', 'Product updated successfully!');
-        return redirect()->route('product-edit', ['slug' => $product->url_key]);
+        $data = $request->all();
+        DB::beginTransaction();
+        try {
+            //code...
+            // update product model
+            $product = Product::find($id);
+            $product->update($request->all());
+            // update images
+            if ($request->hasFile('images')) {
+                $images = $request->file('images');
+                foreach ($images as $image) {
+                    $imageName = time(). '_'. $image->getClientOriginalName();
+                    $image->move(public_path('images/products'), $imageName);
+                    $product->images()->create(['image' => $imageName]);
+                }
+            }
+            // update variant prices
+            DB::commit();
+            echo json_encode(['status' => true, 'message' => 'Product Add successfully', 'orderNo' => ''], 200);
+        } catch (\Exception $e) {
+            // Rollback transaction on error
+            DB::rollBack();
+            Session::flash('failed', $e->getMessage());
+        }
+
+        // Validate the incoming request
+        // $request->validate([
+        //     'name' => 'required|string|max:255',
+        //     'url_key' => 'required|string|max:255',
+        //     'sku' => 'required|string|max:255',
+        //     'product_code' => 'required|string|max:255',
+        //     'short_description' => 'required|string|max:255',
+        //     'description' => 'required|string',
+        // ]);
+
+        // Find the product by ID and update its details
+        // $product = Product::findOrFail($id);
+        // $product->name = $request->name;
+        // $product->url_key = $request->url_key;
+        // $product->sku = $request->sku;
+        // $product->product_code = $request->product_code;
+        // $product->short_description = $request->short_description;
+        // $product->description = $request->description;
+        // $product->save();
+        // Session::flash('success', 'Product updated successfully!');
+        // return redirect()->route('product-edit', ['slug' => $product->url_key]);
     }
 
     function imageUpload(Request $request, $id)

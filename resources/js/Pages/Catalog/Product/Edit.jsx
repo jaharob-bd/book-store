@@ -2,25 +2,27 @@ import React, { useState, useEffect } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import SwalAlert from '@/Components/Alert/SwalAlert';
+import axios from 'axios';
+
 const Edit = (props) => {
     const [activeTab, setActiveTab] = useState("general");
     const [user, setUser] = useState(props.auth.user);
-    const [initial, setInitial] = useState(props.product);
+    const today = new Date().toISOString().slice(0, 10);
+    // categories
     const [categories, setCategories] = useState([
         "Cat ipsum", "Cat lorem", "Cat Product", "Category", "Ipsum", "Ipsum cat", "Ipsum Lorem", "Lorem"
     ]);
     const [selectedCategories, setSelectedCategories] = useState([]);
     const [newCategory, setNewCategory] = useState("");
-
     // tags 
     const [tags, setTags] = useState([]);
     const [newTag, setNewTag] = useState("");
-    // publish 
-    const today = new Date().toISOString().slice(0, 10);
-    const { data, setData, reset, post } = useForm(initial);
     // image loading
     const [images, setImages] = useState([]);
-
+    // specifications
+    const [specifications, setSpecifications] = useState([]);
+    const [specInput, setSpecInput] = useState('');
+    // images function 
     const handleDrop = (event) => {
         event.preventDefault();
         const files = Array.from(event.dataTransfer.files);
@@ -43,7 +45,7 @@ const Edit = (props) => {
         setImages(prevImages => prevImages.filter((_, i) => i !== index));
     };
 
-    // categories
+    // categories function
     const handleCategoryChange = (category) => {
         setSelectedCategories(prev =>
             prev.includes(category) ? prev.filter(cat => cat !== category) : [...prev, category]
@@ -59,7 +61,7 @@ const Edit = (props) => {
         }
     };
 
-    // tags
+    // tags function
     const addTag = () => {
         if (newTag && !tags.includes(newTag)) {
             setTags([...tags, newTag]);
@@ -68,14 +70,12 @@ const Edit = (props) => {
             SwalAlert('warning', 'Tags are already existing');
         }
     };
-    // remove tag
+
     const removeTag = (index) => {
         setTags(prevTags => prevTags.filter((_, i) => i !== index));
     }
-    // specipication
-    const [specifications, setSpecifications] = useState([]);
-    const [specInput, setSpecInput] = useState('');
 
+    // specipication
     const addSpecification = () => {
         if (specInput.trim() !== '') {
             setSpecifications([...specifications, specInput]);
@@ -87,9 +87,70 @@ const Edit = (props) => {
         setSpecifications(specifications.filter((_, i) => i !== index));
     };
 
+    // set initial value
+    const initial = {
+        name: '',
+        description: '',
+        shortDescription: '',
+        status: true,
+        newProduct: true,
+        featured: false,
+        meta: {
+            metaTitle: '',
+            metaDescription: '',
+            metaKeywords: '',
+        },
+        general: {
+            sku: '',
+            productUrl: '',
+            productType: 'physical',
+            // productWeight: '', // attribute value
+            regularPrice: '',
+            salePrice: '',
+            mrpPrice: '',
+            taxStatus: '',
+            taxClass: '',
+            taxIncluded: true,
+            expiryDate: '',
+        },
+        inventories: {
+            stockQuantity: '',
+            manageStock: false,
+            stockStatus: '',
+        },
+        published: {
+            publishedAt: today,
+            visibleIndividually: true,
+        },
+        categories: [],
+        tags: [],
+        images: [],
+        specifications: [],
+        attributes: [],  // future 
+        variants: []     // future
+    };
+    const [formData, setFormData] = useState(initial);
+    console.log(formData);
+
+    // submit use axios
+    const submit = async () => {
+        try {
+            const response = await axios.patch(`/product-update/${props.product.id}`, formData, { withCredentials: true });
+            // console.log(response)
+            if (response.data.status) {
+                SwalAlert('success', response.data.message, 'center');
+            } else {
+                SwalAlert('warning', 'Add failed', 'center');
+            }
+        } catch (error) {
+            console.error('Failed to place order:', error);
+            SwalAlert('error', 'Failed to place order. Please try again.', 'center');
+        }
+    };
+
     return (
         <AuthenticatedLayout user={user} header={'Product List'}>
-            <Head title={`Edit - ` + data.name} />
+            <Head title={`Edit - ` + ''} />
             <div className="bg-gray-100 h-screen">
                 <div className="mx-auto flex">
                     {/* Main Section (70%) */}
@@ -253,7 +314,7 @@ const Edit = (props) => {
                                         <div className="mt-2">
                                             {specifications.map((spec, index) => (
                                                 <div key={index} className="flex justify-between items-center text-gray-700 bg-gray-100 p-2 rounded-sm mt-1">
-                                                    <span>{index +1}. {spec}</span>
+                                                    <span>{index + 1}. {spec}</span>
                                                     <button
                                                         className="ml-2 bg-red-600 text-white p-1 rounded-sm hover:text-white-700"
                                                         onClick={() => removeSpecification(index)}
@@ -289,7 +350,7 @@ const Edit = (props) => {
                     {/* Right Section (30%) */}
                     <section className="w-1/4 bg-white shadow-lg p-6">
                         <div className="flex justify-center pb-2">
-                            <button className="w-[80%] bg-green-600 text-white py-1 hover:bg-green-700">
+                            <button className="w-[80%] bg-green-600 text-white py-1 hover:bg-green-700" onClick={submit}>
                                 Update
                             </button>
                             <button className="w-[20%] bg-gray-600 text-white py-1 hover:bg-green-700 ml-2">
