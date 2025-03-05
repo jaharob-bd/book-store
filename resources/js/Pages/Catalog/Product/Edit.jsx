@@ -7,7 +7,9 @@ import axios from 'axios';
 const Edit = (props) => {
     const [activeTab, setActiveTab] = useState("general");
     const user = props.auth.user; // user
+    const [product, setProduct] = useState(props.product); // product
     const today = new Date().toISOString().slice(0, 10); 
+    // const categories = props.categories;
     const [categories, setCategories] = useState([ // categories
         "Cat ipsum", "Cat lorem", "Cat Product", "Category", "Ipsum", "Ipsum cat", "Ipsum Lorem", "Lorem"
     ]);
@@ -83,39 +85,44 @@ const Edit = (props) => {
         setFormData(prev => prev.formData.specifications.filter((_, i) => i !== index));
     };
 
+    const createSlug = (name) => {
+        return name
+            .toLowerCase()  // Convert to lowercase
+            .replace(/ /g, '-')  // Replace spaces with hyphens
+            .replace(/[^\w-]+/g, '');  // Remove all non-word characters
+    }
     // set initial value
     const initial = {
-        name            : '',
-        description     : '',
-        shortDescription: '',
+        name            : product.name,
+        description     : product.description,
+        shortDescription: product.short_description,
         status          : true,
         newProduct      : true,
         featured        : false,
-        review          : '',
         meta            : {
-            metaTitle      : '',
-            metaDescription: '',
-            metaKeywords   : '',
+            metaTitle      : product.meta_title,
+            metaDescription: product.meta_description,
+            metaKeywords   : product.meta_keywords,
         },
         general: {
-            productUrl  : '',
-            productType : 'physical',
-            regularPrice: '',
-            salePrice   : '',
-            mrpPrice    : '',
-            taxStatus   : '',
-            taxClass    : '',
-            taxIncluded : true,
-            expiryDate  : '',
+            productUrl  : product.product_url,
+            productType : product.product_type,
+            regularPrice: product.regular_price,
+            salePrice   : product.sale_price,
+            mrpPrice    : product.mrp_price,
+            taxStatus   : product.tax_status,
+            taxClass    : product.tax_class,
+            taxIncluded : product.tax_included,
+            expiryDate  : product.expiry_date,
         },
         inventory: {
-            sku          : '',
-            stockQuantity: '',
-            manageStock  : false,
-            stockStatus  : '',
+            sku          : product.sku,
+            stockQuantity: product.stock_quantity,
+            manageStock  : product.manage_stock,
+            stockStatus  : product.stock_status,
         },
         publish: {
-            publishedAt        : today,
+            publishedAt        : product.published_at,
             visibleIndividually: true,
         },
         categories    : [],
@@ -126,7 +133,6 @@ const Edit = (props) => {
         variants      : []                    // future
     };
     const [formData, setFormData] = useState(initial);
-    console.log(formData);
     // submit use axios
     const submit = async () => {
         try {
@@ -159,7 +165,7 @@ const Edit = (props) => {
                                 className="w-full p-2 border border-gray-300"
                                 placeholder="Enter product name"
                                 value={formData.name}
-                                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value, general: { ...prev.general, productUrl: createSlug(e.target.value) } }))}
                             />
                         </div>
 
@@ -201,7 +207,7 @@ const Edit = (props) => {
                                                 className="w-full p-2 border border-gray-300"
                                                 placeholder="Enter external URL"
                                                 value={formData.general?.productUrl}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, productUrl: e.target.value } }))}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, productUrl: createSlug(e.target.value)} }))}
                                             />
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
@@ -209,7 +215,7 @@ const Edit = (props) => {
                                                 <label className="block text-gray-700 font-medium">Regular Price ($)</label>
                                                 <input type="number"
                                                     className="w-full p-2 border border-gray-300"
-                                                    value={formData.general?.regularPrice}
+                                                    value={formData.general.regularPrice}
                                                     onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, regularPrice: e.target.value } }))}
                                                 />
                                             </div>
@@ -218,8 +224,8 @@ const Edit = (props) => {
                                                 <input type="number"
                                                     className="w-full p-2 border border-gray-300"
                                                     placeholder="Enter sale price"
-                                                    value={formData.general?.salePrice}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, salePrice: e.target.value }))}
+                                                    value={formData.general.salePrice}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, general: {...prev.general, salePrice: e.target.value }}))}
                                                 />
                                             </div>
                                         </div>

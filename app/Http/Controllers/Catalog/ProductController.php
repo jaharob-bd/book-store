@@ -16,9 +16,12 @@ use App\Models\Catalog\Product;
 use App\Http\Requests\Catalog\Product\StoreProductRequest;
 use App\Http\Requests\Catalog\Product\VariantPriceRequest;
 use App\Models\Catalog\Category;
+use App\Models\Catalog\ProductCategory;
+use App\Models\Catalog\ProductImage;
+use App\Models\Catalog\ProductSpecification;
+use App\Models\Catalog\ProductTag;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use PhpParser\Node\Stmt\TryCatch;
 
 class ProductController extends Controller
 {
@@ -36,7 +39,7 @@ class ProductController extends Controller
         if ($inserted) {
             Session::flash('success', 'Product added successfully!');
             // Redirect to the desired page (e.g., product listing) with serialized data
-            return redirect()->route('product-edit', ['slug' => $inserted->url_key]);
+            return redirect()->route('product-edit', ['slug' => $inserted->product_url]);
         }
     }
 
@@ -46,7 +49,7 @@ class ProductController extends Controller
             ->with('images')
             ->with('variantPrices')
             ->with('groupPrices')
-            ->where('url_key', $slug)->first();
+            ->where('product_url', $slug)->first();
         // category
         $data['categories'] = Category::select('id', 'name')->get();
         // return $data['category'];
@@ -54,62 +57,73 @@ class ProductController extends Controller
         return Inertia::render('Catalog/Product/Edit', $data);
     }
 
-    function update(Request $request, $id)
+    function update(Request $request, $product_id)
     {
         $data = $request->all();
-        DB::beginTransaction();
-        try {
-            //code...
-            // update product model
-            $product = Product::find($id);
-            $product->update($request->all());
-            // update images
-            if ($request->hasFile('images')) {
-                $images = $request->file('images');
-                foreach ($images as $image) {
-                    $imageName = time(). '_'. $image->getClientOriginalName();
-                    $image->move(public_path('images/products'), $imageName);
-                    $product->images()->create(['image' => $imageName]);
-                }
-            }
-            // update variant prices
-            DB::commit();
-            echo json_encode(['status' => true, 'message' => 'Product Add successfully', 'orderNo' => ''], 200);
-        } catch (\Exception $e) {
-            // Rollback transaction on error
-            DB::rollBack();
-            Session::flash('failed', $e->getMessage());
+        // update product table
+        $updateProduct = Product::updateProduct($data, $product_id);
+        if ($updateProduct['status']) {
+            // update specification table
+            $updateCategories = ProductCategory::updateCategory($data['categories'], $product_id);
+            $updateSpecifications = ProductSpecification::updateSpecification($data['specifications'], $product_id);
+            $updateTags = ProductTag::updateTags($data['tags'], $product_id);
+            // attributes
+            // images 
+            // $updateImages = ProductImage::updateImages($request->file('images'), $id);
+            // dd($updateTags);
+            // update variant prices table
+            // $updateVariantPrices = ProductVariantPrice::updateVariantPrices($request->all(), $id);
+            // dd($updateVariantPrices);
+            // update group prices table
+            // $updateGroupPrices = ProductGroupPrice::updateGroupPrices($request->all(), $id);
+            // dd($updateGroupPrices);
+            // update bundle prices table
+            // $updateBundlePrices = ProductBundlePrice::updateBundlePrices($request->all(), $id);
+            // dd($updateBundlePrices);
+            // update bundle items table
+            // $updateBundleItems = ProductBundleItem::updateBundleItems($request->all(), $id);
+            // dd($updateBundleItems);
+            // update bundle options table
+            // $updateBundleOptions = ProductBundleOption::updateBundleOptions($request->all(), $id);
+            // update images table
+
+            // dd($updateImages);
         }
 
-        // Validate the incoming request
-        // $request->validate([
-        //     'name' => 'required|string|max:255',
-        //     'url_key' => 'required|string|max:255',
-        //     'sku' => 'required|string|max:255',
-        //     'product_code' => 'required|string|max:255',
-        //     'short_description' => 'required|string|max:255',
-        //     'description' => 'required|string',
-        // ]);
-
-        // Find the product by ID and update its details
-        // $product = Product::findOrFail($id);
-        // $product->name = $request->name;
-        // $product->url_key = $request->url_key;
-        // $product->sku = $request->sku;
-        // $product->product_code = $request->product_code;
-        // $product->short_description = $request->short_description;
-        // $product->description = $request->description;
-        // $product->save();
-        // Session::flash('success', 'Product updated successfully!');
-        // return redirect()->route('product-edit', ['slug' => $product->url_key]);
+        // // dd($data);
+        // exit;
+        // DB::beginTransaction();
+        // try {
+        //     //code...
+        //     // update product model
+        //     $product = Product::find($product_id);
+        //     $product->update($request->all());
+        //     // update images
+        //     if ($request->hasFile('images')) {
+        //         $images = $request->file('images');
+        //         foreach ($images as $image) {
+        //             $imageName = time() . '_' . $image->getClientOriginalName();
+        //             $image->move(public_path('images/products'), $imageName);
+        //             $product->images()->create(['image' => $imageName]);
+        //         }
+        //     }
+        //     // update variant prices
+        //     DB::commit();
+        //     echo json_encode(['status' => true, 'message' => 'Product Add successfully', 'orderNo' => ''], 200);
+        // } catch (\Exception $e) {
+        //     // Rollback transaction on error
+        //     DB::rollBack();
+        //     Session::flash('failed', $e->getMessage());
+        // }
     }
 
-    function imageUpload(Request $request, $id)
+    function imageUpload($request, $id)
     {
-        // Validate the incoming request
-        $request->validate([
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+        dd($request);
+        // // Validate the incoming request
+        // $request->validate([
+        //     'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        // ]);
 
         // Find the product by ID
         $product = Product::findOrFail($id);
@@ -122,8 +136,8 @@ class ProductController extends Controller
 
                 // Insert image data
                 $product->images()->create([
-                    'img_src' => 'uploads/' . $name,
-                    'img_alt' => $file->getClientOriginalName(),
+                    'src' => 'uploads/' . $name,
+                    'alt' => $file->getClientOriginalName(),
                     'status' => 1,
                 ]);
             }

@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 
 export default function Index({ auth, products }) {
     // initial value for set form
-    const initialValues = { name: '', url_key: '', sku: '', product_code: '' }
+    const initialValues = { name: '', product_url: '', sku: '', product_code: '' }
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [item, setItem] = useState(products);
     const { data, setData, processing, reset, post, errors } = useForm(initialValues);
@@ -28,11 +28,11 @@ export default function Index({ auth, products }) {
         const { name, value } = e.target;
         let updatedData = { ...data, [name]: value };
 
-        if (name === 'name' || name === 'url_key') {
-            updatedData.url_key = createSlug(value);
+        if (name === 'name' || name === 'product_url') {
+            updatedData.product_url = createSlug(value);
         }
         setData(updatedData);
-        // console.log("url_key", updatedData.url_key);
+        // console.log("product_url", updatedData.product_url);
     };
 
     const closeModal = () => {
@@ -87,12 +87,12 @@ export default function Index({ auth, products }) {
                                 />
                             </div>
                             <div>
-                                <label className="dark:text-gray-200" htmlFor="url_key">URL Key <span className="text-red-600">* {data.url_key}</span></label>
+                                <label className="dark:text-gray-200" htmlFor="product_url">URL Key <span className="text-red-600">* {data.product_url}</span></label>
                                 <input
-                                    name="url_key"
+                                    name="product_url"
                                     type="text"
                                     className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                                    value={data.url_key}
+                                    value={data.product_url}
                                     onChange={handleChange}
                                 />
                             </div>
