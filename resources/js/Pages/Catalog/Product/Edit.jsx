@@ -6,21 +6,13 @@ import axios from 'axios';
 
 const Edit = (props) => {
     const [activeTab, setActiveTab] = useState("general");
-    const [user, setUser] = useState(props.auth.user);
-    const today = new Date().toISOString().slice(0, 10);
-    // categories
-    const [categories, setCategories] = useState([
+    const user = props.auth.user; // user
+    const today = new Date().toISOString().slice(0, 10); 
+    const [categories, setCategories] = useState([ // categories
         "Cat ipsum", "Cat lorem", "Cat Product", "Category", "Ipsum", "Ipsum cat", "Ipsum Lorem", "Lorem"
     ]);
-    const [selectedCategories, setSelectedCategories] = useState([]);
     const [newCategory, setNewCategory] = useState("");
-    // tags 
-    const [tags, setTags] = useState([]);
-    const [newTag, setNewTag] = useState("");
-    // image loading
-    const [images, setImages] = useState([]);
-    // specifications
-    const [specifications, setSpecifications] = useState([]);
+    const [newTag, setNewTag] = useState(""); // tags
     const [specInput, setSpecInput] = useState('');
     // images function 
     const handleDrop = (event) => {
@@ -33,7 +25,7 @@ const Edit = (props) => {
         const newImages = files.map(file => Object.assign(file, {
             preview: URL.createObjectURL(file)
         }));
-        setImages(prevImages => [...prevImages, ...newImages]);
+        setFormData(prev => ({ ...prev, images: [...prev.images, ...newImages] }));
     };
 
     const handleFileSelect = (event) => {
@@ -42,19 +34,23 @@ const Edit = (props) => {
     };
 
     const removeImage = (index) => {
-        setImages(prevImages => prevImages.filter((_, i) => i !== index));
+        setFormData(prev => prev?.formData?.images.filter((_, i) => i !== index));
     };
 
     // categories function
     const handleCategoryChange = (category) => {
-        setSelectedCategories(prev =>
-            prev.includes(category) ? prev.filter(cat => cat !== category) : [...prev, category]
-        );
+        setFormData(prev => {
+            const updatedCategories = prev.categories.includes(category)
+                ? prev.categories.filter(cat => cat !== category) // Remove category if already selected
+                : [...prev.categories, category]; // Add category if not selected
+    
+            return { ...prev, categories: updatedCategories };
+        });
     };
 
     const addCategory = () => {
         if (newCategory && !categories.includes(newCategory)) {
-            setCategories([...categories, newCategory]);
+            setFormData(prev => ({ ...prev, categories: [...prev.categories, newCategory] }));
             setNewCategory("");
         } else {
             SwalAlert('warning', 'Category are already existing');
@@ -63,8 +59,8 @@ const Edit = (props) => {
 
     // tags function
     const addTag = () => {
-        if (newTag && !tags.includes(newTag)) {
-            setTags([...tags, newTag]);
+        if (newTag && !formData.tags.includes(newTag)) {
+            setFormData(prev => ({ ...prev, tags: [...prev.tags, newTag] }));
             setNewTag("");
         } else {
             SwalAlert('warning', 'Tags are already existing');
@@ -72,66 +68,65 @@ const Edit = (props) => {
     };
 
     const removeTag = (index) => {
-        setTags(prevTags => prevTags.filter((_, i) => i !== index));
+        setFormData(prev => prev.formData.tags.filter((_, i) => i !== index));
     }
 
     // specipication
     const addSpecification = () => {
         if (specInput.trim() !== '') {
-            setSpecifications([...specifications, specInput]);
+            setFormData(prev => ({ ...prev, specifications: [...prev.specifications, specInput] }));
             setSpecInput('');
         }
     };
 
     const removeSpecification = (index) => {
-        setSpecifications(specifications.filter((_, i) => i !== index));
+        setFormData(prev => prev.formData.specifications.filter((_, i) => i !== index));
     };
 
     // set initial value
     const initial = {
-        name: '',
-        description: '',
+        name            : '',
+        description     : '',
         shortDescription: '',
-        status: true,
-        newProduct: true,
-        featured: false,
-        meta: {
-            metaTitle: '',
+        status          : true,
+        newProduct      : true,
+        featured        : false,
+        review          : '',
+        meta            : {
+            metaTitle      : '',
             metaDescription: '',
-            metaKeywords: '',
+            metaKeywords   : '',
         },
         general: {
-            sku: '',
-            productUrl: '',
-            productType: 'physical',
-            // productWeight: '', // attribute value
+            productUrl  : '',
+            productType : 'physical',
             regularPrice: '',
-            salePrice: '',
-            mrpPrice: '',
-            taxStatus: '',
-            taxClass: '',
-            taxIncluded: true,
-            expiryDate: '',
+            salePrice   : '',
+            mrpPrice    : '',
+            taxStatus   : '',
+            taxClass    : '',
+            taxIncluded : true,
+            expiryDate  : '',
         },
-        inventories: {
+        inventory: {
+            sku          : '',
             stockQuantity: '',
-            manageStock: false,
-            stockStatus: '',
+            manageStock  : false,
+            stockStatus  : '',
         },
-        published: {
-            publishedAt: today,
+        publish: {
+            publishedAt        : today,
             visibleIndividually: true,
         },
-        categories: [],
-        tags: [],
-        images: [],
+        categories    : [],
+        tags          : [],
+        images        : [],
         specifications: [],
-        attributes: [],  // future 
-        variants: []     // future
+        attributes    : [],                   // future 
+        variants      : []                    // future
     };
     const [formData, setFormData] = useState(initial);
     console.log(formData);
-
     // submit use axios
     const submit = async () => {
         try {
@@ -158,13 +153,26 @@ const Edit = (props) => {
                         {/* product name, description */}
                         <div className="mb-4">
                             <label className="block text-gray-700 font-medium">Product Name</label>
-                            <input type="text" className="w-full p-2 border border-gray-300" placeholder="Enter product name" defaultValue="Moriyam Paper" />
-                        </div>
-                        <div className="mb-4">
-                            <label className="block text-gray-700 font-medium">Description</label>
-                            <textarea className="w-full p-2 border border-gray-300" placeholder="Enter product description" defaultValue="Moriyam Paper is a high-quality, durable paper, suitable for various purposes." />
+                            <input
+                                type="text"
+                                name="name"
+                                className="w-full p-2 border border-gray-300"
+                                placeholder="Enter product name"
+                                value={formData.name}
+                                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                            />
                         </div>
 
+                        <div className="mb-4">
+                            <label className="block text-gray-700 font-medium">Description</label>
+                            <textarea
+                                className="w-full p-2 border border-gray-300"
+                                placeholder="Enter product description"
+                                value={formData.description}
+                                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+                            />
+                        </div>
+                        {/* tab start */}
                         <div className="flex pb-3">
                             {/* Sidebar (Tabs) */}
                             <div className="w-1/4 bg-gray-200 p-6">
@@ -187,57 +195,83 @@ const Edit = (props) => {
                             <div className="w-3/4 p-6">
                                 {activeTab === "general" && (
                                     <div>
-                                        <form>
-                                            <div className="mb-4">
-                                                <label className="block text-gray-700 font-medium">Product URL</label>
-                                                <input type="url" className="w-full p-2 border border-gray-300" placeholder="Enter external URL" defaultValue="https://mercantile.wordpress.org/product/wordpress" />
+                                        <div className="mb-4">
+                                            <label className="block text-gray-700 font-medium">Product URL</label>
+                                            <input type="url"
+                                                className="w-full p-2 border border-gray-300"
+                                                placeholder="Enter external URL"
+                                                value={formData.general?.productUrl}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, productUrl: e.target.value } }))}
+                                            />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label className="block text-gray-700 font-medium">Regular Price ($)</label>
+                                                <input type="number"
+                                                    className="w-full p-2 border border-gray-300"
+                                                    value={formData.general?.regularPrice}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, regularPrice: e.target.value } }))}
+                                                />
                                             </div>
-                                            <div className="mb-4">
-                                                <label className="block text-gray-700 font-medium">Button Text</label>
-                                                <input type="text" className="w-full p-2 border border-gray-300" placeholder="Enter button text" defaultValue="Buy on the WordPress swag store!" />
+                                            <div>
+                                                <label className="block text-gray-700 font-medium">Sale Price ($)</label>
+                                                <input type="number"
+                                                    className="w-full p-2 border border-gray-300"
+                                                    placeholder="Enter sale price"
+                                                    value={formData.general?.salePrice}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, salePrice: e.target.value }))}
+                                                />
                                             </div>
-                                            <div className="grid grid-cols-2 gap-4">
-                                                <div>
-                                                    <label className="block text-gray-700 font-medium">Regular Price ($)</label>
-                                                    <input type="number" className="w-full p-2 border border-gray-300" defaultValue="11.55" />
-                                                </div>
-                                                <div>
-                                                    <label className="block text-gray-700 font-medium">Sale Price ($)</label>
-                                                    <input type="number" className="w-full p-2 border border-gray-300" placeholder="Enter sale price" />
-                                                </div>
-                                            </div>
-                                            <div className="mb-4 mt-4">
-                                                <label className="block text-gray-700 font-medium">Tax Status</label>
-                                                <select className="w-full p-2 border border-gray-300">
-                                                    <option selected>Taxable</option>
-                                                    <option>None</option>
-                                                </select>
-                                            </div>
-                                            <div className="mb-4">
-                                                <label className="block text-gray-700 font-medium">Tax Class</label>
-                                                <select className="w-full p-2 border border-gray-300">
-                                                    <option selected>Standard</option>
-                                                    <option>Reduced Rate</option>
-                                                    <option>Zero Rate</option>
-                                                </select>
-                                            </div>
-                                            {/* add more */}
-                                        </form>
+                                        </div>
+                                        <div className="mb-4 mt-4">
+                                            <label className="block text-gray-700 font-medium">Tax Status</label>
+                                            <select className="w-full p-2 border border-gray-300"
+                                                value={formData.general?.taxStatus}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, general: {...prev.general, taxStatus: e.target.value } }))}
+                                            >
+                                                <option selected>Taxable</option>
+                                                <option>None</option>
+                                            </select>
+                                        </div>
+                                        <div className="mb-4">
+                                            <label className="block text-gray-700 font-medium">Tax Class</label>
+                                            <select
+                                                className="w-full p-2 border border-gray-300"
+                                                value={formData.general?.taxClass}
+                                                onChange={(e) => setFormData(prev => ({...prev, general: {...prev.general, taxClass: e.target.value } }))}
+                                            >
+                                                <option selected>Standard</option>
+                                                <option>Reduced Rate</option>
+                                                <option>Zero Rate</option>
+                                            </select>
+                                        </div>
+                                        {/* add more */}
                                     </div>
                                 )}
                                 {activeTab === "inventory" && <div>
                                     <form>
                                         <div className="mb-4">
                                             <label className="block text-gray-700 font-medium">SKU</label>
-                                            <input type="url" className="w-full p-2 border border-gray-300" placeholder="Enter external URL" defaultValue="https://mercantile.wordpress.org/product/wordpress" />
+                                            <input type="url" 
+                                            className="w-full p-2 border border-gray-300" 
+                                            placeholder="Enter external URL" 
+                                            value={formData.inventory.sku}
+                                            onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, sku: e.target.value } }))}
+                                            />
                                         </div>
                                         <div className="mb-4 flex items-center">
-                                            <input type="checkbox" id="manage-stock" className="mr-2" />
+                                            <input type="checkbox" id="manage-stock" className="mr-2"
+                                                value={formData.inventory.manageStock}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, manageStock: e.target.checked } }))}                                            
+                                            />
                                             <label htmlFor="manage-stock" className="text-gray-700">Enable stock management at product level</label>
                                         </div>
                                         <div className="mb-4">
                                             <label className="block text-gray-700 font-semibold">Stock status</label>
-                                            <select className="w-full p-2 border focus:ring focus:ring-blue-300">
+                                            <select className="w-full p-2 border focus:ring focus:ring-blue-300"
+                                                value={formData.inventory.stockStatus}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, stockStatus: e.target.value } }))}
+                                            >
                                                 <option>In stock</option>
                                                 <option>Out of stock</option>
                                                 <option>On backorder</option>
@@ -312,7 +346,7 @@ const Edit = (props) => {
                                             </button>
                                         </div>
                                         <div className="mt-2">
-                                            {specifications.map((spec, index) => (
+                                            {formData.specifications.map((spec, index) => (
                                                 <div key={index} className="flex justify-between items-center text-gray-700 bg-gray-100 p-2 rounded-sm mt-1">
                                                     <span>{index + 1}. {spec}</span>
                                                     <button
@@ -329,21 +363,51 @@ const Edit = (props) => {
                                 </div>}
                             </div>
                         </div>
+                        {/* tab end */}
                         <div className="mb-4">
                             <label className="block text-gray-700 font-medium">Short Description</label>
-                            <textarea className="w-full p-2 border border-gray-300" placeholder="Enter product description" />
+                            <textarea
+                                className="w-full p-2 border border-gray-300"
+                                placeholder="Enter short description"
+                                value={formData.shortDescription}
+                                onChange={(e) => setFormData(prev => ({ ...prev, shortDescription: e.target.value }))}
+                            />
                         </div>
+
                         <div className="mb-4">
-                            <label className="block text-gray-700 font-medium">Meta title</label>
-                            <input type="text" className="w-full p-2 border border-gray-300" placeholder="Enter product meta" />
+                            <label className="block text-gray-700 font-medium">Meta Title</label>
+                            <input
+                                type="text"
+                                className="w-full p-2 border border-gray-300"
+                                placeholder="Enter product meta title"
+                                value={formData.meta?.metaTitle}
+                                onChange={(e) => setFormData(prev => ({
+                                    ...prev,
+                                    meta: { ...prev.meta, metaTitle: e.target.value }
+                                }))}
+                            />
                         </div>
+
                         <div className="mb-4">
                             <label className="block text-gray-700 font-medium">Meta Description</label>
-                            <textarea className="w-full p-2 border border-gray-300" placeholder="Enter product description" />
+                            <textarea
+                                className="w-full p-2 border border-gray-300"
+                                placeholder="Enter product meta description"
+                                value={formData.meta?.metaDescription}
+                                onChange={(e) => setFormData(prev => ({
+                                    ...prev,
+                                    meta: { ...prev.meta, metaDescription: e.target.value }
+                                }))}
+                            />
                         </div>
                         <div className="mb-4">
                             <label className="block text-gray-700 font-medium">Review</label>
-                            <textarea className="w-full p-2 border border-gray-300" placeholder="Enter product review" />
+                            <textarea
+                                className="w-full p-2 border border-gray-300"
+                                placeholder="Enter product review"
+                                value={formData?.review}
+                                onChange={(e) => setFormData(prev => ({ ...prev, review: e.target.value }))}
+                            />
                         </div>
                     </section>
 
@@ -363,17 +427,17 @@ const Edit = (props) => {
                             {/* radio visible */}
                             <div className="flex items-center mt-4">
                                 <input type="checkbox" name="visibility" id="visibility" className="mr-2" />
-                                <label for="visibility">Visibility: Public</label>
+                                <label htmlFor="visibility">Visibility: Public</label>
                             </div>
                             {/* radio publish */}
                             <div className="flex items-center mt-4">
                                 <input type="checkbox" name="visibility" id="visibility" className="mr-2" />
-                                <label for="visibility">Status: Published</label>
+                                <label htmlFor="visibility">Status: Published</label>
                             </div>
                             {/* published on */}
                             <div className="flex items-center mt-4">
                                 <label className="mr-2">Published on: {today} </label>
-                                <i class="ri-edit-2-fill"></i>
+                                <i className="ri-edit-2-fill"></i>
                             </div>
                         </div>
                         <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
@@ -395,7 +459,7 @@ const Edit = (props) => {
                                 />
                             </div>
                             <div className="mt-4 grid grid-cols-3 gap-2">
-                                {images.map((image, index) => (
+                                {formData?.images?.map((image, index) => (
                                     <div key={index} className="relative">
                                         <img src={image.preview} alt="Preview" className="w-full h-24 object-cover rounded" />
                                         <button
@@ -411,11 +475,12 @@ const Edit = (props) => {
                         <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
                             <h3 className="font-bold border-b">Product Categories</h3>
                             <div className="max-h-40 overflow-y-auto mt-2">
-                                {categories.map((category, index) => (
+                                {categories?.map((category, index) => (
                                     <label key={index} className="flex items-center space-x-2">
                                         <input
                                             type="checkbox"
-                                            checked={selectedCategories.includes(category)}
+                                            // checked={formData?.categories?.includes(category)}
+                                            checked={formData.categories.includes(category)}
                                             onChange={() => handleCategoryChange(category)}
                                         />
                                         <span>{category}</span>
@@ -423,7 +488,7 @@ const Edit = (props) => {
                                 ))}
                             </div>
                             <div className="flex items-center pt-2 space-x-2">
-                                {/* <i class="ri-edit-2-fill"></i> */}
+                                {/* <i className="ri-edit-2-fill"></i> */}
                                 <input
                                     type="text"
                                     value={newCategory}
@@ -436,14 +501,14 @@ const Edit = (props) => {
                                     className="bg-blue-500 text-white px-3 p-1"
                                 >
                                     {/* plus icon */}
-                                    <i class="ri-add-circle-line"></i>
+                                    <i className="ri-add-circle-line"></i>
                                 </button>
                             </div>
                         </div>
                         <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
                             <h3 className="font-bold border-b pb-2">Product Tags</h3>
                             <div className="flex flex-wrap gap-2 mt-2">
-                                {tags.map((tag, index) => (
+                                {formData?.tags?.map((tag, index) => (
                                     <span key={index} className="bg-gray-200 px-2 py-1 rounded">
                                         {tag} <button className="bg-red-500 text-white px-1 ml-1 rounded" onClick={() => removeTag(index)}>✕</button>
                                     </span>
@@ -461,7 +526,7 @@ const Edit = (props) => {
                                     onClick={addTag}
                                     className="bg-blue-500 text-white px-3 p-1"
                                 >
-                                    <i class="ri-add-circle-line"></i>
+                                    <i className="ri-add-circle-line"></i>
                                 </button>
                             </div>
                         </div>

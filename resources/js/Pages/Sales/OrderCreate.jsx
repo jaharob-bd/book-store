@@ -146,6 +146,13 @@ const OrderCreate = (props) => {
         });
     };
 
+    const [selectedProduct, setSelectedProduct] = useState("");
+
+    const handleSelectChange = (event) => {
+        setSelectedProduct(event.target.value);
+        addToCart(event); // আগের ফাংশন যেন ঠিকঠাক কাজ করে
+    };
+
     const addToCart = (event) => {
         const [id, name, price] = event.target.value.split(",");
         setCart((prevCart) => {
@@ -267,10 +274,18 @@ const OrderCreate = (props) => {
                     <div className="w-4/5 p-6">
                         {/* section 1 == selected items */}
                         <div className="flex gap-4 mb-2">
-                            <select className="border p-2 w-1/2" onChange={addToCart}>
+                            {/* <select className="border p-2 w-1/2" onChange={addToCart}>
                                 <option value="" disabled selected>Select an item</option>
                                 {products.map((product, index) => (
                                     <option key={index} value={`${product.id},${product.name},${product.sale_price}`}>{product.id} - {product.name} - ${product.sale_price}</option>
+                                ))}
+                            </select> */}
+                            <select className="border p-2 w-1/2" value={selectedProduct} onChange={handleSelectChange}>
+                                <option value="" disabled>Select an item</option>
+                                {products.map((product, index) => (
+                                    <option key={index} value={`${product.id},${product.name},${product.sale_price}`}>
+                                        {product.id} - {product.name} - ${product.sale_price}
+                                    </option>
                                 ))}
                             </select>
                             <input
