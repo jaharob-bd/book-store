@@ -54,7 +54,7 @@ class ProductController extends Controller
         $data['categories'] = Category::select('id', 'name')->get();
         // return $data['category'];
         // return $data['product']; exit;
-        return Inertia::render('Catalog/Product/Edit', $data);
+        return Inertia::render('Catalog/Product/Edit1', $data);
     }
 
     function update(Request $request, $product_id)

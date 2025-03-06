@@ -7,41 +7,10 @@ import { EditImageUpload } from './Partials/EditImageUpload';
 import EditPrice from './Partials/EditPrice';
 import { EditSetting } from './Partials/EditSetting';
 import { CategoriesDropDrown } from './Partials/CategoriesDropDrown';
-
-const COUNTRIES = [
-    "Austria",
-    "Belgium",
-    "Croatia",
-    "Bulgaria",
-    "Cyprus",
-    "Czech Republic",
-    "Denmark",
-    "Estonia",
-    "Finland",
-    "France",
-    "Germany",
-    "Greece",
-    "Hungary",
-    "Ireland",
-    "Italy",
-    "Latvia",
-    "Lithuania",
-    "Luxembourg",
-    "Malta",
-    "Netherlands",
-    "Poland",
-    "Portugal",
-    "Romania",
-    "Slovakia",
-    "Slovenia",
-    "Spain",
-    "Sweden",
-    "Ukraine",
-];
 // import EditOthers from './Partials/EditOthers';
 // import EditVideo from './Partials/EditVideo';
 
-const Edit = (props) => {
+const Edit1 = (props) => {
     const [user, setUser] = useState(props.auth.user);
     const [initial, setInitial] = useState(props.product);
     const { data, setData, reset, post } = useForm(initial);
@@ -228,4 +197,4 @@ const Edit = (props) => {
     )
 }
 
-export default Edit
+export default Edit1

@@ -2,7 +2,7 @@ import { router, useForm } from '@inertiajs/react';
 import React, { useState } from 'react';
 
 export const EditImageUpload = (props) => {
-    const [baseUrl, setBaseUrl] = useState(props.url.base_url);
+    const [baseUrl, setBaseUrl] = useState(props.url?.base_url);
     const [productId, setProductId] = useState(props.product.id);
     const { data, setData, post, processing, errors } = useForm({
         images: []

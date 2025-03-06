@@ -93,7 +93,7 @@ const Edit = (props) => {
     }
     // set initial value
     const initial = {
-        name            : product.name,
+        name            : product.name || '',
         description     : product.description,
         shortDescription: product.short_description,
         status          : true,
