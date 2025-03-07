@@ -3,6 +3,8 @@
 namespace App\Models\Catalog;
 
 use App\Models\Inventory\Stock\Stock;
+use App\Models\Catalog\ProductTag;
+use App\Models\Catalog\ProductSpecification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -63,18 +65,17 @@ class Product extends Model
             $product->mrp_price = $data['general']['mrpPrice'];
             $product->tax_status = $data['general']['taxStatus'];
             $product->tax_class = $data['general']['taxClass'];
-            $product->tax_included = $data['general']['taxIncluded'];
+            $product->tax_included = $data['general']['taxIncluded'] ?? 0;
             // $product->expiry_date = $data['general']['expiryDate'];
-
             // Update inventory fields
             $product->sku = $data['inventory']['sku'];
-            $product->stock_quantity = $data['inventory']['stockQuantity'];
-            $product->manage_stock = $data['inventory']['manageStock'];
+            $product->stock_quantity = $data['inventory']['stockQuantity'] ?? 0;
+            $product->manage_stock = $data['inventory']['manageStock'] ?? 0;
             $product->stock_status = 'in_stock'; // $data['inventory']['stockStatus'];
 
             // Update publish fields
-            $product->published_at = $data['publish']['publishedAt'];
-            $product->visible_individually = $data['publish']['visibleIndividually'];
+            $product->published_at = $data['publish']['publishedAt'] ?? date('Y-m-d H:i:s');
+            $product->visible_individually = $data['publish']['visibleIndividually'] ?? 0;
 
             // Save the updated product
             $product->save();
@@ -94,26 +95,39 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
+    public function categories1()
+    {
+        return $this->hasMany(ProductCategory::class, 'product_id');
+    }
+    // category name
     public function categories()
     {
-        return $this->belongsToMany(Category::class, 'product_categories');
+        return $this->belongsToMany(Category::class, 'product_categories', 'product_id', 'category_id');
     }
-    public function productCategory()
-    {
-        return $this->hasMany(productCategory::class);
-    }
+    
     public function images()
     {
-        return $this->hasMany(ProductImage::class);
+        return $this->hasMany(ProductImage::class, 'product_id');
+    }
+    
+    public function tags()
+    {
+        return $this->hasMany(ProductTag::class, 'product_id');
     }
 
+    // specifications 
+    public function specifications(){
+        return $this->hasMany(ProductSpecification::class, 'product_id');
+    }
+     
     public function variantPrices()
     {
-        return $this->hasMany(ProductVariantPrice::class);
+        return $this->hasMany(ProductVariantPrice::class, 'product_id');
     }
-
+    
     public function groupPrices()
     {
-        return $this->hasMany(ProductGroupPrice::class);
+        return $this->hasMany(ProductGroupPrice::class, 'product_id');
     }
+    
 }

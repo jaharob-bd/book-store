@@ -16,8 +16,12 @@ class ProductTag extends Model
         'tag_name',
     ];
 
-    public static function updateTags(array $tags, $product_id)
+    public static function updateTags($data, $product_id)
     {
+        if (!isset($data['tags'])) {
+            return false;
+        }
+        $tags = $data['tags'];
         foreach ($tags as $tag) {
             $existingTag = self::where('product_id', $product_id)
                 ->where('tag_name', $tag)
@@ -37,5 +41,10 @@ class ProductTag extends Model
             }
         }
         return true;
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'product_id');
     }
 }

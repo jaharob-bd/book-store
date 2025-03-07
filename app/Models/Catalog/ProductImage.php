@@ -12,40 +12,21 @@ class ProductImage extends Model
 
     public static function updateImages($images, $id)
     {
-        // Find the product by ID
-        $product = Product::findOrFail($id);
-        dd($images);
-        if ($images) {
-            foreach ($images as $file) {
-                $name = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('uploads'), $name);
-
-                // Insert image data
-                $product->images()->create([
-                    'src' => 'uploads/' . $name,
-                    'alt' => $file->getClientOriginalName(),
-                    'status' => 1,
-                ]);
-                dd($product);
-            }
+        if (!$images) {
+            return false;
         }
-        exit;
-        // Check if images exist
-        if (!empty($images)) {
-            foreach ($images as $file) {
-                if ($file instanceof \Illuminate\Http\UploadedFile) { // Ensure it's a valid uploaded file
-                    $name = time() . '_' . $file->getClientOriginalName();
-                    $file->move(public_path('uploads'), $name);
-
-                    // Insert image data into the product_images table
-                    $product->images()->create([
-                        'src' => 'uploads/' . $name,
-                        'alt' => $file->getClientOriginalName(),
-                        'status' => 1,
-                    ]);
-                    dd($product);
-                }
-            }
+        
+        $product = Product::findOrFail($id);
+        foreach ($images as $file) {
+            // $file->storeAs('public/products', time(). '_'. $file->getClientOriginalName());
+            $filename = time() . '_' .rand(99, 999). '_'. $file->getClientOriginalName();
+            $file->move(public_path('uploads/products'), $filename);
+            // Insert image data
+            $product->images()->create([
+                'src' => 'uploads/products/' . $filename,
+                'alt' => $file->getClientOriginalName(),
+                'status' => 1,
+            ]);
         }
         return true;
     }

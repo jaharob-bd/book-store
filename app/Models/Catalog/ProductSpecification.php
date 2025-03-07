@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
+use function PHPUnit\Framework\isArray;
+
 class ProductSpecification extends Model
 {
     use HasFactory;
@@ -18,8 +20,13 @@ class ProductSpecification extends Model
         'specification_value',
     ];
 
-    public static function updateSpecification(array $specifications, $product_id)
+    public static function updateSpecification($data, $product_id)
     {
+
+        if (!isset($data['specifications'])) {
+            return false;
+        }
+        $specifications = $data['specifications'];
         foreach ($specifications as $spec) {
             // Check if the specification already exists
             $existingSpec = self::where('product_id', $product_id)

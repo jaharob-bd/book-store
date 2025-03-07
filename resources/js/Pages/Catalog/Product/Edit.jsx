@@ -3,17 +3,22 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import SwalAlert from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
+// import { useNavigate } from 'react-router-dom';
 
 const Edit = (props) => {
+    // console.log(props.response);
     const [activeTab, setActiveTab] = useState("general");
     const user = props.auth.user; // user
     const [product, setProduct] = useState(props.product); // product
-    const today = new Date().toISOString().slice(0, 10); 
+    // console.log(product);
+    const today = new Date().toISOString().slice(0, 10);
     // const categories = props.categories;
-    const [categories, setCategories] = useState([ // categories
-        "Cat ipsum", "Cat lorem", "Cat Product", "Category", "Ipsum", "Ipsum cat", "Ipsum Lorem", "Lorem"
-    ]);
+    // const [categories, setCategories] = useState([ // categories
+    //     "Cat ipsum", "Cat lorem", "Cat Product", "Category", "Ipsum", "Ipsum cat", "Ipsum Lorem", "Lorem"
+    // ]);
+    const [categories, setCategories] = useState(props.categories);
     const [newCategory, setNewCategory] = useState("");
+    console.log(newCategory);
     const [newTag, setNewTag] = useState(""); // tags
     const [specInput, setSpecInput] = useState('');
     // images function 
@@ -25,6 +30,7 @@ const Edit = (props) => {
 
     const handleFiles = (files) => {
         const newImages = files.map(file => Object.assign(file, {
+            // id: 0,
             preview: URL.createObjectURL(file)
         }));
         setFormData(prev => ({ ...prev, images: [...prev.images, ...newImages] }));
@@ -45,24 +51,41 @@ const Edit = (props) => {
             const updatedCategories = prev.categories.includes(category)
                 ? prev.categories.filter(cat => cat !== category) // Remove category if already selected
                 : [...prev.categories, category]; // Add category if not selected
-    
+
             return { ...prev, categories: updatedCategories };
         });
     };
 
+    // const addCategory = () => {
+    //     if (newCategory && !categories.includes(newCategory)) {
+    //         const countTotalCategory = formData.categories.length;
+    //         // console.log(countTotalCategory);
+    //         setFormData(prev => ({ ...prev, categories: [...prev.categories, {id: countTotalCategory + 1, name: newCategory }] }));
+    //         setNewCategory("");
+    //     } else {
+    //         SwalAlert('warning', 'Category are already existing');
+    //     }
+    // };
+
     const addCategory = () => {
-        if (newCategory && !categories.includes(newCategory)) {
-            setFormData(prev => ({ ...prev, categories: [...prev.categories, newCategory] }));
+        if (newCategory && !categories.some(cat => cat.name === newCategory)) {
+            const newId = categories.length + 1;
+            const newCatObj = { id: newId, name: newCategory };
+
+            // Update both state variables
+            setCategories(prev => [...prev, newCatObj]);
+            setFormData(prev => ({ ...prev, categories: [...prev.categories, newCatObj] }));
+
             setNewCategory("");
         } else {
-            SwalAlert('warning', 'Category are already existing');
+            SwalAlert('warning', 'Category already exists');
         }
     };
 
     // tags function
     const addTag = () => {
         if (newTag && !formData.tags.includes(newTag)) {
-            setFormData(prev => ({ ...prev, tags: [...prev.tags, newTag] }));
+            setFormData(prev => ({ ...prev, tags: [...prev.tags, { id: 0, name: newTag }] }));
             setNewTag("");
         } else {
             SwalAlert('warning', 'Tags are already existing');
@@ -93,52 +116,79 @@ const Edit = (props) => {
     }
     // set initial value
     const initial = {
-        name            : product.name || '',
-        description     : product.description,
+        product_id: product.id,
+        name: product.name || '',
+        description: product.description,
         shortDescription: product.short_description,
-        status          : true,
-        newProduct      : true,
-        featured        : false,
-        meta            : {
-            metaTitle      : product.meta_title,
-            metaDescription: product.meta_description,
-            metaKeywords   : product.meta_keywords,
+        status: 1,
+        newProduct: 1,
+        featured: 0,
+        meta: {
+            metaTitle: product.meta_title || '',
+            metaDescription: product.meta_description || '',
+            metaKeywords: product.meta_keywords || '',
         },
         general: {
-            productUrl  : product.product_url,
-            productType : product.product_type,
+            productUrl: product.product_url,
+            productType: product.product_type,
             regularPrice: product.regular_price,
-            salePrice   : product.sale_price,
-            mrpPrice    : product.mrp_price,
-            taxStatus   : product.tax_status,
-            taxClass    : product.tax_class,
-            taxIncluded : product.tax_included,
-            expiryDate  : product.expiry_date,
+            salePrice: product.sale_price,
+            mrpPrice: product.mrp_price,
+            taxStatus: product.tax_status,
+            taxClass: product.tax_class,
+            taxIncluded: product.tax_included || 0,
+            expiryDate: product.expiry_date,
         },
         inventory: {
-            sku          : product.sku,
-            stockQuantity: product.stock_quantity,
-            manageStock  : product.manage_stock,
-            stockStatus  : product.stock_status,
+            sku: product.sku,
+            stockQuantity: product.stock_quantity || 0,
+            manageStock: product.manage_stock || 0,
+            stockStatus: product.stock_status || 0,
         },
         publish: {
-            publishedAt        : product.published_at,
-            visibleIndividually: true,
+            publishedAt: product.published_at || today,
+            visibleIndividually: 1,
         },
-        categories    : [],
-        tags          : [],
-        images        : [],
+        categories: product.categories,
+        tags: product.tags,
+        images: product.images,
         specifications: [],
-        attributes    : [],                   // future 
-        variants      : []                    // future
+        attributes: [],                   // future 
+        variants: []                    // future
     };
     const [formData, setFormData] = useState(initial);
+    console.log(formData);
     // submit use axios
     const submit = async () => {
+        // const formDataToSend = FormData;
+        // --- Create a new FormData instance to send data with the image files if not need image upload could not use formDataToSend --
+        const formDataToSend = new FormData();
+        // Append all key-value pairs from formData state
+        Object.keys(formData).forEach((key) => {
+            // Check if value is an array to send as an array in Laravel
+            if (Array.isArray(formData[key])) {
+                // Append arrays correctly
+                formData[key].forEach((value) => {
+                    formDataToSend.append(`${key}[]`, value); // Send as an array in Laravel
+                });
+            } else if (typeof formData[key] === "object" && formData[key] !== null) {
+                // Handle nested object (general)
+                Object.keys(formData[key]).forEach((subKey) => {
+                    formDataToSend.append(`${key}[${subKey}]`, formData[key][subKey]);
+                });
+            } else {
+                // Append other fields normally
+                formDataToSend.append(key, formData[key]);
+            }
+        });
+        // -- end of formDataToSend
         try {
-            const response = await axios.patch(`/product-update/${props.product.id}`, formData, { withCredentials: true });
-            // console.log(response)
+            const response = await axios.post('/product-update', formDataToSend, { withCredentials: true });
+            // router.push('/product-edit/' + formData.general.productUrl);
             if (response.data.status) {
+                // change url to current
+                // console.log('Navigating to:', '/product-edit/' + formData.general.productUrl);
+                // router.visit('/product-edit/' + formData.general.productUrl);
                 SwalAlert('success', response.data.message, 'center');
             } else {
                 SwalAlert('warning', 'Add failed', 'center');
@@ -207,7 +257,7 @@ const Edit = (props) => {
                                                 className="w-full p-2 border border-gray-300"
                                                 placeholder="Enter external URL"
                                                 value={formData.general?.productUrl}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, productUrl: createSlug(e.target.value)} }))}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, productUrl: createSlug(e.target.value) } }))}
                                             />
                                         </div>
                                         <div className="grid grid-cols-2 gap-4">
@@ -225,7 +275,7 @@ const Edit = (props) => {
                                                     className="w-full p-2 border border-gray-300"
                                                     placeholder="Enter sale price"
                                                     value={formData.general.salePrice}
-                                                    onChange={(e) => setFormData(prev => ({ ...prev, general: {...prev.general, salePrice: e.target.value }}))}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, salePrice: e.target.value } }))}
                                                 />
                                             </div>
                                         </div>
@@ -233,7 +283,7 @@ const Edit = (props) => {
                                             <label className="block text-gray-700 font-medium">Tax Status</label>
                                             <select className="w-full p-2 border border-gray-300"
                                                 value={formData.general?.taxStatus}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, general: {...prev.general, taxStatus: e.target.value } }))}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, taxStatus: e.target.value } }))}
                                             >
                                                 <option selected>Taxable</option>
                                                 <option>None</option>
@@ -244,7 +294,7 @@ const Edit = (props) => {
                                             <select
                                                 className="w-full p-2 border border-gray-300"
                                                 value={formData.general?.taxClass}
-                                                onChange={(e) => setFormData(prev => ({...prev, general: {...prev.general, taxClass: e.target.value } }))}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, taxClass: e.target.value } }))}
                                             >
                                                 <option selected>Standard</option>
                                                 <option>Reduced Rate</option>
@@ -258,17 +308,17 @@ const Edit = (props) => {
                                     <form>
                                         <div className="mb-4">
                                             <label className="block text-gray-700 font-medium">SKU</label>
-                                            <input type="url" 
-                                            className="w-full p-2 border border-gray-300" 
-                                            placeholder="Enter external URL" 
-                                            value={formData.inventory.sku}
-                                            onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, sku: e.target.value } }))}
+                                            <input type="url"
+                                                className="w-full p-2 border border-gray-300"
+                                                placeholder="Enter external URL"
+                                                value={formData.inventory.sku}
+                                                onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, sku: e.target.value } }))}
                                             />
                                         </div>
                                         <div className="mb-4 flex items-center">
                                             <input type="checkbox" id="manage-stock" className="mr-2"
                                                 value={formData.inventory.manageStock}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, manageStock: e.target.checked } }))}                                            
+                                                onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, manageStock: e.target.checked } }))}
                                             />
                                             <label htmlFor="manage-stock" className="text-gray-700">Enable stock management at product level</label>
                                         </div>
@@ -352,9 +402,9 @@ const Edit = (props) => {
                                             </button>
                                         </div>
                                         <div className="mt-2">
-                                            {formData.specifications.map((spec, index) => (
+                                            {data.specifications.map((spec, index) => (
                                                 <div key={index} className="flex justify-between items-center text-gray-700 bg-gray-100 p-2 rounded-sm mt-1">
-                                                    <span>{index + 1}. {spec}</span>
+                                                    <span>{index + 1}. {spec.name}</span>
                                                     <button
                                                         className="ml-2 bg-red-600 text-white p-1 rounded-sm hover:text-white-700"
                                                         onClick={() => removeSpecification(index)}
@@ -465,36 +515,36 @@ const Edit = (props) => {
                                 />
                             </div>
                             <div className="mt-4 grid grid-cols-3 gap-2">
-                                {formData?.images?.map((image, index) => (
-                                    <div key={index} className="relative">
-                                        <img src={image.preview} alt="Preview" className="w-full h-24 object-cover rounded" />
-                                        <button
-                                            className="absolute top-0 right-0 bg-red-500 text-white p-1"
-                                            onClick={() => removeImage(index)}
-                                        >
-                                            ✕
-                                        </button>
-                                    </div>
-                                ))}
+                                {
+                                    formData.images.map((image, index) => (
+                                        <div key={index} className="relative">
+                                            <img src={image.preview} alt="Preview" className="w-full h-24 object-cover rounded" />
+                                            <button
+                                                className="absolute top-0 right-0 bg-red-500 text-white p-1"
+                                                onClick={() => removeImage(index)}
+                                            >
+                                                ✕
+                                            </button>
+                                        </div>
+                                    ))
+                                }
                             </div>
                         </div>
                         <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
                             <h3 className="font-bold border-b">Product Categories</h3>
                             <div className="max-h-40 overflow-y-auto mt-2">
-                                {categories?.map((category, index) => (
+                                {categories.map((category, index) => (
                                     <label key={index} className="flex items-center space-x-2">
                                         <input
                                             type="checkbox"
-                                            // checked={formData?.categories?.includes(category)}
-                                            checked={formData.categories.includes(category)}
+                                            checked={formData.categories.some(cat => cat.id === category.id)}
                                             onChange={() => handleCategoryChange(category)}
                                         />
-                                        <span>{category}</span>
+                                        <span>{category.name}</span>
                                     </label>
                                 ))}
                             </div>
                             <div className="flex items-center pt-2 space-x-2">
-                                {/* <i className="ri-edit-2-fill"></i> */}
                                 <input
                                     type="text"
                                     value={newCategory}
@@ -514,11 +564,13 @@ const Edit = (props) => {
                         <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
                             <h3 className="font-bold border-b pb-2">Product Tags</h3>
                             <div className="flex flex-wrap gap-2 mt-2">
-                                {formData?.tags?.map((tag, index) => (
-                                    <span key={index} className="bg-gray-200 px-2 py-1 rounded">
-                                        {tag} <button className="bg-red-500 text-white px-1 ml-1 rounded" onClick={() => removeTag(index)}>✕</button>
-                                    </span>
-                                ))}
+                                {
+                                    formData.tags.map((tag, index) => (
+                                        <span key={index} className="bg-gray-200 px-2 py-1 rounded">
+                                            {tag.name} <button className="bg-red-500 text-white px-1 ml-1 rounded" onClick={() => removeTag(index)}>✕</button>
+                                        </span>
+                                    ))
+                                }
                             </div>
                             <div className="mt-4 flex items-center space-x-2">
                                 <input

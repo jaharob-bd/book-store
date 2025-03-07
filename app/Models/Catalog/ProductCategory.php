@@ -18,8 +18,12 @@ class ProductCategory extends Model
         'updated_by',
     ];
 
-    public static function updateCategory(array $categories, $product_id)
+    public static function updateCategory($data, $product_id)
     {
+        if (!isset($data['categories'])) {
+            return false;
+        }
+        $categories = $data['categories'];
         foreach ($categories as $key => $category) {
             $sl = $key + 1;
             // Check if the category already exists for this product
