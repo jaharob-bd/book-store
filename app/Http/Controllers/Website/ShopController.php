@@ -35,12 +35,12 @@ class ShopController extends Controller
         $products = DB::table('products as p')
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
             ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
-            ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+            // ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
             ->select(
                 'p.*',
                 'a.name as author_name',
                 'pb.name as publisher_name',
-                'c.name as category_name'
+                'a.name as category_name'
             );
 
         // Handle "category" filter
@@ -72,12 +72,12 @@ class ShopController extends Controller
             ->where('p.url_key', $slug)
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
             ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
-            ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+            // ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
             ->select(
                 'p.*',
                 'a.name as author_name',
                 'pb.name as publisher_name',
-                'c.name as category_name'
+                'a.name as category_name'
             )
             ->first();
         if (!$product) {
@@ -99,12 +99,12 @@ class ShopController extends Controller
         $products = DB::table('products as p')
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
             ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
-            ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
+            // ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')
             ->select(
                 'p.*',
                 'a.name as author_name',
                 'pb.name as publisher_name',
-                'c.name as category_name'
+                'a.name as category_name'
             );
 
         // Handle "category" filter
