@@ -20,6 +20,7 @@ use App\Models\Catalog\ProductCategory;
 use App\Models\Catalog\ProductImage;
 use App\Models\Catalog\ProductSpecification;
 use App\Models\Catalog\ProductTag;
+use App\Models\Catalog\Specification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -48,14 +49,15 @@ class ProductController extends Controller
         $data['productQ'] = $product = Product::with(['categories:id,name', 'specifications', 'images', 'tags', 'variantPrices', 'groupPrices'])
             ->where('product_url', $slug)
             ->first();
-
+// return $product;
         if (!$product) {
             Session::flash('failed', 'Not found product!');
             return redirect()->route('products');
         }
 
+        // return $product;
         $data['product'] = [
-            'product_id'       => $product->id,
+            'productId'        => $product->id,
             'name'             => $product->name ?? '',
             'description'      => $product->description,
             'shortDescription' => $product->short_description ?? '',
@@ -102,16 +104,20 @@ class ProductController extends Controller
                 'preview' => asset($image->src)
             ]),
             'specifications' => $product->specifications->map(fn($spec) => [
-                'id'    => $spec->id,
-                'name'  => $spec->specification_name,
-                'value' => $spec->specification_value
+                'id'               => $spec->id,
+                'specification_id' => $spec->pivot->specification_id,
+                'name'             => $spec->name,
+                'value'            => $spec->pivot->value
             ]),
             'attributes' => [],   // Future use
             'variants'   => []    // Future use
         ];
 
-        // return response()->json($data['product']);
+        // return respons   e()->json($data['product']);
         $data['categories'] = Category::select('id', 'name')->get();
+        // specification
+        $data['specifications'] = Specification::all();
+
         return Inertia::render('Catalog/Product/Edit', $data);
     }
 
@@ -124,20 +130,37 @@ class ProductController extends Controller
     function update(Request $request)
     {
         $data = $request->all();
-        $product_id = intval($data['product_id']);
+        $product_id = intval($data['productId']);
+        try {
+            $updateProduct = Product::updateProduct($data, $product_id);
+            if ($updateProduct['status']) {
+                $updateSpecifications = ProductSpecification::updateSpecification($data, $product_id);
+                $updateImages         = ProductImage::updateImages($request->file('images'), $product_id);
+                $updateCategories     = ProductCategory::updateCategory($data, $product_id);
+                $updateTags           = ProductTag::updateTags($data, $product_id);
+                echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
+            } else {
+                echo json_encode(['status' => false, 'message' => 'Product not found']);
+            }
 
-        // update product table
-        $updateProduct = Product::updateProduct($data, $product_id);
-        // dd($updateProduct);
-        if ($updateProduct['status']) {
-            $updateSpecifications = ProductSpecification::updateSpecification($data, $product_id);
-            $updateImages         = ProductImage::updateImages($request->file('images'), $product_id);
-            $updateCategories     = ProductCategory::updateCategory($data, $product_id);
-            $updateTags           = ProductTag::updateTags($data, $product_id);
-            echo json_encode(['status' => true, 'message' => 'Order place successfully'], 200);
-        } else {
-            echo json_encode(['status' => false, 'message' => 'Product not found']);
+            // return response()->json([
+            //     'success' => true,
+            //     'message' => 'Product updated successfully!'
+            // ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong!',
+                'error' => $e->getMessage()
+            ], 500);
         }
+
+
+
+
+        // echo json_encode(['status' => false, 'message' => 'Product not found']);
+        // exit;
+
 
 
         // // dd($data);

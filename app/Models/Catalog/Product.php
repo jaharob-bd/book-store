@@ -117,7 +117,8 @@ class Product extends Model
 
     // specifications 
     public function specifications(){
-        return $this->hasMany(ProductSpecification::class, 'product_id');
+        // return $this->hasMany(ProductSpecification::class, 'product_id');
+        return $this->belongsToMany(Specification::class, 'product_specifications', 'product_id', 'specification_id')->withPivot('value');
     }
      
     public function variantPrices()

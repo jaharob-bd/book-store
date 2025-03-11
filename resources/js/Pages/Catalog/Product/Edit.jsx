@@ -3,24 +3,65 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import SwalAlert from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
-import ProductAttribute from '../Components/ProductAttribute';
+// import { useNavigate } from 'react-router-dom';
 
 const Edit = (props) => {
     // console.log(props.response);
     const [activeTab, setActiveTab] = useState("general");
     const user = props.auth.user; // user
-    const [product, setProduct] = useState(props.product); // product
-    // console.log(product);
     const today = new Date().toISOString().slice(0, 10);
-    // const categories = props.categories;
-    // const [categories, setCategories] = useState([ // categories
-    //     "Cat ipsum", "Cat lorem", "Cat Product", "Category", "Ipsum", "Ipsum cat", "Ipsum Lorem", "Lorem"
-    // ]);
     const [categories, setCategories] = useState(props.categories);
+    const [specifications, setSpecifications] = useState(props.specifications);
     const [newCategory, setNewCategory] = useState("");
-    console.log(newCategory);
     const [newTag, setNewTag] = useState(""); // tags
+    const [spec, setSpec] = useState('');
     const [specInput, setSpecInput] = useState('');
+
+    const product = props.product;
+    const initial = {
+        productId: product.productId,
+        name: product.name || '',
+        description: product.description,
+        shortDescription: product.shortDescription,
+        status: product.status || 1,
+        newProduct: product.newProduct,
+        featured: product.featured,
+        meta: {
+            metaTitle: product.metaTitle || '',
+            metaDescription: product.metaDescription || '',
+            metaKeywords: product.metaKeywords || '',
+        },
+        general: {
+            productUrl: props.productQ.productUrl,
+            productType: props.productQ.productType,
+            regularPrice: props.productQ.regularPrice,
+            salePrice: props.productQ.salePrice,
+            mrpPrice: props.productQ.mrpPrice,
+            taxStatus: product.taxStatus,
+            taxClass: product.taxClass,
+            taxIncluded: product.taxIncluded || 0,
+            expiryDate: product.expiryDate,
+        },
+        inventory: {
+            sku: product.sku,
+            stockQuantity: product.stockQuantity || 0,
+            manageStock: product.manageStock || 0,
+            stockStatus: product.stockStatus || 0,
+        },
+        publish: {
+            publishedAt: product.publishedAt || today,
+            visibleIndividually: product.visibleIndividually || 1,
+        },
+        categories: product.categories,
+        tags: product.tags,
+        images: product.images,
+        specifications: [],
+        attributes: [],
+        variants: []
+    };
+    const [formData, setFormData] = useState(props.product);
+    console.log(formData);
+
     // images function 
     const handleDrop = (event) => {
         event.preventDefault();
@@ -55,18 +96,6 @@ const Edit = (props) => {
             return { ...prev, categories: updatedCategories };
         });
     };
-
-    // const addCategory = () => {
-    //     if (newCategory && !categories.includes(newCategory)) {
-    //         const countTotalCategory = formData.categories.length;
-    //         // console.log(countTotalCategory);
-    //         setFormData(prev => ({ ...prev, categories: [...prev.categories, {id: countTotalCategory + 1, name: newCategory }] }));
-    //         setNewCategory("");
-    //     } else {
-    //         SwalAlert('warning', 'Category are already existing');
-    //     }
-    // };
-
     const addCategory = () => {
         if (newCategory && !categories.some(cat => cat.name === newCategory)) {
             const newId = categories.length + 1;
@@ -98,8 +127,34 @@ const Edit = (props) => {
 
     // specipication
     const addSpecification = () => {
-        if (specInput.trim() !== '') {
-            setFormData(prev => ({ ...prev, specifications: [...prev.specifications, specInput] }));
+        // valiation alert
+        if (specInput.trim() === '') {
+            SwalAlert('warning', 'Please enter specification value');
+            return;
+        }
+        // validation alert
+        if (!spec) {
+            SwalAlert('warning', 'Please select specification');
+            return;
+        }
+        // validation alert
+        if (formData.specifications.some(s => s.specification_id == spec && s.value === specInput)) {
+            SwalAlert('warning', 'Specification already exists');
+            return;
+        }
+
+        // Add specification to form data
+        if (specInput.trim() !== '' && spec) {
+            const selectedSpec = specifications.find(s => s.id == spec);// ID দিয়ে নাম খুঁজে বের 
+            setFormData(prev => ({
+                ...prev,
+                specifications: [...prev.specifications, {
+                    specification_id: spec,
+                    name: selectedSpec ? selectedSpec.name : '',
+                    value: specInput
+                }]
+            }));
+            setSpec('');
             setSpecInput('');
         }
     };
@@ -114,77 +169,40 @@ const Edit = (props) => {
             .replace(/ /g, '-')  // Replace spaces with hyphens
             .replace(/[^\w-]+/g, '');  // Remove all non-word characters
     }
-    // set initial value
-    const initial = {
-        product_id: product.id,
-        name: product.name || '',
-        description: product.description,
-        shortDescription: product.short_description,
-        status: 1,
-        newProduct: 1,
-        featured: 0,
-        meta: {
-            metaTitle: product.meta_title || '',
-            metaDescription: product.meta_description || '',
-            metaKeywords: product.meta_keywords || '',
-        },
-        general: {
-            productUrl: product.product_url,
-            productType: product.product_type,
-            regularPrice: product.regular_price,
-            salePrice: product.sale_price,
-            mrpPrice: product.mrp_price,
-            taxStatus: product.tax_status,
-            taxClass: product.tax_class,
-            taxIncluded: product.tax_included || 0,
-            expiryDate: product.expiry_date,
-        },
-        inventory: {
-            sku: product.sku,
-            stockQuantity: product.stock_quantity || 0,
-            manageStock: product.manage_stock || 0,
-            stockStatus: product.stock_status || 0,
-        },
-        publish: {
-            publishedAt: product.published_at || today,
-            visibleIndividually: 1,
-        },
-        categories: product.categories,
-        tags: product.tags,
-        images: product.images,
-        specifications: [],
-        attributes: [],                   // future 
-        variants: []                    // future
-    };
-    const [formData, setFormData] = useState(initial);
-    console.log(formData);
+
     // submit use axios
     const submit = async () => {
-        // const formDataToSend = FormData;
-        // --- Create a new FormData instance to send data with the image files if not need image upload could not use formDataToSend --
         const formDataToSend = new FormData();
-        // Append all key-value pairs from formData state
         Object.keys(formData).forEach((key) => {
-            // Check if value is an array to send as an array in Laravel
-            if (Array.isArray(formData[key])) {
-                // Append arrays correctly
-                formData[key].forEach((value) => {
-                    formDataToSend.append(`${key}[]`, value); // Send as an array in Laravel
+            const value = formData[key];
+
+            if (Array.isArray(value)) {
+                // যদি অ্যারের ভেতরে অবজেক্ট থাকে
+                value.forEach((item, index) => {
+                    if (typeof item === "object" && item !== null) {
+                        Object.keys(item).forEach((subKey) => {
+                            formDataToSend.append(`${key}[${index}][${subKey}]`, item[subKey]);
+                        });
+                    } else {
+                        formDataToSend.append(`${key}[]`, item);
+                    }
                 });
-            } else if (typeof formData[key] === "object" && formData[key] !== null) {
-                // Handle nested object (general)
-                Object.keys(formData[key]).forEach((subKey) => {
-                    formDataToSend.append(`${key}[${subKey}]`, formData[key][subKey]);
+            } else if (typeof value === "object" && value !== null) {
+                // যদি অবজেক্ট হয়, তাহলে key[subKey] হিসেবে append করবো
+                Object.keys(value).forEach((subKey) => {
+                    formDataToSend.append(`${key}[${subKey}]`, value[subKey]);
                 });
             } else {
-                // Append other fields normally
-                formDataToSend.append(key, formData[key]);
+                // সাধারণ মানগুলোর জন্য
+                formDataToSend.append(key, value);
             }
         });
         // -- end of formDataToSend
         try {
-            const response = await axios.post('/product-update', formDataToSend, { withCredentials: true });
-            // router.push('/product-edit/' + formData.general.productUrl);
+            const response = await axios.post('/product-update', formDataToSend, {
+                withCredentials: true
+            });
+            console.log('Success:', response.data);
             if (response.data.status) {
                 // change url to current
                 // console.log('Navigating to:', '/product-edit/' + formData.general.productUrl);
@@ -193,6 +211,7 @@ const Edit = (props) => {
             } else {
                 SwalAlert('warning', 'Add failed', 'center');
             }
+
         } catch (error) {
             console.error('Failed to place order:', error);
             SwalAlert('error', 'Failed to place order. Please try again.', 'center');
@@ -340,39 +359,123 @@ const Edit = (props) => {
                                     </form>
                                 </div>}
                                 {activeTab === "linked-products" && <div><h3 className="text-xl font-semibold">Linked Products</h3><p className="text-gray-700">Configure upsells, cross-sells, and grouping here.</p></div>}
-                                {activeTab === "attributes" &&
-                                    <ProductAttribute />
-                                }
+                                {activeTab === "attributes" && <div>
+                                    <form>
+                                        <div classname="mb-4">
+                                            <label className="block text-gray-700 font-semibold">Product data</label>
+                                            <select className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300">
+                                                <option>Variable product</option>
+                                            </select>
+                                        </div>
+                                        <div className="flex space-x-2 mb-4 pt-2">
+                                            <button className="px-2 py-2 bg-blue-600 text-white hover:bg-blue-700">Add new</button>
+                                            <button className="px-2 py-2 bg-gray-200 text-gray-700 cursor-not-allowed">Add existing</button>
+                                        </div>
+                                        <div className="mb-4">
+                                            <label className="block text-gray-700 font-semibold">Color</label>
+                                            <div className="flex flex-wrap gap-2 p-2 border rounded-md bg-gray-100">
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Blue</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Gray</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Green</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Red</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Yellow</span>
+                                            </div>
+                                            <div className="flex space-x-2 mt-2">
+                                                <button className="text-blue-600">Select all</button>
+                                                <button className="text-blue-600">Select none</button>
+                                                <button className="px-2 py-1 bg-gray-200 rounded-md">Create value</button>
+                                            </div>
+                                        </div>
+                                        <div className="mb-4">
+                                            <label className="block text-gray-700 font-semibold">Size</label>
+                                            <div className="flex flex-wrap gap-2 p-2 border rounded-md bg-gray-100">
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Large</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Medium</span>
+                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Small</span>
+                                            </div>
+                                            <div className="flex space-x-2 mt-2">
+                                                <button className="text-blue-600">Select all</button>
+                                                <button className="text-blue-600">Select none</button>
+                                                <button className="px-2 py-1 bg-gray-200 rounded-md">Create value</button>
+                                            </div>
+                                        </div>
+                                        <button className="w-100 p-2 bg-blue-600 flex items-end text-white hover:bg-blue-700">Save</button>
+                                    </form>
+                                </div>}
                                 {activeTab === "specification" && <div>
                                     <div className="mb-4">
                                         <label className="block text-gray-700 font-semibold">Product Specification</label>
                                         <div className="flex space-x-2">
-                                            <textarea
+                                            {/* <select
                                                 className="w-full p-2 border focus:ring focus:ring-blue-300"
-                                                rows="2"
                                                 placeholder="Enter product specifications..."
+                                                value={spec}
+                                                onChange={(e) => setSpec(e.target.value)}
+                                            >
+                                                <option value="">Select specification...</option>
+                                                {
+                                                    specifications.map((spec, index) => (
+                                                        <option key={index} value={spec.id}>{spec.name}</option>
+                                                    ))
+                                                }
+                                            </select> */}
+                                            <select
+                                                className="w-full p-2 border focus:ring focus:ring-blue-300"
+                                                placeholder="Enter product specifications..."
+                                                value={spec}
+                                                onChange={(e) => setSpec(e.target.value)}
+                                            >
+                                                <option value="">Select specification...</option>
+                                                {
+                                                    specifications
+                                                        .filter(s => !formData.specifications.some(fs => fs.specification_id == s.id)) // আগের থেকে থাকা `specification_id` ফিল্টার করা
+                                                        .map((spec, index) => (
+                                                            <option key={index} value={spec.id}>{spec.name}</option>
+                                                        ))
+                                                }
+                                            </select>
+
+                                            <input
+                                                className="w-full p-2 border focus:ring focus:ring-blue-300"
+                                                placeholder="Enter specifications value..."
                                                 value={specInput}
                                                 onChange={(e) => setSpecInput(e.target.value)}
-                                            ></textarea>
+                                            />
                                             <button
-                                                className="px-4 py-2 bg-blue-600 text-white rounded-sm hover:bg-blue-700"
+                                                className="px-2 py-1 bg-green-600 text-white"
                                                 onClick={addSpecification}
                                             >
                                                 Add
                                             </button>
                                         </div>
                                         <div className="mt-2">
-                                            {formData.specifications.map((spec, index) => (
-                                                <div key={index} className="flex justify-between items-center text-gray-700 bg-gray-100 p-2 rounded-sm mt-1">
-                                                    <span>{index + 1}. {spec.name}</span>
-                                                    <button
-                                                        className="ml-2 bg-red-600 text-white p-1 rounded-sm hover:text-white-700"
-                                                        onClick={() => removeSpecification(index)}
-                                                    >
-                                                        X
-                                                    </button>
-                                                </div>
-                                            ))}
+                                            <table className="w-full border-collapse border mt-1">
+                                                <thead>
+                                                    <tr className="bg-gray-200">
+                                                        <th className="border border-gray-300 p-1 w-10">#</th>
+                                                        <th className="border border-gray-300 p-1 w-40">Specification Name</th>
+                                                        <th className="border border-gray-300 p-1 w-40">Value</th>
+                                                        <th className="border border-gray-300 p-1 w-5"></th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {formData.specifications.map((spec, index) => (
+                                                        <tr key={index}>
+                                                            <td className="border border-gray-300 p-1 text-center">{index + 1}</td>
+                                                            <td className="border border-gray-300 p-1">{spec.name}</td>
+                                                            <td className="border border-gray-300 p-1 text-center">{spec.value}</td>
+                                                            <td className="border border-gray-300 p-1 text-center">
+                                                                <button
+                                                                    className="bg-red-600 text-white p-1 rounded-sm"
+                                                                    onClick={() => removeSpecification(index)}
+                                                                >
+                                                                    X
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>}

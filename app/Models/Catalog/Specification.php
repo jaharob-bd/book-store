@@ -8,49 +8,43 @@ use Illuminate\Http\Request;
 
 use function PHPUnit\Framework\isArray;
 
-class ProductSpecification extends Model
+class Specification extends Model
 {
     use HasFactory;
 
-    protected $table = 'product_specifications';
+    protected $table = 'specifications';
 
     protected $fillable = [
-        'product_id',
-        'specification_id',
-        'value',
+        'name',
     ];
 
     public static function updateSpecification($data, $product_id)
     {
-        if (!isset($data['specifications']) || !is_array($data['specifications'])) {
+
+        if (!isset($data['specifications'])) {
             return false;
         }
-
-        foreach ($data['specifications'] as $spec) {
-            // Ensure proper data structure
-            if (!isset($spec['specification_id'], $spec['value'])) {
-                continue; // Skip if invalid data
-            }
-
+        $specifications = $data['specifications'];
+        foreach ($specifications as $spec) {
+            // Check if the specification already exists
             $existingSpec = self::where('product_id', $product_id)
-                ->where('specification_id', $spec['specification_id'])
+                ->where('specification_value', $spec)
                 ->first();
 
             if ($existingSpec) {
                 // Update if exists
                 $existingSpec->update([
-                    'value' => $spec['value'],
+                    'specification_value' => $spec,
                 ]);
             } else {
                 // Insert new if not exists
                 self::create([
                     'product_id' => $product_id,
-                    'specification_id' => $spec['specification_id'],
-                    'value' => $spec['value'],
+                    'specification_name' => $spec,
+                    'specification_value' => $spec,
                 ]);
             }
         }
-
         return true;
     }
 }

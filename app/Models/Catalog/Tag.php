@@ -9,11 +9,10 @@ class ProductTag extends Model
 {
     use HasFactory;
 
-    protected $table = 'product_tags';
+    protected $table = 'tags';
 
     protected $fillable = [
-        'product_id',
-        'tag_id',
+        'name',
     ];
 
     public static function updateTags($data, $product_id)
@@ -24,19 +23,19 @@ class ProductTag extends Model
         $tags = $data['tags'];
         foreach ($tags as $tag) {
             $existingTag = self::where('product_id', $product_id)
-                ->where('tag_id', $tag)
+                ->where('tag_name', $tag)
                 ->first();
 
             if ($existingTag) {
                 // Update if exists
                 $existingTag->update([
-                    'tag_id' => $tag,
+                    'tag_name' => $tag,
                 ]);
             } else {
                 // Insert new if not exists
                 self::create([
                     'product_id' => $product_id,
-                    'tag_id' => $tag,
+                    'tag_name' => $tag,
                 ]);
             }
         }
