@@ -3,6 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import SwalAlert from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
+import ProductAttribute from '../Components/ProductAttribute';
 // import { useNavigate } from 'react-router-dom';
 
 const Edit = (props) => {
@@ -360,7 +361,8 @@ const Edit = (props) => {
                                 </div>}
                                 {activeTab === "linked-products" && <div><h3 className="text-xl font-semibold">Linked Products</h3><p className="text-gray-700">Configure upsells, cross-sells, and grouping here.</p></div>}
                                 {activeTab === "attributes" && <div>
-                                    <form>
+                                    <ProductAttribute />
+                                    {/* <form>
                                         <div classname="mb-4">
                                             <label className="block text-gray-700 font-semibold">Product data</label>
                                             <select className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300">
@@ -400,25 +402,12 @@ const Edit = (props) => {
                                             </div>
                                         </div>
                                         <button className="w-100 p-2 bg-blue-600 flex items-end text-white hover:bg-blue-700">Save</button>
-                                    </form>
+                                    </form> */}
                                 </div>}
                                 {activeTab === "specification" && <div>
                                     <div className="mb-4">
                                         <label className="block text-gray-700 font-semibold">Product Specification</label>
                                         <div className="flex space-x-2">
-                                            {/* <select
-                                                className="w-full p-2 border focus:ring focus:ring-blue-300"
-                                                placeholder="Enter product specifications..."
-                                                value={spec}
-                                                onChange={(e) => setSpec(e.target.value)}
-                                            >
-                                                <option value="">Select specification...</option>
-                                                {
-                                                    specifications.map((spec, index) => (
-                                                        <option key={index} value={spec.id}>{spec.name}</option>
-                                                    ))
-                                                }
-                                            </select> */}
                                             <select
                                                 className="w-full p-2 border focus:ring focus:ring-blue-300"
                                                 placeholder="Enter product specifications..."
