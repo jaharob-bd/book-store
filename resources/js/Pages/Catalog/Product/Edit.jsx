@@ -3,7 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
 import SwalAlert from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
-// import { useNavigate } from 'react-router-dom';
+import ProductAttribute from '../Components/ProductAttribute';
 
 const Edit = (props) => {
     // console.log(props.response);
@@ -340,49 +340,9 @@ const Edit = (props) => {
                                     </form>
                                 </div>}
                                 {activeTab === "linked-products" && <div><h3 className="text-xl font-semibold">Linked Products</h3><p className="text-gray-700">Configure upsells, cross-sells, and grouping here.</p></div>}
-                                {activeTab === "attributes" && <div>
-                                    <form>
-                                        <div classname="mb-4">
-                                            <label className="block text-gray-700 font-semibold">Product data</label>
-                                            <select className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300">
-                                                <option>Variable product</option>
-                                            </select>
-                                        </div>
-                                        <div className="flex space-x-2 mb-4 pt-2">
-                                            <button className="px-2 py-2 bg-blue-600 text-white hover:bg-blue-700">Add new</button>
-                                            <button className="px-2 py-2 bg-gray-200 text-gray-700 cursor-not-allowed">Add existing</button>
-                                        </div>
-                                        <div className="mb-4">
-                                            <label className="block text-gray-700 font-semibold">Color</label>
-                                            <div className="flex flex-wrap gap-2 p-2 border rounded-md bg-gray-100">
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Blue</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Gray</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Green</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Red</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Yellow</span>
-                                            </div>
-                                            <div className="flex space-x-2 mt-2">
-                                                <button className="text-blue-600">Select all</button>
-                                                <button className="text-blue-600">Select none</button>
-                                                <button className="px-2 py-1 bg-gray-200 rounded-md">Create value</button>
-                                            </div>
-                                        </div>
-                                        <div className="mb-4">
-                                            <label className="block text-gray-700 font-semibold">Size</label>
-                                            <div className="flex flex-wrap gap-2 p-2 border rounded-md bg-gray-100">
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Large</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Medium</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Small</span>
-                                            </div>
-                                            <div className="flex space-x-2 mt-2">
-                                                <button className="text-blue-600">Select all</button>
-                                                <button className="text-blue-600">Select none</button>
-                                                <button className="px-2 py-1 bg-gray-200 rounded-md">Create value</button>
-                                            </div>
-                                        </div>
-                                        <button className="w-100 p-2 bg-blue-600 flex items-end text-white hover:bg-blue-700">Save</button>
-                                    </form>
-                                </div>}
+                                {activeTab === "attributes" &&
+                                    <ProductAttribute />
+                                }
                                 {activeTab === "specification" && <div>
                                     <div className="mb-4">
                                         <label className="block text-gray-700 font-semibold">Product Specification</label>
@@ -402,7 +362,7 @@ const Edit = (props) => {
                                             </button>
                                         </div>
                                         <div className="mt-2">
-                                            {data.specifications.map((spec, index) => (
+                                            {formData.specifications.map((spec, index) => (
                                                 <div key={index} className="flex justify-between items-center text-gray-700 bg-gray-100 p-2 rounded-sm mt-1">
                                                     <span>{index + 1}. {spec.name}</span>
                                                     <button
@@ -415,7 +375,6 @@ const Edit = (props) => {
                                             ))}
                                         </div>
                                     </div>
-
                                 </div>}
                             </div>
                         </div>

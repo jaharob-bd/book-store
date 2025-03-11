@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-6">
+
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-4">Add Product</h2>
+
+        <form action="#" method="POST">
+            <!-- Product Name -->
+            <div class="mb-4">
+                <label class="block font-semibold mb-1">Product Name</label>
+                <input type="text" class="w-full border rounded p-2 focus:outline-blue-500" placeholder="Enter product name">
+            </div>
+
+            <!-- Price -->
+            <div class="mb-4">
+                <label class="block font-semibold mb-1">Price ($)</label>
+                <input type="number" class="w-full border rounded p-2 focus:outline-blue-500" placeholder="Enter price">
+            </div>
+
+            <!-- Dynamic Attributes Table -->
+            <div class="mb-6">
+                <h3 class="text-lg font-semibold mb-2">Product Attributes</h3>
+                <table class="w-full border bg-white" id="attributesTable">
+                    <thead>
+                        <tr class="bg-gray-200 text-left">
+                            <th class="p-2 border">Attribute</th>
+                            <th class="p-2 border">Value</th>
+                            <th class="p-2 border">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attributeRows">
+                        <tr>
+                            <td class="p-2 border">
+                                <select class="w-full p-2 border rounded attribute-select">
+                                    <option value="">Select Attribute</option>
+                                    <option value="Color">Color</option>
+                                    <option value="Size">Size</option>
+                                    <option value="Material">Material</option>
+                                </select>
+                            </td>
+                            <td class="p-2 border">
+                                <input type="text" class="w-full p-2 border rounded" placeholder="Enter value">
+                            </td>
+                            <td class="p-2 border text-center">
+                                <button type="button" class="bg-red-500 text-white px-3 py-1 rounded removeRow">Remove</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" id="addAttribute" class="mt-2 bg-green-500 text-white px-3 py-1 rounded">
+                    + Add Attribute
+                </button>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition">
+                Add Product
+            </button>
+        </form>
+
+    </div>
+
+    <script>
+        document.getElementById('addAttribute').addEventListener('click', function () {
+            let table = document.getElementById('attributeRows');
+            let newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td class="p-2 border">
+                    <select class="w-full p-2 border rounded attribute-select">
+                        <option value="">Select Attribute</option>
+                        <option value="Color">Color</option>
+                        <option value="Size">Size</option>
+                        <option value="Material">Material</option>
+                    </select>
+                </td>
+                <td class="p-2 border">
+                    <input type="text" class="w-full p-2 border rounded" placeholder="Enter value">
+                </td>
+                <td class="p-2 border text-center">
+                    <button type="button" class="bg-red-500 text-white px-3 py-1 rounded removeRow">Remove</button>
+                </td>
+            `;
+            table.appendChild(newRow);
+        });
+
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('removeRow')) {
+                e.target.closest('tr').remove();
+            }
+        });
+    </script>
+
+</body>
+</html>
