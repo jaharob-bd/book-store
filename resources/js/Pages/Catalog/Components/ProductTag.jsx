@@ -28,7 +28,7 @@ const ProductTag = ({ tags, formData, setFormData }) => {
 
     // ✅ Handle input change for tags
     const inputTag = (e) => {
-        const tagValue = e.target.value.toLowerCase().trim();
+        const tagValue = e.target.value;
         setNewTag(tagValue);
 
         if (tagValue.length < 3) {
@@ -37,7 +37,7 @@ const ProductTag = ({ tags, formData, setFormData }) => {
         }
 
         // Filter suggested tags
-        const filteredTags = tags.filter(tag => tag.name.toLowerCase().includes(tagValue));
+        const filteredTags = tags.filter(tag => tag.name.toLowerCase().includes(tagValue.toLowerCase().trim()));
         setSuggestedTags(filteredTags);
     };
 
