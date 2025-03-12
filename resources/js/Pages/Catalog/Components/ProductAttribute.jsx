@@ -1,50 +1,40 @@
 import { useState } from "react";
 import Select from "react-select";
-import SwalAlert from '@/Components/Alert/SwalAlert';
+import SwalAlert from "@/Components/Alert/SwalAlert";
 
 const ProductAttribute = ({ formData, setFormData }) => {
-  const [selectedAttribute, setSelectedAttribute] = useState("");
+  const [selectedAttribute, setSelectedAttribute] = useState(null);
   const [selectedValues, setSelectedValues] = useState([]);
-
+  console.log(formData);
   const attributeOptions = {
-    Color          : ["Red", "Blue", "Green", "Yellow", "Black"],
-    Size           : ["Small", "Medium", "Large", "Large", "X-Large"],
-    Material       : ["Cotton", "Polyester", "Linen", "Wool"],
-    Pattern        : ["Striped", "Checked", "Floral", "Printed"],
-    Season         : ["Summer", "Winter", "Spring", "Fall"],
-    FashionStyle   : ["Casual", "Dressy", "Vintage", "Streetwear"],
-    Occasion       : ["Work", "School", "Vacation", "Holiday"],
-    Brand          : ["Nike", "Adidas", "Puma", "Reebok", "Asics"],
-    Type           : ["Shirt", "Pants", "Jacket", "Shoes", "Accessories"],
-    AgeGroup       : ["Adult", "Kid", "Teenager", "Senior", "Infant"],
-    Gender         : ["Male", "Female", "Unisex"],
-    MaterialQuality: ["Good", "Average", "Poor", "New"],
-    Fabric         : ["Cotton", "Polyester", "Linen", "Wool"],
-    Weight         : ["Light", "Medium", "Heavy"],
-    Fit            : ["Regular", "Slim", "Skinny", "Loose"],
-    SleeveLength   : ["Short Sleeve", "Long Sleeve", "Sleeveless"],
-    Neckline       : ["V-Neck", "Round Neck", "Crew Neck", "Boat Neck"],
-    Closure        : ["Button", "Zipper", "Lace-Up", "Slip-On"],
-    Style          : ["Casual", "Formal", "Sporty", "Boho"],
-    MaterialType   : ["Cotton", "Polyester", "Linen", "Wool"],
-    Length         : ["Short", "Regular", "Long"],
-    HeelHeight     : ["Flat", "Low", "Medium", "High"],
-    ToeShape       : ["Round", "Square", "Pointed", "Open"],
-    HeelType       : ["Block", "Cone", "Wedge", "Stiletto"],
-    BootHeight     : ["Ankle", "Knee", "Thigh"],
-    Waistline      : ["High", "Mid", "Low"],
-    Rise           : ["High", "Mid", "Low"],
-    Wash           : ["Light", "Medium", "Dark"],
-    Stretch        : ["High", "Medium", "Low"],
-    Belt           : ["With Belt", "Without Belt"],
-    Collar         : ["Mandarin", "Spread", "Notched", "Shawl"],
-    Lining         : ["Fully Lined", "Partially Lined", "Unlined"],
-    Features       : ["Pockets", "Hooded", "Belted", "Embroidered"],
-    Design         : ["Printed", "Embroidered", "Solid", "Striped"],
+    Color: [
+      { id: 1, value: "Red" },
+      { id: 2, value: "Blue" },
+      { id: 3, value: "Green" },
+      { id: 4, value: "Yellow" },
+      { id: 5, value: "Black" },
+    ],
+    Size: [
+      { id: 6, value: "Small" },
+      { id: 7, value: "Medium" },
+      { id: 8, value: "Large" },
+      { id: 9, value: "X-Large" },
+    ],
+    Material: [
+      { id: 10, value: "Cotton" },
+      { id: 11, value: "Polyester" },
+      { id: 12, value: "Linen" },
+      { id: 13, value: "Wool" },
+    ],
+    Pattern: [
+      { id: 14, value: "Striped" },
+      { id: 15, value: "Checked" },
+      { id: 16, value: "Floral" },
+      { id: 17, value: "Printed" },
+    ],
   };
 
   const addAttribute = () => {
-    // Validation checks
     if (!selectedAttribute) {
       SwalAlert("warning", "Please select an attribute");
       return;
@@ -53,30 +43,59 @@ const ProductAttribute = ({ formData, setFormData }) => {
       SwalAlert("warning", "Please select at least one value");
       return;
     }
-    if (formData.attributes.some(attr => attr.attribute === selectedAttribute)) {
+
+    // Check if the selected attribute already exists in formData
+    if (formData.attributes.some((attr) => attr.attribute === selectedAttribute.value)) {
       SwalAlert("warning", "Attribute already exists");
       return;
     }
 
-    // Add attribute
-    setFormData(prev => ({
+    // Map selected values to a comma-separated string of ids
+    const selectedValueIds = selectedValues.map((v) => v.value.id).join(",");
+
+    // Map selected values to a comma-separated string of names (e.g., "Red, Black, Green")
+    const selectedValueNames = selectedValues.map((v) => v.value.value).join(", ");
+
+    // Add the new attribute along with selected value ids and names to formData
+    setFormData((prev) => ({
       ...prev,
       attributes: [
         ...prev.attributes,
-        { attribute: selectedAttribute, values: selectedValues }
+        {
+          attribute: selectedAttribute.value,
+          attribute_value_id: selectedValueIds,  // Store IDs as a string
+          attribute_values: selectedValueNames,  // Store names as a string
+        },
       ],
     }));
 
-    // Reset selections
-    setSelectedAttribute("");
+    setSelectedAttribute(null);
     setSelectedValues([]);
   };
 
+
   const removeAttribute = (index) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       attributes: prev.attributes.filter((_, i) => i !== index),
     }));
+  };
+
+  // Filter out already selected attributes
+  const filteredAttributeOptions = Object.keys(attributeOptions)
+    .filter(
+      (attr) => !formData.attributes.some((a) => a.attribute === attr)
+    )
+    .map((attr) => ({ value: attr, label: attr }));
+
+  // Prevent selecting duplicate values for an attribute
+  const handleValuesChange = (newValues) => {
+    // Filter out duplicate values by comparing ids
+    const uniqueValues = newValues.filter(
+      (value, index, self) =>
+        index === self.findIndex((v) => v.value.id === value.value.id)
+    );
+    setSelectedValues(uniqueValues);
   };
 
   return (
@@ -87,11 +106,9 @@ const ProductAttribute = ({ formData, setFormData }) => {
           {/* Attribute Select */}
           <Select
             className="w-full"
-            options={Object.keys(attributeOptions)
-              .filter(attr => !formData.attributes.some(a => a.attribute === attr))
-              .map(attr => ({ value: attr, label: attr }))}
-            value={selectedAttribute ? { value: selectedAttribute, label: selectedAttribute } : null}
-            onChange={(option) => setSelectedAttribute(option.value)}
+            options={filteredAttributeOptions}
+            value={selectedAttribute}
+            onChange={setSelectedAttribute}
             placeholder="Select an attribute..."
           />
 
@@ -100,18 +117,18 @@ const ProductAttribute = ({ formData, setFormData }) => {
             <Select
               className="w-full"
               isMulti
-              options={attributeOptions[selectedAttribute].map(value => ({ value, label: value }))}
-              value={selectedValues.map(value => ({ value, label: value }))}
-              onChange={(options) => setSelectedValues(options.map(opt => opt.value))}
+              options={attributeOptions[selectedAttribute.value].map((option) => ({
+                value: option,
+                label: option.value,
+              }))}
+              value={selectedValues}
+              onChange={handleValuesChange}
               placeholder="Select values..."
             />
           )}
 
           {/* Add Button */}
-          <button
-            className="px-2 py-1 bg-green-600 text-white"
-            onClick={addAttribute}
-          >
+          <button className="px-2 py-1 bg-green-600 text-white" onClick={addAttribute}>
             Add
           </button>
         </div>
@@ -132,12 +149,9 @@ const ProductAttribute = ({ formData, setFormData }) => {
                 <tr key={index}>
                   <td className="border border-gray-300 p-1 text-center">{index + 1}</td>
                   <td className="border border-gray-300 p-1">{attr.attribute}</td>
-                  <td className="border border-gray-300 p-1">{attr.values.join(", ")}</td>
+                  <td className="border border-gray-300 p-1">{attr.attribute_values}</td>
                   <td className="border border-gray-300 p-1 text-center">
-                    <button
-                      className="bg-red-600 text-white p-1 rounded-sm"
-                      onClick={() => removeAttribute(index)}
-                    >
+                    <button className="bg-red-600 text-white p-1 rounded-sm" onClick={() => removeAttribute(index)}>
                       X
                     </button>
                   </td>

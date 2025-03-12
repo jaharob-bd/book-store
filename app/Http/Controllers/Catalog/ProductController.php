@@ -16,6 +16,7 @@ use App\Models\Catalog\Product;
 use App\Http\Requests\Catalog\Product\StoreProductRequest;
 use App\Http\Requests\Catalog\Product\VariantPriceRequest;
 use App\Models\Catalog\Category;
+use App\Models\Catalog\ProductAttribute;
 use App\Models\Catalog\ProductCategory;
 use App\Models\Catalog\ProductImage;
 use App\Models\Catalog\ProductSpecification;
@@ -50,7 +51,7 @@ class ProductController extends Controller
         $data['productQ'] = $product = Product::with(['categories:id,name', 'specifications', 'images', 'tags', 'variantPrices', 'groupPrices'])
             ->where('product_url', $slug)
             ->first();
-// return $product;
+        // return $product;
         if (!$product) {
             Session::flash('failed', 'Not found product!');
             return redirect()->route('products');
@@ -121,6 +122,30 @@ class ProductController extends Controller
         // tag
         $data['tags'] = Tag::all();
 
+        // attributes value
+        $attributes = DB::table('attributes')
+            ->leftJoin('attribute_values', 'attributes.id', '=', 'attribute_values.attribute_id')
+            ->select('attributes.name as attribute_name', 'attribute_values.id as attribute_value_id', 'attribute_values.value')
+            ->get();
+
+        // Transform result into the desired format
+        $attributeOptions = [];
+
+        foreach ($attributes as $attribute) {
+            if (!isset($attributeOptions[$attribute->attribute_name])) {
+                $attributeOptions[$attribute->attribute_name] = [];
+            }
+
+            if ($attribute->value) { // Avoid null values
+                $attributeOptions[$attribute->attribute_name][] = [
+                    'id' => $attribute->attribute_value_id,
+                    'value' => $attribute->value,
+                ];
+            }
+        }
+        $data['attributes'] = $attributeOptions;
+        // return $attributeOptions;
+
         return Inertia::render('Catalog/Product/Edit', $data);
     }
 
@@ -132,19 +157,20 @@ class ProductController extends Controller
     }
     function update(Request $request)
     {
-        $data = $request->all();
-        $product_id = intval($data['productId']);
-        dd($data['attributes']);
-        $updateTags           = ProductTag::updateTags($data, $product_id);
-        // echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
-        // exit; 
+        $data             = $request->all();
+        $product_id       = intval($data['productId']);
+        // dd($data['attributes']);
+        $updateAttributes = ProductAttribute::updateAttribute($data, $product_id);
+        echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
+        exit; 
         try {
             $updateProduct = Product::updateProduct($data, $product_id);
             if ($updateProduct['status']) {
+                $updateAttributes     = ProductAttribute::updateAttribute($data, $product_id);
                 $updateSpecifications = ProductSpecification::updateSpecification($data, $product_id);
                 $updateImages         = ProductImage::updateImages($request->file('images'), $product_id);
                 $updateCategories     = ProductCategory::updateCategory($data, $product_id);
-                // $updateTags           = ProductTag::updateTags($data, $product_id);
+                $updateTags           = ProductTag::updateTags($data, $product_id);
                 echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
             } else {
                 echo json_encode(['status' => false, 'message' => 'Product not found']);

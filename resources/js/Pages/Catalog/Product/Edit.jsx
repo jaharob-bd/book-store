@@ -11,6 +11,8 @@ import ProductGeneral from '../Components/ProductGeneral';
 import ProductImage from '../Components/ProductImage';
 import ProductCategory from '../Components/ProductCategory';
 import ProductPublished from '../Components/ProductPublished';
+import ProductSubmition from '../Components/ProductSubmition';
+import ProductInput from '../Components/ProductInput';
 
 const Edit = (props) => {
     // console.log(props.response);
@@ -76,6 +78,7 @@ const Edit = (props) => {
 
     // submit use axios
     const submit = async () => {
+        console.log(formData);
         const formDataToSend = new FormData();
         Object.keys(formData).forEach((key) => {
             const value = formData[key];
@@ -241,20 +244,11 @@ const Edit = (props) => {
 
                     {/* Right Section (30%) */}
                     <section className="w-1/4 bg-white shadow-lg p-6">
-                        <div className="flex justify-center pb-2">
-                            <button className="w-[80%] bg-green-600 text-white py-1 hover:bg-green-700" onClick={submit}>
-                                Update
-                            </button>
-                            <button className="w-[20%] bg-gray-600 text-white py-1 hover:bg-green-700 ml-2">
-                                Add New
-                            </button>
-                        </div>
+                        <ProductSubmition {...{ submit }} />
                         <ProductPublished {...{ today }} />
                         <ProductImage {...{ formData, setFormData }} />
                         <ProductCategory {...{ categories, formData, setFormData }} />
                         <ProductTag {...{ tags, formData, setFormData }} />
-                        {/* add more information */}
-                        {/* add more information */}
                     </section>
                 </div>
             </div>
