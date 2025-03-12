@@ -26,55 +26,98 @@ class ProductAttribute extends Model
             return false; // Return false if no attributes are provided
         }
 
-        // Begin transaction to ensure data integrity
         DB::beginTransaction();
 
         try {
-            // Loop through the attributes and process them
+            // Fetch current attributes for the given product_id
+            $currentAttributes = self::where('product_id', $product_id)->get()->pluck('attribute_value_id')->toArray();
+            $newValueArray = [];
             foreach ($data['attributes'] as $attributeData) {
-                // Get the attribute name and attribute values
-                $attributeName = $attributeData['attribute'];
+                $attributeIds = $attributeData['attribute_value_id'];
+                $attributeValues = explode(',', $attributeIds);
+                // Populate the new value array with cleaned attribute values (cast to integers)
+                foreach ($attributeValues as $value) {
+                    $newValueArray[] = (int)$value;
+                }
+            }
+
+            // Find new values that need to be inserted (those not already present in current attributes)
+            $newValuesToInsert = array_diff($newValueArray, $currentAttributes);
+
+            // Bulk insert only the new attribute values that don't exist yet
+            if (!empty($newValuesToInsert)) {
+                $insertData = [];
+                foreach ($newValuesToInsert as $value) {
+                    $insertData[] = [
+                        'product_id' => (int)$product_id,
+                        'attribute_value_id' => $value
+                    ];
+                }
+
+                // Insert in bulk
+                self::insert($insertData);
+            }
+
+            // Find old values that should be deleted (those no longer present in new values)
+            $valuesToDelete = array_diff($currentAttributes, $newValueArray);
+
+            // Bulk delete only the outdated attribute values
+            if (!empty($valuesToDelete)) {
+                self::whereIn('attribute_value_id', $valuesToDelete)
+                    ->where('product_id', $product_id) // Make sure to delete only for the specific product
+                    ->delete();
+            }
+
+            // Commit the transaction if everything is successful
+            DB::commit();
+            return true;
+        } catch (\Exception $e) {
+            // In case of an exception, rollback the transaction
+            DB::rollBack();
+            // Optionally, you can log the exception message for debugging purposes
+            // Log::error($e->getMessage());
+            return false;
+        }
+    }
+
+    public static function updateAttribute_old($data, $product_id)
+    {
+        // Check if 'attributes' key exists in the provided data
+        if (!isset($data['attributes'])) {
+            return false; // Return false if no attributes are provided
+        }
+
+        $currentAttributes = self::where('product_id', $product_id)->get()->toArray();
+        $existingAttributeValueIdArray = array_column($currentAttributes, 'attribute_value_id');
+        DB::beginTransaction();
+        try {
+            // Loop through the attributes and process them
+            $newValueArray = [];
+            foreach ($data['attributes'] as $attributeData) {
                 $attributeIds = $attributeData['attribute_value_id'];
                 // Convert the comma-separated values into an array of attribute IDs
                 $attributeValues = explode(',', $attributeIds);
 
-                // Get the current values for this attribute and product
-                $currentValues = self::where('product_id', $product_id)
-                    ->where('attribute', $attributeName)
-                    ->pluck('attribute_value_id')
-                    ->toArray();
-
-                // Calculate the difference between the existing values and the new values
-                $valuesToRemove = array_diff($currentValues, $attributeValues);
-                $valuesToAdd = array_diff($attributeValues, $currentValues);
-
-                // Remove old attribute values (those that no longer exist)
-                foreach ($valuesToRemove as $value) {
-                    self::where('product_id', $product_id)
-                        ->where('attribute_value_id', $value)
-                        ->delete();
-                }
-
                 // Add new attribute values (those that don't exist yet)
-                foreach ($valuesToAdd as $value) {
-                    // Check if the value already exists for the product
-                    $existing = self::where('product_id', $product_id)
-                        ->where('attribute_value_id', $value)
-                        ->exists();
-
-                    // If the value doesn't already exist, insert it
+                foreach ($attributeValues as $value) {
+                    $newValueArray[] = (int) $value;
+                    $existing = in_array($value, $existingAttributeValueIdArray);
                     if (!$existing) {
                         $insertArray = [
                             'product_id' => (int) $product_id,
-                            // 'attribute' => $attributeName,  // Ensure attribute name is added
                             'attribute_value_id' => (int) $value, // The specific value ID for the attribute
                         ];
                         self::create($insertArray);
                     }
                 }
             }
-
-            // Commit the transaction
+            $deleteArray = array_diff($existingAttributeValueIdArray, $newValueArray);
+            if (!empty($deleteArray)) {
+                // Delete the records where attribute_value_id is in $deleteArray
+                self::whereIn('attribute_value_id', $deleteArray)->delete();
+            } else {
+                return false;
+            }
             DB::commit();
 
             return true; // Return true when the operation is successful

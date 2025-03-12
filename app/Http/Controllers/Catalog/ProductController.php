@@ -48,7 +48,7 @@ class ProductController extends Controller
 
     function edit($slug)
     {
-        $data['productQ'] = $product = Product::with(['categories:id,name', 'specifications', 'images', 'tags', 'variantPrices', 'groupPrices'])
+        $data['productQ'] = $product = Product::with(['attributes', 'specifications', 'images', 'categories:id,name', 'tags', 'variantPrices', 'groupPrices'])
             ->where('product_url', $slug)
             ->first();
         // return $product;
@@ -111,7 +111,15 @@ class ProductController extends Controller
                 'name'             => $spec->name,
                 'value'            => $spec->pivot->value
             ]),
-            'attributes' => [],   // Future use
+            'attributes' => $product->attributes
+                ->groupBy('attribute_name')
+                ->map(function ($group) {
+                    return [
+                        'attribute' => $group->first()->attribute_name,
+                        'attribute_value_id' => $group->pluck('pivot.attribute_value_id')->implode(','),
+                        'attribute_values' => $group->pluck('pivot.attribute_value')->implode(', ')
+                    ];
+                })->values(),
             'variants'   => []    // Future use
         ];
 
@@ -149,20 +157,13 @@ class ProductController extends Controller
         return Inertia::render('Catalog/Product/Edit', $data);
     }
 
-    function update1(Request $request)
-    {
-        $data = $request->all();
-        dd($request->file('images'));
-        $updateImages = ProductImage::updateImages($request->file('images'), 6);
-    }
     function update(Request $request)
     {
         $data             = $request->all();
-        $product_id       = intval($data['productId']);
-        // dd($data['attributes']);
-        $updateAttributes = ProductAttribute::updateAttribute($data, $product_id);
-        echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
-        exit; 
+        $product_id       = (int) $data['productId'];
+        // $updateAttributes = ProductAttribute::updateAttribute($data, $product_id);
+        // // echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
+        // exit;
         try {
             $updateProduct = Product::updateProduct($data, $product_id);
             if ($updateProduct['status']) {
