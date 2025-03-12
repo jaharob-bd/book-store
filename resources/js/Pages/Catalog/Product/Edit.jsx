@@ -4,6 +4,7 @@ import { Head, Link, router, useForm } from '@inertiajs/react';
 import SwalAlert from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
 import ProductAttribute from '../Components/ProductAttribute';
+import ProductTag from '../Components/ProductTag';
 // import { useNavigate } from 'react-router-dom';
 
 const Edit = (props) => {
@@ -12,9 +13,10 @@ const Edit = (props) => {
     const user = props.auth.user; // user
     const today = new Date().toISOString().slice(0, 10);
     const [categories, setCategories] = useState(props.categories);
+    const [tags, setTags] = useState(props.tags);
     const [specifications, setSpecifications] = useState(props.specifications);
     const [newCategory, setNewCategory] = useState("");
-    const [newTag, setNewTag] = useState(""); // tags
+    // const [newTag, setNewTag] = useState(""); // tags
     const [spec, setSpec] = useState('');
     const [specInput, setSpecInput] = useState('');
 
@@ -61,7 +63,7 @@ const Edit = (props) => {
         variants: []
     };
     const [formData, setFormData] = useState(props.product);
-    console.log(formData);
+    // console.log(formData);
 
     // images function 
     const handleDrop = (event) => {
@@ -113,18 +115,18 @@ const Edit = (props) => {
     };
 
     // tags function
-    const addTag = () => {
-        if (newTag && !formData.tags.includes(newTag)) {
-            setFormData(prev => ({ ...prev, tags: [...prev.tags, { id: 0, name: newTag }] }));
-            setNewTag("");
-        } else {
-            SwalAlert('warning', 'Tags are already existing');
-        }
-    };
+    // const addTag = () => {
+    //     if (newTag && !formData.tags.includes(newTag)) {
+    //         setFormData(prev => ({ ...prev, tags: [...prev.tags, { id: 0, tag_id: '', name: newTag }] }));
+    //         setNewTag("");
+    //     } else {
+    //         SwalAlert('warning', 'Tags are already existing');
+    //     }
+    // };
 
-    const removeTag = (index) => {
-        setFormData(prev => prev.formData.tags.filter((_, i) => i !== index));
-    }
+    // const removeTag = (index) => {
+    //     setFormData(prev => prev.formData.tags.filter((_, i) => i !== index));
+    // }
 
     // specipication
     const addSpecification = () => {
@@ -324,150 +326,118 @@ const Edit = (props) => {
                                         {/* add more */}
                                     </div>
                                 )}
-                                {activeTab === "inventory" && <div>
-                                    <form>
-                                        <div className="mb-4">
-                                            <label className="block text-gray-700 font-medium">SKU</label>
-                                            <input type="url"
-                                                className="w-full p-2 border border-gray-300"
-                                                placeholder="Enter external URL"
-                                                value={formData.inventory.sku}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, sku: e.target.value } }))}
-                                            />
-                                        </div>
-                                        <div className="mb-4 flex items-center">
-                                            <input type="checkbox" id="manage-stock" className="mr-2"
-                                                value={formData.inventory.manageStock}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, manageStock: e.target.checked } }))}
-                                            />
-                                            <label htmlFor="manage-stock" className="text-gray-700">Enable stock management at product level</label>
-                                        </div>
-                                        <div className="mb-4">
-                                            <label className="block text-gray-700 font-semibold">Stock status</label>
-                                            <select className="w-full p-2 border focus:ring focus:ring-blue-300"
-                                                value={formData.inventory.stockStatus}
-                                                onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, stockStatus: e.target.value } }))}
-                                            >
-                                                <option>In stock</option>
-                                                <option>Out of stock</option>
-                                                <option>On backorder</option>
-                                            </select>
-                                        </div>
-                                        <div className="mb-4 flex items-center">
-                                            <input type="checkbox" id="sold-individually" className="mr-2" />
-                                            <label htmlFor="sold-individually" className="text-gray-700">Enable this to only allow one of this item to be bought in a single order</label>
-                                        </div>
-                                    </form>
-                                </div>}
+                                {
+                                    activeTab === "inventory" &&
+                                    <div>
+                                        <form>
+                                            <div className="mb-4">
+                                                <label className="block text-gray-700 font-medium">SKU</label>
+                                                <input type="url"
+                                                    className="w-full p-2 border border-gray-300"
+                                                    placeholder="Enter external URL"
+                                                    value={formData.inventory.sku}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, sku: e.target.value } }))}
+                                                />
+                                            </div>
+                                            <div className="mb-4 flex items-center">
+                                                <input type="checkbox" id="manage-stock" className="mr-2"
+                                                    value={formData.inventory.manageStock}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, manageStock: e.target.checked } }))}
+                                                />
+                                                <label htmlFor="manage-stock" className="text-gray-700">Enable stock management at product level</label>
+                                            </div>
+                                            <div className="mb-4">
+                                                <label className="block text-gray-700 font-semibold">Stock status</label>
+                                                <select className="w-full p-2 border focus:ring focus:ring-blue-300"
+                                                    value={formData.inventory.stockStatus}
+                                                    onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, stockStatus: e.target.value } }))}
+                                                >
+                                                    <option>In stock</option>
+                                                    <option>Out of stock</option>
+                                                    <option>On backorder</option>
+                                                </select>
+                                            </div>
+                                            <div className="mb-4 flex items-center">
+                                                <input type="checkbox" id="sold-individually" className="mr-2" />
+                                                <label htmlFor="sold-individually" className="text-gray-700">Enable this to only allow one of this item to be bought in a single order</label>
+                                            </div>
+                                        </form>
+                                    </div>
+                                }
                                 {activeTab === "linked-products" && <div><h3 className="text-xl font-semibold">Linked Products</h3><p className="text-gray-700">Configure upsells, cross-sells, and grouping here.</p></div>}
-                                {activeTab === "attributes" && <div>
-                                    <ProductAttribute />
-                                    {/* <form>
-                                        <div classname="mb-4">
-                                            <label className="block text-gray-700 font-semibold">Product data</label>
-                                            <select className="w-full p-2 border rounded-md focus:ring focus:ring-blue-300">
-                                                <option>Variable product</option>
-                                            </select>
-                                        </div>
-                                        <div className="flex space-x-2 mb-4 pt-2">
-                                            <button className="px-2 py-2 bg-blue-600 text-white hover:bg-blue-700">Add new</button>
-                                            <button className="px-2 py-2 bg-gray-200 text-gray-700 cursor-not-allowed">Add existing</button>
-                                        </div>
+                                {
+                                    activeTab === "attributes" &&
+                                    <div>
+                                        <ProductAttribute />
+                                    </div>
+                                }
+                                {
+                                    activeTab === "specification" &&
+                                    <div>
                                         <div className="mb-4">
-                                            <label className="block text-gray-700 font-semibold">Color</label>
-                                            <div className="flex flex-wrap gap-2 p-2 border rounded-md bg-gray-100">
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Blue</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Gray</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Green</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Red</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Yellow</span>
-                                            </div>
-                                            <div className="flex space-x-2 mt-2">
-                                                <button className="text-blue-600">Select all</button>
-                                                <button className="text-blue-600">Select none</button>
-                                                <button className="px-2 py-1 bg-gray-200 rounded-md">Create value</button>
-                                            </div>
-                                        </div>
-                                        <div className="mb-4">
-                                            <label className="block text-gray-700 font-semibold">Size</label>
-                                            <div className="flex flex-wrap gap-2 p-2 border rounded-md bg-gray-100">
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Large</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Medium</span>
-                                                <span className="px-2 py-1 bg-gray-300 rounded-md">Small</span>
-                                            </div>
-                                            <div className="flex space-x-2 mt-2">
-                                                <button className="text-blue-600">Select all</button>
-                                                <button className="text-blue-600">Select none</button>
-                                                <button className="px-2 py-1 bg-gray-200 rounded-md">Create value</button>
-                                            </div>
-                                        </div>
-                                        <button className="w-100 p-2 bg-blue-600 flex items-end text-white hover:bg-blue-700">Save</button>
-                                    </form> */}
-                                </div>}
-                                {activeTab === "specification" && <div>
-                                    <div className="mb-4">
-                                        <label className="block text-gray-700 font-semibold">Product Specification</label>
-                                        <div className="flex space-x-2">
-                                            <select
-                                                className="w-full p-2 border focus:ring focus:ring-blue-300"
-                                                placeholder="Enter product specifications..."
-                                                value={spec}
-                                                onChange={(e) => setSpec(e.target.value)}
-                                            >
-                                                <option value="">Select specification...</option>
-                                                {
-                                                    specifications
-                                                        .filter(s => !formData.specifications.some(fs => fs.specification_id == s.id)) // আগের থেকে থাকা `specification_id` ফিল্টার করা
-                                                        .map((spec, index) => (
-                                                            <option key={index} value={spec.id}>{spec.name}</option>
-                                                        ))
-                                                }
-                                            </select>
+                                            <label className="block text-gray-700 font-semibold">Product Specification</label>
+                                            <div className="flex space-x-2">
+                                                <select
+                                                    className="w-full p-2 border focus:ring focus:ring-blue-300"
+                                                    placeholder="Enter product specifications..."
+                                                    value={spec}
+                                                    onChange={(e) => setSpec(e.target.value)}
+                                                >
+                                                    <option value="">Select specification...</option>
+                                                    {
+                                                        specifications
+                                                            .filter(s => !formData.specifications.some(fs => fs.specification_id == s.id)) // আগের থেকে থাকা `specification_id` ফিল্টার করা
+                                                            .map((spec, index) => (
+                                                                <option key={index} value={spec.id}>{spec.name}</option>
+                                                            ))
+                                                    }
+                                                </select>
 
-                                            <input
-                                                className="w-full p-2 border focus:ring focus:ring-blue-300"
-                                                placeholder="Enter specifications value..."
-                                                value={specInput}
-                                                onChange={(e) => setSpecInput(e.target.value)}
-                                            />
-                                            <button
-                                                className="px-2 py-1 bg-green-600 text-white"
-                                                onClick={addSpecification}
-                                            >
-                                                Add
-                                            </button>
-                                        </div>
-                                        <div className="mt-2">
-                                            <table className="w-full border-collapse border mt-1">
-                                                <thead>
-                                                    <tr className="bg-gray-200">
-                                                        <th className="border border-gray-300 p-1 w-10">#</th>
-                                                        <th className="border border-gray-300 p-1 w-40">Specification Name</th>
-                                                        <th className="border border-gray-300 p-1 w-40">Value</th>
-                                                        <th className="border border-gray-300 p-1 w-5"></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {formData.specifications.map((spec, index) => (
-                                                        <tr key={index}>
-                                                            <td className="border border-gray-300 p-1 text-center">{index + 1}</td>
-                                                            <td className="border border-gray-300 p-1">{spec.name}</td>
-                                                            <td className="border border-gray-300 p-1 text-center">{spec.value}</td>
-                                                            <td className="border border-gray-300 p-1 text-center">
-                                                                <button
-                                                                    className="bg-red-600 text-white p-1 rounded-sm"
-                                                                    onClick={() => removeSpecification(index)}
-                                                                >
-                                                                    X
-                                                                </button>
-                                                            </td>
+                                                <input
+                                                    className="w-full p-2 border focus:ring focus:ring-blue-300"
+                                                    placeholder="Enter specifications value..."
+                                                    value={specInput}
+                                                    onChange={(e) => setSpecInput(e.target.value)}
+                                                />
+                                                <button
+                                                    className="px-2 py-1 bg-green-600 text-white"
+                                                    onClick={addSpecification}
+                                                >
+                                                    Add
+                                                </button>
+                                            </div>
+                                            <div className="mt-2">
+                                                <table className="w-full border-collapse border mt-1">
+                                                    <thead>
+                                                        <tr className="bg-gray-200">
+                                                            <th className="border border-gray-300 p-1 w-10">#</th>
+                                                            <th className="border border-gray-300 p-1 w-40">Specification Name</th>
+                                                            <th className="border border-gray-300 p-1 w-40">Value</th>
+                                                            <th className="border border-gray-300 p-1 w-5"></th>
                                                         </tr>
-                                                    ))}
-                                                </tbody>
-                                            </table>
+                                                    </thead>
+                                                    <tbody>
+                                                        {formData.specifications.map((spec, index) => (
+                                                            <tr key={index}>
+                                                                <td className="border border-gray-300 p-1 text-center">{index + 1}</td>
+                                                                <td className="border border-gray-300 p-1">{spec.name}</td>
+                                                                <td className="border border-gray-300 p-1 text-center">{spec.value}</td>
+                                                                <td className="border border-gray-300 p-1 text-center">
+                                                                    <button
+                                                                        className="bg-red-600 text-white p-1 rounded-sm"
+                                                                        onClick={() => removeSpecification(index)}
+                                                                    >
+                                                                        X
+                                                                    </button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>}
+                                }
                             </div>
                         </div>
                         {/* tab end */}
@@ -612,35 +582,8 @@ const Edit = (props) => {
                                 </button>
                             </div>
                         </div>
-                        <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
-                            <h3 className="font-bold border-b pb-2">Product Tags</h3>
-                            <div className="flex flex-wrap gap-2 mt-2">
-                                {
-                                    formData.tags.map((tag, index) => (
-                                        <span key={index} className="bg-gray-200 px-2 py-1 rounded">
-                                            {tag.name} <button className="bg-red-500 text-white px-1 ml-1 rounded" onClick={() => removeTag(index)}>✕</button>
-                                        </span>
-                                    ))
-                                }
-                            </div>
-                            <div className="mt-4 flex items-center space-x-2">
-                                <input
-                                    type="text"
-                                    value={newTag}
-                                    onChange={(e) => setNewTag(e.target.value)}
-                                    placeholder="Add new tag"
-                                    className="border p-1 rounded w-full"
-                                />
-                                <button
-                                    onClick={addTag}
-                                    className="bg-blue-500 text-white px-3 p-1"
-                                >
-                                    <i className="ri-add-circle-line"></i>
-                                </button>
-                            </div>
-                        </div>
+                        <ProductTag {...{ tags, formData, setFormData}}/>
                         {/* add more information */}
-
                     </section>
                 </div>
             </div>

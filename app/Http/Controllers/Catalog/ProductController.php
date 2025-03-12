@@ -21,6 +21,7 @@ use App\Models\Catalog\ProductImage;
 use App\Models\Catalog\ProductSpecification;
 use App\Models\Catalog\ProductTag;
 use App\Models\Catalog\Specification;
+use App\Models\Catalog\Tag;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -97,7 +98,7 @@ class ProductController extends Controller
             ]),
             'tags' => $product->tags->map(fn($tag) => [
                 'id'   => $tag->id,
-                'name' => $tag->tag_name
+                'name' => $tag->name
             ]),
             'images' => $product->images->map(fn($image) => [
                 'id'      => $image->id,
@@ -113,10 +114,12 @@ class ProductController extends Controller
             'variants'   => []    // Future use
         ];
 
-        // return respons   e()->json($data['product']);
+        // return response()->json($data['product']);
         $data['categories'] = Category::select('id', 'name')->get();
         // specification
         $data['specifications'] = Specification::all();
+        // tag
+        $data['tags'] = Tag::all();
 
         return Inertia::render('Catalog/Product/Edit', $data);
     }
@@ -131,13 +134,17 @@ class ProductController extends Controller
     {
         $data = $request->all();
         $product_id = intval($data['productId']);
+        // dd($data['tags']);
+        $updateTags           = ProductTag::updateTags($data, $product_id);
+        // echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
+        // exit; 
         try {
             $updateProduct = Product::updateProduct($data, $product_id);
             if ($updateProduct['status']) {
                 $updateSpecifications = ProductSpecification::updateSpecification($data, $product_id);
                 $updateImages         = ProductImage::updateImages($request->file('images'), $product_id);
                 $updateCategories     = ProductCategory::updateCategory($data, $product_id);
-                $updateTags           = ProductTag::updateTags($data, $product_id);
+                // $updateTags           = ProductTag::updateTags($data, $product_id);
                 echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
             } else {
                 echo json_encode(['status' => false, 'message' => 'Product not found']);

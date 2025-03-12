@@ -4,6 +4,7 @@ namespace App\Models\Catalog;
 
 use App\Models\Inventory\Stock\Stock;
 use App\Models\Catalog\ProductTag;
+use App\Models\Catalog\Tag;
 use App\Models\Catalog\ProductSpecification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -95,40 +96,40 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    public function categories1()
-    {
-        return $this->hasMany(ProductCategory::class, 'product_id');
-    }
     // category name
     public function categories()
     {
         return $this->belongsToMany(Category::class, 'product_categories', 'product_id', 'category_id');
     }
-    
+
     public function images()
     {
         return $this->hasMany(ProductImage::class, 'product_id');
     }
-    
+
     public function tags()
     {
-        return $this->hasMany(ProductTag::class, 'product_id');
+        return $this->belongsToMany(Tag::class, 'product_tags', 'product_id', 'tag_id');
+            // ->withPivot('tag_id') // If you want the tag_id in the pivot table
+            // ->addSelect(['tags.name as tag_name']) // Adding the name from the tags table
+            // ->withTimestamps(); // Optionally, include timestamps if needed
     }
 
+
     // specifications 
-    public function specifications(){
+    public function specifications()
+    {
         // return $this->hasMany(ProductSpecification::class, 'product_id');
         return $this->belongsToMany(Specification::class, 'product_specifications', 'product_id', 'specification_id')->withPivot('value');
     }
-     
+
     public function variantPrices()
     {
         return $this->hasMany(ProductVariantPrice::class, 'product_id');
     }
-    
+
     public function groupPrices()
     {
         return $this->hasMany(ProductGroupPrice::class, 'product_id');
     }
-    
 }
