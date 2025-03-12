@@ -1,8 +1,10 @@
 import { useState } from "react";
 import Select from "react-select";
+import SwalAlert from '@/Components/Alert/SwalAlert';
 
-const ProductAttribute = () => {
-  const [attributes, setAttributes] = useState([]);
+const ProductAttribute = ({ formData, setFormData }) => {
+  const [selectedAttribute, setSelectedAttribute] = useState("");
+  const [selectedValues, setSelectedValues] = useState([]);
 
   const attributeOptions = {
     Color          : ["Red", "Blue", "Green", "Yellow", "Black"],
@@ -42,110 +44,108 @@ const ProductAttribute = () => {
   };
 
   const addAttribute = () => {
-    const availableAttributes = Object.keys(attributeOptions).filter(
-      (attr) => !attributes.some((a) => a.attribute === attr)
-    );
-
-    if (availableAttributes.length > 0) {
-      setAttributes([
-        ...attributes,
-        { id: attributes.length + 1, attribute: "", values: [] },
-      ]);
+    // Validation checks
+    if (!selectedAttribute) {
+      SwalAlert("warning", "Please select an attribute");
+      return;
     }
+    if (selectedValues.length === 0) {
+      SwalAlert("warning", "Please select at least one value");
+      return;
+    }
+    if (formData.attributes.some(attr => attr.attribute === selectedAttribute)) {
+      SwalAlert("warning", "Attribute already exists");
+      return;
+    }
+
+    // Add attribute
+    setFormData(prev => ({
+      ...prev,
+      attributes: [
+        ...prev.attributes,
+        { attribute: selectedAttribute, values: selectedValues }
+      ],
+    }));
+
+    // Reset selections
+    setSelectedAttribute("");
+    setSelectedValues([]);
   };
 
-  const removeAttribute = (id) => {
-    setAttributes(attributes.filter((attr) => attr.id !== id));
-  };
-
-  const handleAttributeChange = (id, selectedOption) => {
-    setAttributes(
-      attributes.map((attr) =>
-        attr.id === id ? { ...attr, attribute: selectedOption.value, values: [] } : attr
-      )
-    );
-  };
-
-  const handleValueChange = (id, selectedOptions) => {
-    setAttributes(
-      attributes.map((attr) =>
-        attr.id === id ? { ...attr, values: selectedOptions.map((opt) => opt.value) } : attr
-      )
-    );
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Product Data:", attributes);
+  const removeAttribute = (index) => {
+    setFormData(prev => ({
+      ...prev,
+      attributes: prev.attributes.filter((_, i) => i !== index),
+    }));
   };
 
   return (
     <div>
       <div className="mb-4">
-        <form onSubmit={handleSubmit}>
-          <table className="w-full border bg-white">
+        <label className="block text-gray-700 font-semibold">Product Attributes</label>
+        <div className="flex space-x-2">
+          {/* Attribute Select */}
+          <Select
+            className="w-full"
+            options={Object.keys(attributeOptions)
+              .filter(attr => !formData.attributes.some(a => a.attribute === attr))
+              .map(attr => ({ value: attr, label: attr }))}
+            value={selectedAttribute ? { value: selectedAttribute, label: selectedAttribute } : null}
+            onChange={(option) => setSelectedAttribute(option.value)}
+            placeholder="Select an attribute..."
+          />
+
+          {/* Attribute Values Multi-Select */}
+          {selectedAttribute && (
+            <Select
+              className="w-full"
+              isMulti
+              options={attributeOptions[selectedAttribute].map(value => ({ value, label: value }))}
+              value={selectedValues.map(value => ({ value, label: value }))}
+              onChange={(options) => setSelectedValues(options.map(opt => opt.value))}
+              placeholder="Select values..."
+            />
+          )}
+
+          {/* Add Button */}
+          <button
+            className="px-2 py-1 bg-green-600 text-white"
+            onClick={addAttribute}
+          >
+            Add
+          </button>
+        </div>
+
+        {/* Attribute List Table */}
+        <div className="mt-2">
+          <table className="w-full border-collapse border mt-1">
             <thead>
-              <tr className="bg-gray-200 text-left">
-                <th className="p-1 border">Attribute</th>
-                <th className="p-1 border">Values</th>
-                <th className="p-1 border text-center">
-                  <button
-                    type="button"
-                    onClick={addAttribute}
-                    className="bg-green-500 text-white px-3 py-1 rounded"
-                    disabled={attributes.length >= Object.keys(attributeOptions).length}
-                  >
-                    +
-                  </button>
-                </th>
+              <tr className="bg-gray-200">
+                <th className="border border-gray-300 p-1 w-10">#</th>
+                <th className="border border-gray-300 p-1 w-40">Attribute</th>
+                <th className="border border-gray-300 p-1 w-60">Values</th>
+                <th className="border border-gray-300 p-1 w-5"></th>
               </tr>
             </thead>
             <tbody>
-              {attributes.map((attr) => (
-                <tr key={attr.id}>
-                  <td className="p-2 border">
-                    <Select
-                      options={Object.keys(attributeOptions)
-                        .filter(
-                          (option) =>
-                            !attributes.some((a) => a.attribute === option && a.id !== attr.id)
-                        )
-                        .map((option) => ({ value: option, label: option }))}
-                      value={attr.attribute ? { value: attr.attribute, label: attr.attribute } : null}
-                      onChange={(selectedOption) =>
-                        handleAttributeChange(attr.id, selectedOption)
-                      }
-                      className="w-full"
-                    />
-                  </td>
-                  <td className="p-2 border">
-                    {attr.attribute && (
-                      <Select
-                        isMulti
-                        options={attributeOptions[attr.attribute].map((value) => ({
-                          value,
-                          label: value,
-                        }))}
-                        value={attr.values.map((value) => ({ value, label: value }))}
-                        onChange={(selectedOptions) => handleValueChange(attr.id, selectedOptions)}
-                        className="w-full"
-                      />
-                    )}
-                  </td>
-                  <td className="p-2 border text-center">
+              {formData.attributes.map((attr, index) => (
+                <tr key={index}>
+                  <td className="border border-gray-300 p-1 text-center">{index + 1}</td>
+                  <td className="border border-gray-300 p-1">{attr.attribute}</td>
+                  <td className="border border-gray-300 p-1">{attr.values.join(", ")}</td>
+                  <td className="border border-gray-300 p-1 text-center">
                     <button
-                      type="button"
-                      className="bg-red-500 text-white px-3 py-1 rounded"
-                      onClick={() => removeAttribute(attr.id)}
+                      className="bg-red-600 text-white p-1 rounded-sm"
+                      onClick={() => removeAttribute(index)}
                     >
-                      -
+                      X
                     </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </form>
+        </div>
       </div>
     </div>
   );
