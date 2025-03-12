@@ -185,7 +185,7 @@ const Edit = (props) => {
                                     <div><h3 className="text-xl font-semibold">Linked Products</h3><p className="text-gray-700">Configure upsells, cross-sells, and grouping here.</p></div>}
                                 {
                                     activeTab === "attributes" &&
-                                    <ProductAttribute {...{ formData, setFormData }}/>
+                                    <ProductAttribute {...{ formData, setFormData }} />
                                 }
                                 {
                                     activeTab === "specification" &&
@@ -241,10 +241,19 @@ const Edit = (props) => {
 
                     {/* Right Section (30%) */}
                     <section className="w-1/4 bg-white shadow-lg p-6">
+                        <div className="flex justify-center pb-2">
+                            <button className="w-[80%] bg-green-600 text-white py-1 hover:bg-green-700" onClick={submit}>
+                                Update
+                            </button>
+                            <button className="w-[20%] bg-gray-600 text-white py-1 hover:bg-green-700 ml-2">
+                                Add New
+                            </button>
+                        </div>
                         <ProductPublished {...{ today }} />
                         <ProductImage {...{ formData, setFormData }} />
                         <ProductCategory {...{ categories, formData, setFormData }} />
                         <ProductTag {...{ tags, formData, setFormData }} />
+                        {/* add more information */}
                         {/* add more information */}
                     </section>
                 </div>

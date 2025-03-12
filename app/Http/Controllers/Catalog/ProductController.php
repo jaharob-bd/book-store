@@ -134,7 +134,7 @@ class ProductController extends Controller
     {
         $data = $request->all();
         $product_id = intval($data['productId']);
-        // dd($data['tags']);
+        dd($data['attributes']);
         $updateTags           = ProductTag::updateTags($data, $product_id);
         // echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
         // exit; 
