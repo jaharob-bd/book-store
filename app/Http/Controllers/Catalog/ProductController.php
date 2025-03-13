@@ -89,7 +89,7 @@ class ProductController extends Controller
                 'stockStatus'   => $product->stock_status ?? 0,
             ],
             'publish' => [
-                'visibleIndividually' => $product->visible_individually ?? 1,
+                'visibleIndividually' => $product->visible_individually ?? 0,
                 'publishedStatus'     => $product->published_status ?? 0,
                 'publishedAt'         => $product->published_at ?? now(),
             ],

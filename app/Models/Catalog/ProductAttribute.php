@@ -30,19 +30,25 @@ class ProductAttribute extends Model
 
         try {
             // Fetch current attributes for the given product_id
-            $currentAttributes = self::where('product_id', $product_id)->get()->pluck('attribute_value_id')->toArray();
-            $newValueArray = [];
+            $currentAttributes = self::where('product_id', $product_id)->pluck('attribute_value_id')
+                ->values()
+                ->toArray();
+            // print_r($currentAttributes);
+            $requestValueArray = [];
             foreach ($data['attributes'] as $attributeData) {
                 $attributeIds = $attributeData['attribute_value_id'];
                 $attributeValues = explode(',', $attributeIds);
                 // Populate the new value array with cleaned attribute values (cast to integers)
                 foreach ($attributeValues as $value) {
-                    $newValueArray[] = (int)$value;
+                    $requestValueArray[] = (int)$value;
                 }
             }
 
+            // print_r($requestValueArray);
             // Find new values that need to be inserted (those not already present in current attributes)
-            $newValuesToInsert = array_diff($newValueArray, $currentAttributes);
+            $newValuesToInsert = array_diff($requestValueArray, $currentAttributes);
+            // print_r($newValuesToInsert);
+            // exit;
 
             // Bulk insert only the new attribute values that don't exist yet
             if (!empty($newValuesToInsert)) {
@@ -59,8 +65,9 @@ class ProductAttribute extends Model
             }
 
             // Find old values that should be deleted (those no longer present in new values)
-            $valuesToDelete = array_diff($currentAttributes, $newValueArray);
-
+            $valuesToDelete = array_diff($currentAttributes, $requestValueArray);
+            // print_r($valuesToDelete);
+            // exit;
             // Bulk delete only the outdated attribute values
             if (!empty($valuesToDelete)) {
                 self::whereIn('attribute_value_id', $valuesToDelete)

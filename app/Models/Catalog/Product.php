@@ -77,8 +77,9 @@ class Product extends Model
             $product->stock_status = 'in_stock'; // $data['inventory']['stockStatus'];
 
             // Update publish fields
-            $product->published_at = $data['publish']['publishedAt'] ?? date('Y-m-d H:i:s');
+            $product->published_at         = $data['publish']['publishedAt'] ?? date('Y-m-d H:i:s');
             $product->visible_individually = $data['publish']['visibleIndividually'] ?? 0;
+            $product->published_status     = $data['publish']['publishedStatus'] ?? 0;
 
             // Save the updated product
             $product->save();

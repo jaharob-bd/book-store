@@ -55,8 +55,9 @@ const Edit = (props) => {
             stockStatus: product.stockStatus || 0,
         },
         publish: {
-            publishedAt: product.publishedAt || today,
-            visibleIndividually: product.visibleIndividually || 1,
+            visibleIndividually: product.visibleIndividually || 0,
+            publishedStatus    : product.publishedStatus,
+            publishedAt        : product.publishedAt || today,
         },
         categories: product.categories,
         tags: product.tags,
@@ -245,7 +246,7 @@ const Edit = (props) => {
                     {/* Right Section (30%) */}
                     <section className="w-1/4 bg-white shadow-lg p-6">
                         <ProductSubmition {...{ submit }} />
-                        <ProductPublished {...{ today }} />
+                        <ProductPublished {...{ formData, setFormData, today }} />
                         <ProductImage {...{ formData, setFormData }} />
                         <ProductCategory {...{ categories, formData, setFormData }} />
                         <ProductTag {...{ tags, formData, setFormData }} />
