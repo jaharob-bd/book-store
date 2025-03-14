@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProductGeneral = ({formData, setFormData }) => {
+const ProductGeneral = ({ formData, setFormData }) => {
     return (
         <div>
             <div className="mb-4">
@@ -37,8 +37,8 @@ const ProductGeneral = ({formData, setFormData }) => {
                     value={formData.general?.taxStatus}
                     onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, taxStatus: e.target.value } }))}
                 >
-                    <option selected>Taxable</option>
-                    <option>None</option>
+                    <option value="0">None</option>
+                    <option value="1">Taxable</option>
                 </select>
             </div>
             <div className="mb-4">
@@ -48,11 +48,30 @@ const ProductGeneral = ({formData, setFormData }) => {
                     value={formData.general?.taxClass}
                     onChange={(e) => setFormData(prev => ({ ...prev, general: { ...prev.general, taxClass: e.target.value } }))}
                 >
-                    <option selected>Standard</option>
-                    <option>Reduced Rate</option>
-                    <option>Zero Rate</option>
+                    <option value="">-Select-</option>
+                    <option value="0">Zero Rate</option>
+                    <option value="1">Standard</option>
+                    <option value="2">Reduced Rate</option>
                 </select>
             </div>
+            <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Expire Date</label>
+                <input
+                    className="w-full p-2 border border-gray-300"
+                    type="date"
+                    placeholder="Enter expiry date"
+                    min={new Date().toISOString().split('T')[0]} // Restrict selection to today or earlier
+                    value={formData.general.expiryDate ? formData.general.expiryDate : ''}
+                    onChange={(e) => setFormData(prev => ({
+                        ...prev,
+                        general: {
+                            ...prev.general,
+                            expiryDate: e.target.value
+                        }
+                    }))}
+                />
+            </div>
+
             {/* add more */}
         </div>
     );

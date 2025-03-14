@@ -63,21 +63,22 @@ class Product extends Model
             // Update general fields
             $product->product_url = $data['general']['productUrl'];
             $product->product_type = 'physical'; // $data['general']['productType'];
-            $product->regular_price = $data['general']['regularPrice'];
-            $product->sale_price = $data['general']['salePrice'];
-            $product->mrp_price = $data['general']['mrpPrice'];
+            $product->regular_price = $data['general']['regularPrice'] ?? 0;
+            $product->sale_price = $data['general']['salePrice'] ?? 0;
+            $product->mrp_price = $data['general']['mrpPrice'] ?? 0;
+
             $product->tax_status = $data['general']['taxStatus'];
             $product->tax_class = $data['general']['taxClass'];
             $product->tax_included = $data['general']['taxIncluded'] ?? 0;
-            // $product->expiry_date = $data['general']['expiryDate'];
+            $product->expiry_date = date('Y-m-d', strtotime($data['general']['expiryDate']));
             // Update inventory fields
             $product->sku = $data['inventory']['sku'];
             $product->stock_quantity = $data['inventory']['stockQuantity'] ?? 0;
             $product->manage_stock = $data['inventory']['manageStock'] ?? 0;
-            $product->stock_status = 'in_stock'; // $data['inventory']['stockStatus'];
+            $product->stock_status = $data['inventory']['stockStatus'];
 
             // Update publish fields
-            $product->published_at         = $data['publish']['publishedAt'] ?? date('Y-m-d H:i:s');
+            $product->published_at         = date('Y-m-d', strtotime($data['publish']['publishedAt'] ?? date('Y-m-d')));
             $product->visible_individually = $data['publish']['visibleIndividually'] ?? 0;
             $product->published_status     = $data['publish']['publishedStatus'] ?? 0;
 

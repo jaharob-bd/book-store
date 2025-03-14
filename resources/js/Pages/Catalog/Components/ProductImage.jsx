@@ -29,7 +29,7 @@ const ProductImage = ({ formData, setFormData }) => {
 
     return (
         <div className="border p-4 mb-4 mx-auto bg-white overflow-hidden shadow-lg">
-            <h3 className="font-bold border-b pb-2">Product Images</h3>
+            <h3 className="font-bold border-b pb-2">Product Images {formData.images.length > 0 && <span className="text-white bg-red-600 item-end rounded-xl p-2 m-2">{formData.images.length}</span>} </h3>
             <div
                 className="border-dashed border-2 border-gray-300 p-6 mt-2 text-center cursor-pointer rounded-md"
                 onDrop={handleDrop}

@@ -73,25 +73,27 @@ class ProductController extends Controller
             ],
             'general' => [
                 'productUrl'   => $product->product_url,
-                'productType'  => $product->product_type,
-                'regularPrice' => $product->regular_price,
-                'salePrice'    => $product->sale_price,
-                'mrpPrice'     => $product->mrp_price,
-                'taxStatus'    => $product->tax_status,
-                'taxClass'     => $product->tax_class,
-                'taxIncluded'  => $product->tax_included ?? 0,
-                'expiryDate'   => $product->expiry_date,
+                'productType'  => $product->product_type ?? 0,
+                'regularPrice' => $product->regular_price ?? 0,
+                'salePrice'    => $product->sale_price ?? 0,
+                'mrpPrice'     => $product->mrp_price ?? 0,
+                'taxStatus'    => $product->tax_status ?? '',
+                'taxClass'     => $product->tax_class ?? '',
+                'taxIncluded'  => $product->tax_included ?? '',
+                'expiryDate'   => (empty($product->expiry_date) || $product->expiry_date == '1970-01-01') 
+                ? date('Y-m-d', strtotime('+1 year')) 
+                : $product->expiry_date,
             ],
             'inventory' => [
                 'sku'           => $product->sku ?? '',
                 'stockQuantity' => $product->stock_quantity ?? 0,
                 'manageStock'   => $product->manage_stock ?? 0,
-                'stockStatus'   => $product->stock_status ?? 0,
+                'stockStatus'   => $product->stock_status ?? '',
             ],
             'publish' => [
                 'visibleIndividually' => $product->visible_individually ?? 0,
                 'publishedStatus'     => $product->published_status ?? 0,
-                'publishedAt'         => $product->published_at ?? now(),
+                'publishedAt'         => $product->published_at ?? '',
             ],
             'categories' => $product->categories->map(fn($category) => [
                 'id'   => $category->id,
@@ -105,6 +107,7 @@ class ProductController extends Controller
                 'id'      => $image->id,
                 'preview' => asset($image->src)
             ]),
+            'imageIds' => [],
             'specifications' => $product->specifications->map(fn($spec) => [
                 'id'               => $spec->id,
                 'specification_id' => $spec->pivot->specification_id,
@@ -161,15 +164,12 @@ class ProductController extends Controller
     {
         $data             = $request->all();
         $product_id       = (int) $data['productId'];
-        // $updateAttributes = ProductAttribute::updateAttribute($data, $product_id);
-        // // echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
-        // exit;
         try {
             $updateProduct = Product::updateProduct($data, $product_id);
             if ($updateProduct['status']) {
                 $updateAttributes     = ProductAttribute::updateAttribute($data, $product_id);
                 $updateSpecifications = ProductSpecification::updateSpecification($data, $product_id);
-                $updateImages         = ProductImage::updateImages($request->file('images'), $product_id);
+                $updateImages         = ProductImage::updateImages($request->file('images'), $data, $product_id);
                 $updateCategories     = ProductCategory::updateCategory($data, $product_id);
                 $updateTags           = ProductTag::updateTags($data, $product_id);
                 echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);

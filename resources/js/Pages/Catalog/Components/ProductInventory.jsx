@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ProductInventory = ({formData, setFormData }) => {
+const ProductInventory = ({ formData, setFormData }) => {
     return (
         <div>
             <div className="mb-4">
@@ -14,8 +14,9 @@ const ProductInventory = ({formData, setFormData }) => {
             </div>
             <div className="mb-4 flex items-center">
                 <input type="checkbox" id="manage-stock" className="mr-2"
+                    checked={formData.inventory.manageStock === 1}
                     value={formData.inventory.manageStock}
-                    onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, manageStock: e.target.checked } }))}
+                    onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, manageStock: e.target.checked ? 1 : 0 } }))}
                 />
                 <label htmlFor="manage-stock" className="text-gray-700">Enable stock management at product level</label>
             </div>
@@ -25,9 +26,10 @@ const ProductInventory = ({formData, setFormData }) => {
                     value={formData.inventory.stockStatus}
                     onChange={(e) => setFormData(prev => ({ ...prev, inventory: { ...prev.inventory, stockStatus: e.target.value } }))}
                 >
-                    <option>In stock</option>
-                    <option>Out of stock</option>
-                    <option>On backorder</option>
+                    <option value="">Select One</option>
+                    <option value="in_stock">In stock</option>
+                    <option value="out_of_stock">Out of stock</option>
+                    <option value="backorder">On backorder</option>
                 </select>
             </div>
             <div className="mb-4 flex items-center">

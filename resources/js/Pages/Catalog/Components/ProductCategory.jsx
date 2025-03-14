@@ -1,22 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import SwalAlert from '@/Components/Alert/SwalAlert';
 
-const ProductCategory = ({ categories, formData, setFormData }) => {
+const ProductCategory = ({ categories,setCategories, formData, setFormData }) => {
     const [newCategory, setNewCategory] = useState("");
 
     const handleCategoryChange = (category) => {
         setFormData(prev => {
-            const updatedCategories = prev.categories.includes(category)
-                ? prev.categories.filter(cat => cat !== category) // Remove category if already selected
+            const isSelected = prev.categories.some(cat => cat.id === category.id);
+            const updatedCategories = isSelected
+                ? prev.categories.filter(cat => cat.id !== category.id) // Remove category by id
                 : [...prev.categories, category]; // Add category if not selected
-
+    
             return { ...prev, categories: updatedCategories };
         });
     };
+    
     const addCategory = () => {
         if (newCategory && !categories.some(cat => cat.name === newCategory)) {
             const newId = categories.length + 1;
-            const newCatObj = { id: newId, name: newCategory };
+            const newCatObj = { name: newCategory };
 
             // Update both state variables
             setCategories(prev => [...prev, newCatObj]);

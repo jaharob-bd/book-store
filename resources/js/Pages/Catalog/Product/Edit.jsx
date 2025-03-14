@@ -46,7 +46,7 @@ const Edit = (props) => {
             taxStatus: product.taxStatus,
             taxClass: product.taxClass,
             taxIncluded: product.taxIncluded || 0,
-            expiryDate: product.expiryDate,
+            expiryDate: product.expiryDate ?? '',
         },
         inventory: {
             sku: product.sku,
@@ -59,12 +59,13 @@ const Edit = (props) => {
             publishedStatus    : product.publishedStatus,
             publishedAt        : product.publishedAt || today,
         },
-        categories: product.categories,
-        tags: product.tags,
-        images: product.images,
+        categories    : product.categories,
+        tags          : product.tags,
+        images        : product.images,
+        imageIds     : [],
         specifications: [],
-        attributes: [],
-        variants: []
+        attributes    : [],
+        variants      : []
     };
     const [formData, setFormData] = useState(props.product);
     // console.log(formData);
@@ -79,13 +80,22 @@ const Edit = (props) => {
 
     // submit use axios
     const submit = async () => {
-        console.log(formData);
         const formDataToSend = new FormData();
+        console.log(formData);
+
         Object.keys(formData).forEach((key) => {
             const value = formData[key];
-
-            if (Array.isArray(value)) {
-                // যদি অ্যারের ভেতরে অবজেক্ট থাকে
+            if (key === "images" && Array.isArray(value)) {
+                value.forEach((item) => {
+                    if (item instanceof File) {
+                        // ফাইল থাকলে `images[]` হিসেবে পাঠানো হবে
+                        formDataToSend.append("images[]", item);
+                    } else if (typeof item === "object" && item !== null && item.id) {
+                        // ID থাকলে `image_ids[]` হিসেবে পাঠানো হবে
+                        formDataToSend.append("imageIds[]", item.id);
+                    }
+                });
+            } else if (Array.isArray(value)) {
                 value.forEach((item, index) => {
                     if (typeof item === "object" && item !== null) {
                         Object.keys(item).forEach((subKey) => {
@@ -96,15 +106,15 @@ const Edit = (props) => {
                     }
                 });
             } else if (typeof value === "object" && value !== null) {
-                // যদি অবজেক্ট হয়, তাহলে key[subKey] হিসেবে append করবো
                 Object.keys(value).forEach((subKey) => {
                     formDataToSend.append(`${key}[${subKey}]`, value[subKey]);
                 });
             } else {
-                // সাধারণ মানগুলোর জন্য
                 formDataToSend.append(key, value);
             }
         });
+        console.log(formDataToSend);
+      
         // -- end of formDataToSend
         try {
             const response = await axios.post('/product-update', formDataToSend, {
@@ -248,7 +258,7 @@ const Edit = (props) => {
                         <ProductSubmition {...{ submit }} />
                         <ProductPublished {...{ formData, setFormData, today }} />
                         <ProductImage {...{ formData, setFormData }} />
-                        <ProductCategory {...{ categories, formData, setFormData }} />
+                        <ProductCategory {...{ categories, setCategories, formData, setFormData }} />
                         <ProductTag {...{ tags, formData, setFormData }} />
                     </section>
                 </div>
