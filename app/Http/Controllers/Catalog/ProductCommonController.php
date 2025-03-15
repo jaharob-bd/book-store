@@ -252,4 +252,10 @@ class ProductCommonController extends Controller
             'attribute' => $attribute
         ]);
     }
+
+    public function attribute_values_index()
+    {
+        $data['attributes'] = Attribute::all();
+        return Inertia::render('Catalog/Attribute/ValueIndex', $data);
+    }
 }
