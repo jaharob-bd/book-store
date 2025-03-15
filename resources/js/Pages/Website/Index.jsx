@@ -32,7 +32,7 @@ export default function Index({ auth, products }) {
                                 <div className="relative">
                                     <img src="image.png" alt="product 1" className="w-full" />
                                     <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-                                        <ProductLink slug={product.url_key} />
+                                        <ProductLink slug={product.product_url} />
                                         <WishLink product={product} />
                                     </div>
                                 </div>
@@ -97,7 +97,7 @@ export default function Index({ auth, products }) {
 //                             <div className="relative">
 //                                 <img src="image.png" alt="product 1" className="w-full" />
 //                                 <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center gap-2 opacity-0 group-hover:opacity-100 transition">
-//                                     <ProductLink slug={product.url_key} />
+//                                     <ProductLink slug={product.product_url} />
 //                                     <WishLink product={product} />
 //                                 </div>
 //                             </div>

@@ -20,7 +20,7 @@ export const FormGroupPrice = ({ onChangeInput, handleSubmit }) => {
                         </select>
                     </div>
                     <div>
-                        <label className="dark:text-gray-200" htmlFor="url_key">Discount Type <span className="text-red-600">*</span></label>
+                        <label className="dark:text-gray-200" htmlFor="product_url">Discount Type <span className="text-red-600">*</span></label>
                         <select
                             name="discount_type"
                             onChange={onChangeInput}

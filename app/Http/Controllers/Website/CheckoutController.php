@@ -39,7 +39,7 @@ class CheckoutController extends Controller
         if ($inserted) {
             Session::flash('success', 'Product added successfully!');
             // Redirect to the desired page (e.g., product listing) with serialized data
-            return redirect()->route('product-edit', ['slug' => $inserted->url_key]);
+            return redirect()->route('product-edit', ['slug' => $inserted->product_url]);
         }
     }
 
@@ -49,7 +49,7 @@ class CheckoutController extends Controller
             ->with('images')
             ->with('variantPrices')
             ->with('groupPrices')
-            ->where('url_key', $slug)->first();
+            ->where('product_url', $slug)->first();
         // category
         $data['categories'] = Category::select('id', 'name')->get();
         // return $data['category'];

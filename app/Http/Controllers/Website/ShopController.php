@@ -69,7 +69,7 @@ class ShopController extends Controller
     {
         // $slug = 'bangladesher-itihash';
         $product = DB::table('products as p')
-            ->where('p.url_key', $slug)
+            ->where('p.product_url', $slug)
             ->leftJoin('authors as a', 'a.id', '=', 'p.author_id')
             ->leftJoin('publishers as pb', 'pb.id', '=', 'p.publisher_id')
             // ->leftJoin('categories as c', 'c.id', '=', 'p.category_id')

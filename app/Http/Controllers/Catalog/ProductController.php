@@ -264,12 +264,12 @@ class ProductController extends Controller
             // Commit transaction
             DB::commit();
             Session::flash('success', 'Product updated successfully!');
-            return redirect()->route('product-edit', ['slug' => $product->url_key]);
+            return redirect()->route('product-edit', ['slug' => $product->product_url]);
         } catch (\Exception $e) {
             // Rollback transaction in case of error
             DB::rollBack();
             Session::flash('failed', $e->getMessage());
-            return redirect()->route('product-edit', ['slug' => $product->url_key]);
+            return redirect()->route('product-edit', ['slug' => $product->product_url]);
         }
     }
 
@@ -287,6 +287,6 @@ class ProductController extends Controller
         ]);
 
         Session::flash('success', 'Product price updated successfully!');
-        return redirect()->route('product-edit', ['slug' => $product->url_key]);
+        return redirect()->route('product-edit', ['slug' => $product->product_url]);
     }
 }
