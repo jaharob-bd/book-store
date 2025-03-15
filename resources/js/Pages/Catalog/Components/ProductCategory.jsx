@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import SwalAlert from '@/Components/Alert/SwalAlert';
+import axios from 'axios';
 
-const ProductCategory = ({ categories,setCategories, formData, setFormData }) => {
+const ProductCategory = ({ categories, setCategories, formData, setFormData }) => {
     const [newCategory, setNewCategory] = useState("");
 
     const handleCategoryChange = (category) => {
@@ -14,19 +15,39 @@ const ProductCategory = ({ categories,setCategories, formData, setFormData }) =>
             return { ...prev, categories: updatedCategories };
         });
     };
-    
+
+    const insertCategory = async (categoryName) => {
+        try {
+            const response = await axios.post('/category-store', { name: categoryName, status: 1}, {
+                withCredentials: true
+            });
+            console.log(response);
+            if (response.data.status && response.data.categoryId) {
+                const newCatObj = { id: response.data.categoryId, name: newCategory };
+                setCategories(prev => [...prev, newCatObj]);
+                setFormData(prev => ({ ...prev, categories: [...prev.categories, newCatObj] }));
+                setNewCategory(""); // Clear the input only after a successful addition
+                SwalAlert('success', 'Category added successfully!');
+            } else {
+                SwalAlert('warning', 'Category add failed! Please try again.');
+            }
+        } catch (error) {
+            console.error('Error adding category:', error);
+            SwalAlert('error', 'There was an error while adding the category. Please try again later.');
+        }
+    }
+
     const addCategory = () => {
-        if (newCategory && !categories.some(cat => cat.name === newCategory)) {
-            const newId = categories.length + 1;
-            const newCatObj = { name: newCategory };
+        if (!newCategory) {
+            SwalAlert('warning', 'Category name cannot be empty');
+            return;
+        }
 
-            // Update both state variables
-            setCategories(prev => [...prev, newCatObj]);
-            setFormData(prev => ({ ...prev, categories: [...prev.categories, newCatObj] }));
-
-            setNewCategory("");
-        } else {
+        // Check for duplicates in the current list before making the API request
+        if (categories.some(cat => cat.name.toLowerCase() === newCategory.toLowerCase())) {
             SwalAlert('warning', 'Category already exists');
+        } else {
+            insertCategory(newCategory);
         }
     };
 

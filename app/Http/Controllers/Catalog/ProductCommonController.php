@@ -81,10 +81,18 @@ class ProductCommonController extends Controller
         // Attempt to create the category
         try {
             $category = Category::create($validatedData);
+            // dd($category);
+            if ($category) {
+                return response()->json([
+                    'status' => true,
+                    'categoryId' => $category->id,
+                    'message' => 'Category added successfully.'
+                ], 201);
+            }
 
-            // Flash success message and redirect to the categories listing page
-            Session::flash('success', 'Category added successfully!');
-            return redirect()->route('categories');
+            // // Flash success message and redirect to the categories listing page
+            // Session::flash('success', 'Category added successfully!');
+            // return redirect()->route('categories');
         } catch (\Exception $e) {
             // Flash error message and redirect back with input data
             Session::flash('failed', 'Failed to add category: ' . $e->getMessage());
@@ -103,5 +111,4 @@ class ProductCommonController extends Controller
         Session::flash('success', 'Category updated successfully!');
         return redirect()->route('categories');
     }
-
 }

@@ -84,6 +84,26 @@ export default function Index({ auth, categories }) {
             SwalWarning('All fields are required.');
         }
     };
+    const insertCategory = async (categoryName) => {
+        try {
+            const response = await axios.post('/category-store', { name: categoryName, status: 1 }, {
+                withCredentials: true
+            });
+            console.log(response);
+            if (response.data.status && response.data.categoryId) {
+                const newCatObj = { id: response.data.categoryId, name: newCategory };
+                // setCategories(prev => [...prev, newCatObj]);
+                // setFormData(prev => ({ ...prev, categories: [...prev.categories, newCatObj] }));
+                // setNewCategory(""); // Clear the input only after a successful addition
+                SwalAlert('success', 'Category added successfully!');
+            } else {
+                SwalAlert('warning', 'Category add failed! Please try again.');
+            }
+        } catch (error) {
+            console.error('Error adding category:', error);
+            SwalAlert('error', 'There was an error while adding the category. Please try again later.');
+        }
+    }
 
     return (
         <AuthenticatedLayout user={auth.user} header={'Category List'}>

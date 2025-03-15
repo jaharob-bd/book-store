@@ -54,6 +54,7 @@ class ProductCategory extends Model
         if ($deleteCateIdInArray) {
             self::whereIn('category_id', $deleteCateIdInArray)->where('product_id', $product_id)->delete();
         }
+        /*
         // new category insert category and product category table
         $newCategoryArray = array_filter($requestCategoryArray, function ($item) {
             return !isset($item['id']);
@@ -81,6 +82,7 @@ class ProductCategory extends Model
                 }
             }
         }
+        */
         return true;
     }
 }
