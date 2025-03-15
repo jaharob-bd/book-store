@@ -17,7 +17,7 @@ class ProductTag extends Model
         'tag_id',
     ];
 
-    public static function updateTags(array $data, int $product_id): bool
+    public static function updateTags(array $data, int $productId): bool
     {
         if (empty($data['tags'])) {
             return false;
@@ -38,7 +38,7 @@ class ProductTag extends Model
         }
 
         // Fetch existing tags for the product
-        $existingTagIds = self::where('product_id', $product_id)->pluck('tag_id')->toArray();
+        $existingTagIds = self::where('product_id', $productId)->pluck('tag_id')->toArray();
 
         // Determine tags to add and remove
         $tagsToAdd = array_diff($tagIds, $existingTagIds);
@@ -47,7 +47,7 @@ class ProductTag extends Model
         // Insert new associations
         if (!empty($tagsToAdd)) {
             $insertData = array_map(fn($tagId) => [
-                'product_id' => $product_id,
+                'product_id' => $productId,
                 'tag_id' => $tagId,
                 'created_at' => now(),
                 'updated_at' => now(),
@@ -58,7 +58,7 @@ class ProductTag extends Model
 
         // Remove unselected tags
         if (!empty($tagsToRemove)) {
-            self::where('product_id', $product_id)
+            self::where('product_id', $productId)
                 ->whereIn('tag_id', $tagsToRemove)
                 ->delete();
         }
@@ -66,7 +66,7 @@ class ProductTag extends Model
         return true;
     }
 
-    public static function updateTags_old($data, $product_id)
+    public static function updateTags_old($data, $productId)
     {
         if (!isset($data['tags'])) {
             return false;
@@ -80,11 +80,11 @@ class ProductTag extends Model
                     'name' => $tag,
                 ]);
                 self::create([
-                    'product_id' => $product_id,
+                    'product_id' => $productId,
                     'tag_id'     => $tagId,
                 ]);
             } else {
-                $existingTag = self::where('product_id', $product_id)
+                $existingTag = self::where('product_id', $productId)
                     ->where('tag_id', $tag['tag_id'])
                     ->first();
 

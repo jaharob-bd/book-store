@@ -19,7 +19,7 @@ class ProductAttribute extends Model
         'updated_by',
     ];
 
-    public static function updateAttribute($data, $product_id)
+    public static function updateAttribute($data, $productId)
     {
         // Check if 'attributes' key exists in the provided data
         if (!isset($data['attributes'])) {
@@ -30,7 +30,7 @@ class ProductAttribute extends Model
 
         try {
             // Fetch current attributes for the given product_id
-            $currentAttributes = self::where('product_id', $product_id)->pluck('attribute_value_id')
+            $currentAttributes = self::where('product_id', $productId)->pluck('attribute_value_id')
                 ->values()
                 ->toArray();
             // print_r($currentAttributes);
@@ -55,7 +55,7 @@ class ProductAttribute extends Model
                 $insertData = [];
                 foreach ($newValuesToInsert as $value) {
                     $insertData[] = [
-                        'product_id' => (int)$product_id,
+                        'product_id' => (int)$productId,
                         'attribute_value_id' => $value
                     ];
                 }
@@ -71,7 +71,7 @@ class ProductAttribute extends Model
             // Bulk delete only the outdated attribute values
             if (!empty($valuesToDelete)) {
                 self::whereIn('attribute_value_id', $valuesToDelete)
-                    ->where('product_id', $product_id) // Make sure to delete only for the specific product
+                    ->where('product_id', $productId) // Make sure to delete only for the specific product
                     ->delete();
             }
 
@@ -87,14 +87,14 @@ class ProductAttribute extends Model
         }
     }
 
-    public static function updateAttribute_old($data, $product_id)
+    public static function updateAttribute_old($data, $productId)
     {
         // Check if 'attributes' key exists in the provided data
         if (!isset($data['attributes'])) {
             return false; // Return false if no attributes are provided
         }
 
-        $currentAttributes = self::where('product_id', $product_id)->get()->toArray();
+        $currentAttributes = self::where('product_id', $productId)->get()->toArray();
         $existingAttributeValueIdArray = array_column($currentAttributes, 'attribute_value_id');
         DB::beginTransaction();
         try {
@@ -111,7 +111,7 @@ class ProductAttribute extends Model
                     $existing = in_array($value, $existingAttributeValueIdArray);
                     if (!$existing) {
                         $insertArray = [
-                            'product_id' => (int) $product_id,
+                            'product_id' => (int) $productId,
                             'attribute_value_id' => (int) $value, // The specific value ID for the attribute
                         ];
                         self::create($insertArray);

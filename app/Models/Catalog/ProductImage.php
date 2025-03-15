@@ -10,10 +10,10 @@ class ProductImage extends Model
     use HasFactory;
     protected $fillable = ['product_id', 'src', 'alt', 'status'];
 
-    public static function updateImages($images, $data, $product_id)
+    public static function updateImages($images, $data, $productId)
     {
         $requestIdArray = isset($data['imageIds']) ? $data['imageIds'] : array();
-        $currentImageArray = self::where('product_id', $product_id)
+        $currentImageArray = self::where('product_id', $productId)
             ->select('id', 'src')
             ->get()
             ->toArray();
@@ -36,7 +36,7 @@ class ProductImage extends Model
 
         // Insert new images
         if (!empty($images)) { // Ensure images are not empty
-            $product = Product::findOrFail($product_id);
+            $product = Product::findOrFail($productId);
             foreach ($images as $file) { // Fixed the double dollar sign issue
                 if ($file instanceof \Illuminate\Http\UploadedFile) { // Ensure it's a valid file
                     $filename = time() . '_' . rand(99, 999) . '_' . $file->getClientOriginalName();

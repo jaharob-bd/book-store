@@ -19,10 +19,10 @@ class ProductCategory extends Model
         'updated_by',
     ];
 
-    public static function updateCategory($data, $product_id)
+    public static function updateCategory($data, $productId)
     {
         $requestCategoryArray = isset($data['categories']) ? $data['categories'] : array();
-        $currentCategoryArray = self::where('product_id', $product_id)
+        $currentCategoryArray = self::where('product_id', $productId)
             ->pluck('category_id')
             ->values()
             ->toArray();
@@ -39,7 +39,7 @@ class ProductCategory extends Model
             $insertProductCategoryData = array();
             foreach ($newProductCategoryArray as $categoryId) {
                 $insertProductCategoryData[] = [
-                    'product_id' => $product_id,
+                    'product_id' => $productId,
                     'category_id' => $categoryId,
                     'created_by' => auth()->user()->id,
                     'updated_by' => auth()->user()->id,
@@ -52,7 +52,7 @@ class ProductCategory extends Model
             return !in_array($item, array_column($requestCategoryArray, 'id'));
         });
         if ($deleteCateIdInArray) {
-            self::whereIn('category_id', $deleteCateIdInArray)->where('product_id', $product_id)->delete();
+            self::whereIn('category_id', $deleteCateIdInArray)->where('product_id', $productId)->delete();
         }
         /*
         // new category insert category and product category table
@@ -74,7 +74,7 @@ class ProductCategory extends Model
                     ]);
                     // Insert product_category
                     self::create([
-                        'product_id'  => $product_id,
+                        'product_id'  => $productId,
                         'category_id' => $categoryId,
                         'created_by'  => auth()->id() ?? null,
                         'updated_by'  => auth()->id() ?? null,

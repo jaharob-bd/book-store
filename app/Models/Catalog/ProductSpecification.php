@@ -20,7 +20,7 @@ class ProductSpecification extends Model
         'value',
     ];
 
-    public static function updateSpecification($data, $product_id)
+    public static function updateSpecification($data, $productId)
     {
         if (!isset($data['specifications']) || !is_array($data['specifications'])) {
             return false;
@@ -34,7 +34,7 @@ class ProductSpecification extends Model
         }
 
         // Get current specifications from DB
-        $currentSpecifications = self::where('product_id', $product_id)
+        $currentSpecifications = self::where('product_id', $productId)
             ->pluck('specification_id')
             ->values()
             ->toArray();
@@ -49,7 +49,7 @@ class ProductSpecification extends Model
                 $index = array_search($specId, $requestSpecifications);
                 if ($index !== false) {
                     $insertData[] = [
-                        'product_id' => $product_id,
+                        'product_id' => $productId,
                         'specification_id' => $specId,
                         'value' => $data['specifications'][$index]['value'],
                         'created_at' => now(),
@@ -65,7 +65,7 @@ class ProductSpecification extends Model
         // Specifications to delete
         $specificationsToDelete = array_diff($currentSpecifications, $requestSpecifications);
         if (!empty($specificationsToDelete)) {
-            self::where('product_id', $product_id)
+            self::where('product_id', $productId)
                 ->whereIn('specification_id', $specificationsToDelete)
                 ->delete();
         }
@@ -79,7 +79,7 @@ class ProductSpecification extends Model
             foreach ($specificationsToUpdate as $specId) {
                 $index = array_search($specId, $requestSpecifications);
                 if ($index !== false) {
-                    self::where('product_id', $product_id)
+                    self::where('product_id', $productId)
                         ->where('specification_id', $specId)
                         ->update([
                             'value' => $data['specifications'][$index]['value'],
@@ -93,18 +93,18 @@ class ProductSpecification extends Model
     }
 
 
-    public static function updateSpecification_OLD($data, $product_id)
+    public static function updateSpecification_OLD($data, $productId)
     {
         if (!isset($data['specifications']) || !is_array($data['specifications'])) {
             return false;
         }
-        $currentSpecifications = self::where('product_id', $product_id)->get()->pluck('specification_id')->toArray();
+        $currentSpecifications = self::where('product_id', $productId)->get()->pluck('specification_id')->toArray();
         $requestSpecifications = array_column($data['specifications'], 'specification_id');
         // specifications to insert
         $specificationsToInsert = array_diff($requestSpecifications, $currentSpecifications);
         if ($specificationsToInsert) {
             $insertData = array_map(fn($specId) => [
-                'product_id' => $product_id,
+                'product_id' => $productId,
                 'specification_id' => $specId,
                 'value' => $data['specifications'][array_search($specId, $requestSpecifications)]['value'],
             ], $specificationsToInsert);
@@ -113,7 +113,7 @@ class ProductSpecification extends Model
         // specifications to delete
         $specificationsToDelete = array_diff($currentSpecifications, $requestSpecifications);
         if ($specificationsToDelete) {
-            self::where('product_id', $product_id)
+            self::where('product_id', $productId)
                 ->whereIn('specification_id', $specificationsToDelete)
                 ->delete();
         }
@@ -123,7 +123,7 @@ class ProductSpecification extends Model
         $specificationsToUpdate = array_diff($requestSpecifications, $specificationsToMerge);
         if ($specificationsToUpdate) {
             foreach ($specificationsToUpdate as $specId) {
-                self::where('product_id', $product_id)
+                self::where('product_id', $productId)
                     ->where('specification_id', $specId)
                     ->update([
                         'value' => $data['specifications'][array_search($specId, $requestSpecifications)]['value']

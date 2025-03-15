@@ -163,15 +163,15 @@ class ProductController extends Controller
     function update(Request $request)
     {
         $data             = $request->all();
-        $product_id       = (int) $data['productId'];
+        $productId       = (int) $data['productId'];
         try {
-            $updateProduct = Product::updateProduct($data, $product_id);
+            $updateProduct = Product::updateProduct($data, $productId);
             if ($updateProduct['status']) {
-                $updateAttributes     = ProductAttribute::updateAttribute($data, $product_id);
-                $updateSpecifications = ProductSpecification::updateSpecification($data, $product_id);
-                $updateImages         = ProductImage::updateImages($request->file('images'), $data, $product_id);
-                $updateCategories     = ProductCategory::updateCategory($data, $product_id);
-                $updateTags           = ProductTag::updateTags($data, $product_id);
+                $updateAttributes     = ProductAttribute::updateAttribute($data, $productId);
+                $updateSpecifications = ProductSpecification::updateSpecification($data, $productId);
+                $updateImages         = ProductImage::updateImages($request->file('images'), $data, $productId);
+                $updateCategories     = ProductCategory::updateCategory($data, $productId);
+                $updateTags           = ProductTag::updateTags($data, $productId);
                 echo json_encode(['status' => true, 'message' => 'Product updated successfully!'], 200);
             } else {
                 echo json_encode(['status' => false, 'message' => 'Product not found']);
@@ -203,7 +203,7 @@ class ProductController extends Controller
         // try {
         //     //code...
         //     // update product model
-        //     $product = Product::find($product_id);
+        //     $product = Product::find($productId);
         //     $product->update($request->all());
         //     // update images
         //     if ($request->hasFile('images')) {

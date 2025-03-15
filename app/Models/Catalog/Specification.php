@@ -18,7 +18,7 @@ class Specification extends Model
         'name',
     ];
 
-    public static function updateSpecification($data, $product_id)
+    public static function updateSpecification($data, $productId)
     {
 
         if (!isset($data['specifications'])) {
@@ -27,7 +27,7 @@ class Specification extends Model
         $specifications = $data['specifications'];
         foreach ($specifications as $spec) {
             // Check if the specification already exists
-            $existingSpec = self::where('product_id', $product_id)
+            $existingSpec = self::where('product_id', $productId)
                 ->where('specification_value', $spec)
                 ->first();
 
@@ -39,7 +39,7 @@ class Specification extends Model
             } else {
                 // Insert new if not exists
                 self::create([
-                    'product_id' => $product_id,
+                    'product_id' => $productId,
                     'specification_name' => $spec,
                     'specification_value' => $spec,
                 ]);
