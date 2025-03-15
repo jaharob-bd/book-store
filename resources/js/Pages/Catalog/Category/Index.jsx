@@ -3,7 +3,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useTranslation } from "react-i18next";
 import Modal from '@/Components/Modal';
-import { List } from './Partials/List';
+import { List } from './List';
 import SwalWarning from '@/Components/Alert/SwalWarning';
 
 export default function Index({ auth, categories }) {

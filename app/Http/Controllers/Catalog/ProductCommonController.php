@@ -15,8 +15,12 @@ use Inertia\Response;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Catalog\Product;
 use App\Models\Catalog\Category;
+use App\Models\Catalog\Tag;
+use App\Models\Catalog\Attribute;
+use App\Models\Catalog\Specification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class ProductCommonController extends Controller
 {
@@ -110,5 +114,142 @@ class ProductCommonController extends Controller
         $category->save();
         Session::flash('success', 'Category updated successfully!');
         return redirect()->route('categories');
+    }
+
+    function tag_index()
+    {
+        $data['tags'] = Tag::all();
+        // return $data;
+        return Inertia::render('Catalog/Tag/Index', $data);
+    }
+
+    /**
+     * Store a new tag.
+     */
+    public function tag_store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100|unique:tags,name',
+        ]);
+
+        $tag = Tag::create([
+            'name' => $request->name,
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Tag created successfully!',
+            'tag' => $tag
+        ], 201);
+    }
+
+    /**
+     * Update an existing tag.
+     */
+    public function tag_update(Request $request, $id)
+    {
+        $tag = Tag::findOrFail($id);
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:100', Rule::unique('tags', 'name')->ignore($tag->id)],
+        ]);
+
+        $tag->update([
+            'name' => $request->name,
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Tag updated successfully!',
+            'tag' => $tag
+        ]);
+    }
+
+    public function specification_index()
+    {
+        $data['specifications'] = Specification::all();
+        // return response()->json(['status' => true, 'specifications' => $specifications]);
+        return Inertia::render('Catalog/Specification/Index', $data);
+    }
+
+    public function specification_store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|unique:specifications,name|max:255',
+        ]);
+
+        $specification = Specification::create([
+            'name' => $request->name,
+            'status' => true,
+        ]);
+
+        return response()->json(['status' => true, 'message' => 'Specification added!', 'specification' => $specification]);
+    }
+
+    public function specification_update(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|max:255|unique:specifications,name,' . $id,
+        ]);
+
+        $specification = Specification::findOrFail($id);
+        $specification->update([
+            'name' => $request->name,
+        ]);
+
+        return response()->json(['status' => true, 'message' => 'Specification updated!', 'specification' => $specification]);
+    }
+
+    public function attribute_index()
+    {
+        $data['attributes'] = Attribute::all();
+        // return response()->json(['status' => true, 'specifications' => $specifications]);
+        return Inertia::render('Catalog/Attribute/Index', $data);
+    }
+
+    //
+    /**
+     * Store a newly created attribute.
+     */
+    public function attribute_store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:100|unique:attributes,name',
+        ]);
+
+        // Create the new attribute
+        $attribute = Attribute::create([
+            'name' => $request->name
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Attribute created successfully!',
+            'attribute' => $attribute
+        ], 201);
+    }
+
+    /**
+     * Update an existing attribute.
+     */
+    public function attribute_update(Request $request, $id)
+    {
+        // Find the attribute by its ID or fail
+        $attribute = Attribute::findOrFail($id);
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:100', Rule::unique('attributes', 'name')->ignore($attribute->id)],
+        ]);
+
+        // Update the attribute
+        $attribute->update([
+            'name' => $request->name
+        ]);
+
+        return response()->json([
+            'status' => true,
+            'message' => 'Attribute updated successfully!',
+            'attribute' => $attribute
+        ]);
     }
 }

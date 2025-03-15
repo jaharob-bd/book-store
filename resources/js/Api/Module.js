@@ -22,14 +22,42 @@ export const modules = [
                 id: 2,
                 parent_id: 2,
                 menu_name: "categories",
-                controller_name: "ProductController",
+                controller_name: "ProductCommonController",
                 route: "categories"
             },
             {
                 id: 3,
                 parent_id: 2,
+                menu_name: "attributes",
+                controller_name: "ProductCommonController",
+                route: "attributes"
+            },
+            {
+                id: 4,
+                parent_id: 2,
+                menu_name: "attribute-values",
+                controller_name: "ProductCommonController",
+                route: "attribute-values"
+            },
+            {
+                id: 5,
+                parent_id: 2,
+                menu_name: "specifications",
+                controller_name: "ProductCommonController",
+                route: "specifications"
+            },
+            {
+                id: 6,
+                parent_id: 2,
+                menu_name: "tags",
+                controller_name: "ProductCommonController",
+                route: "tags"
+            },
+            {
+                id: 7,
+                parent_id: 2,
                 menu_name: "brands",
-                controller_name: "ProductController",
+                controller_name: "ProductCommonController",
                 route: "brands"
             }
         ]
