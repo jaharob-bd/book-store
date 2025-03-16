@@ -7,14 +7,17 @@ import axios from 'axios';
 
 export default function ValueIndex({ auth, attributes }) {
     const initialState = {
-        name: '',
-        value: '', // New state to handle attribute value
+        name  : '',
+        value : '',
+        values: [],
     };
 
     const reducer = (state, action) => {
         switch (action.type) {
             case 'SET_FIELD':
                 return { ...state, [action.field]: action.value };
+            case 'SET_FIELDS': // New case to handle multiple fields
+                return { ...state, ...action.payload };
             case 'RESET':
                 return initialState;
             default:
@@ -27,6 +30,7 @@ export default function ValueIndex({ auth, attributes }) {
     const [isEditMode, setIsEditMode] = useState(false);
     const [currentAttrId, setCurrentAttrId] = useState(null);
     const [attrList, setAttrList] = useState(attributes);
+    // console.log(state);
 
     const closeModal = () => {
         setIsOpenModal(false);
@@ -39,7 +43,14 @@ export default function ValueIndex({ auth, attributes }) {
         if (attr) {
             setIsEditMode(true);
             setCurrentAttrId(attr.id);
-            dispatch({ type: 'SET_FIELD', field: 'name', value: attr.name });
+            dispatch({
+                type: 'SET_FIELDS',
+                payload: {
+                    name: attr.name,
+                    value: attr.values,
+                    values: attr.valueArray
+                }
+            });
         } else {
             setIsEditMode(false);
             setCurrentAttrId(null);
@@ -135,8 +146,8 @@ export default function ValueIndex({ auth, attributes }) {
                                     <input type="checkbox" />
                                 </th>
                                 <th className="p-2 px-3 text-left">Name</th>
-                                <th className="p-2 text-center">Actions</th>
                                 <th className="p-2 text-center">Values</th>
+                                <th className="p-2 text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -146,18 +157,19 @@ export default function ValueIndex({ auth, attributes }) {
                                         <input type="checkbox" />
                                     </td>
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-left">{attr.name}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
-                                        <button
-                                            onClick={() => openModal(attr)}
-                                            className="text-blue-500 hover:underline"
-                                        >
-                                            Edit
-                                        </button>
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-left">
+                                        {attr.values}
                                     </td>
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                         <button
                                             onClick={() => openModal(attr)}
-                                            className="text-green-500 hover:underline"
+                                            className="bg-blue-500 p-1 rounded-sm text-white hover:underline"
+                                        >
+                                            Edit
+                                        </button>
+                                        <button
+                                            onClick={() => openModal(attr)}
+                                            className="bg-green-500 p-1 rounded-sm text-white ml-2 hover:underline"
                                         >
                                             Add Value
                                         </button>

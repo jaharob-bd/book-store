@@ -255,7 +255,18 @@ class ProductCommonController extends Controller
 
     public function attribute_values_index()
     {
-        $data['attributes'] = Attribute::all();
+        $attributes = Attribute::with('attributeValues')->get();
+        // return $attributes;
+
+        $data['attributes'] = $attributes->map(function ($attribute) {
+            return [
+                'id' => $attribute->id,
+                'name' => $attribute->name,
+                'values' => $attribute->attributeValues->pluck('value')->implode(', '),
+                'valueArray' => $attribute->attributeValues->pluck('value', 'id')->toArray()
+            ];
+        });
+        // return $data['attributes'];
         return Inertia::render('Catalog/Attribute/ValueIndex', $data);
     }
 }
