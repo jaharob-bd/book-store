@@ -7,8 +7,9 @@ import axios from 'axios';
 
 export default function ValueIndex({ auth, attributes }) {
     const initialState = {
-        name  : '',
-        value : '',
+        name: '',
+        value: '',
+        newValue: '',
         values: [],
     };
 
@@ -30,8 +31,7 @@ export default function ValueIndex({ auth, attributes }) {
     const [isEditMode, setIsEditMode] = useState(false);
     const [currentAttrId, setCurrentAttrId] = useState(null);
     const [attrList, setAttrList] = useState(attributes);
-    // console.log(state);
-
+    console.log(state); // Debugging
     const closeModal = () => {
         setIsOpenModal(false);
         dispatch({ type: 'RESET' });
@@ -47,8 +47,8 @@ export default function ValueIndex({ auth, attributes }) {
                 type: 'SET_FIELDS',
                 payload: {
                     name: attr.name,
-                    value: attr.values,
-                    values: attr.valueArray
+                    newValue: '',
+                    values: attr.valueArray // { ...attr.valueArray } // Ensure it's an object
                 }
             });
         } else {
@@ -59,33 +59,42 @@ export default function ValueIndex({ auth, attributes }) {
         setIsOpenModal(true);
     };
 
+
     const handleChange = (e) => {
-        dispatch({ type: 'SET_FIELD', field: e.target.name, value: e.target.value });
+        dispatch({
+            type: 'SET_FIELD',
+            field: 'newValue',
+            value: e.target.value
+        });
+    };
+    const handleKeyPress = (e) => {
+        if (e.key === "Enter" && state.newValue.trim() !== "") {
+            // Get the highest numeric key from state.values, or start from 1 if empty
+            const maxKey = Object.keys(state.values).length > 0
+                ? Math.max(...Object.keys(state.values).map(Number))
+                : 0;
+    
+            dispatch({
+                type: "SET_FIELDS",
+                payload: {
+                    values: { 
+                        ...state.values, // Keep existing values
+                        [maxKey + 1]: state.newValue.trim(), // Use the next numeric index
+                    },
+                    newValue: "", // Reset input
+                },
+            });
+        }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!state.name.trim()) {
-            SwalAlert('warning', 'Attribute name is required.');
-            return;
-        }
-
-        try {
-            const url = isEditMode ? `/attribute-update/${currentAttrId}` : '/attribute-store';
-            const method = isEditMode ? axios.post : axios.post;
-
-            const response = await method(url, { name: state.name });
-
-            if (response.data.status) {
-                SwalAlert('success', isEditMode ? 'Attribute updated!' : 'Attribute added!');
-                setAttrList([...attrList, response.data.attribute]);
-                closeModal();
-            } else {
-                SwalAlert('warning', response.data.message || 'Something went wrong!');
-            }
-        } catch (error) {
-            SwalAlert('warning', 'Server error! Please try again.');
-        }
+    const removeAttribute = (id) => {
+        dispatch({
+            type: "SET_FIELD",
+            field: "values",
+            value: Object.fromEntries(
+                Object.entries(state.values).filter(([key]) => Number(key) !== id)
+            )
+        });
     };
 
     // Handle the attribute value submission
@@ -163,12 +172,6 @@ export default function ValueIndex({ auth, attributes }) {
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                         <button
                                             onClick={() => openModal(attr)}
-                                            className="bg-blue-500 p-1 rounded-sm text-white hover:underline"
-                                        >
-                                            Edit
-                                        </button>
-                                        <button
-                                            onClick={() => openModal(attr)}
                                             className="bg-green-500 p-1 rounded-sm text-white ml-2 hover:underline"
                                         >
                                             Add Value
@@ -181,40 +184,35 @@ export default function ValueIndex({ auth, attributes }) {
                 </div>
             </div>
 
-            <Modal show={isOpenModal} title={isEditMode ? 'Edit Attribute' : 'Create New Attribute'} onClose={closeModal}>
-                <form onSubmit={handleSubmit} className="p-4">
-                    <div className="mb-3">
-                        <label className="block text-gray-700">Attribute Name <span className="text-red-500">*</span></label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={state.name}
-                            onChange={handleChange}
-                            className="w-full p-2 border border-gray-300 rounded"
-                        />
-                    </div>
-
-                    <div className="flex justify-end">
-                        <button
-                            type="submit"
-                            className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
-                        >
-                            {isEditMode ? 'Update' : 'Save'}
-                        </button>
-                    </div>
-                </form>
-            </Modal>
-
             {/* Modal for adding attribute values */}
             <Modal show={isOpenModal} title="Add Attribute Value" onClose={closeModal}>
                 <form onSubmit={handleAttributeValueSubmit} className="p-4">
+                    <div className="flex flex-wrap gap-2 pb-4">
+                        {
+                            Object.entries(state.values).map(([id, value]) => (
+                                <span
+                                    key={id}
+                                    className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
+                                >
+                                    {value}
+                                    <button
+                                        onClick={() => removeAttribute(Number(id))}
+                                        className="ml-2 bg-red-500 text-white rounded-full px-2 hover:bg-red-700 transition"
+                                    >
+                                        ✕
+                                    </button>
+                                </span>
+                            ))
+                        }
+                    </div>
                     <div className="mb-3">
                         <label className="block text-gray-700">Attribute Value <span className="text-red-500">*</span></label>
                         <input
                             type="text"
-                            name="value"
-                            value={state.value}
+                            name="newValue"
+                            value={state.newValue}
                             onChange={handleChange}
+                            onKeyDown={handleKeyPress}
                             className="w-full p-2 border border-gray-300 rounded"
                         />
                     </div>

@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 
 const Header = ({ handleToggle }) => {
     const [userInfoIsOpen, setUserInfoIsOpen] = useState(false);
-    // const userInfoToggle = () => setUserInfoIsOpen(true);
     const userInfoToggle = () => setUserInfoIsOpen(!userInfoIsOpen);
     const { t, i18n } = useTranslation();
     const changeLanguageHandler = (e) => {
@@ -229,20 +228,41 @@ const Header = ({ handleToggle }) => {
                         <option value="ar" >Arabic</option>
                     </select>
                 </li>
-                <li className="dropdown ml-3">
-                    <button type="button" className="dropdown-toggle flex items-center" onClick={userInfoToggle}>
-                        <img src="https://placehold.co/32x32" alt="" className="w-8 h-8 rounded block object-cover align-middle" />
+                <li className="dropdown ml-3 relative">
+                    <button
+                        type="button"
+                        className="dropdown-toggle flex items-center"
+                        onClick={userInfoToggle}
+                    >
+                        <img
+                            src="https://placehold.co/32x32"
+                            alt=""
+                            className="w-8 h-8 rounded block object-cover align-middle"
+                        />
                     </button>
-                    <ul className={`dropdown-menu shadow-md shadow-black/5 z-30  py-1.5 rounded-md bg-white border border-gray-100 w-full max-w-[140px] ${!userInfoIsOpen ? 'hidden' : ''}`}>
+                    <ul
+                        className={`dropdown-menu py-1.5 rounded-md bg-white absolute w-20 top-full right-0 ${!userInfoIsOpen ? "hidden" : "block"
+                            }`}
+                    >
                         <li>
-                            <a href="#" className="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Profile</a>
+                            <a
+                                href="#"
+                                className="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50"
+                            >
+                                Profile
+                            </a>
                         </li>
                         <li>
-                            <a href="#" className="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50">Settings</a>
+                            <a
+                                href="#"
+                                className="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50"
+                            >
+                                Settings
+                            </a>
                         </li>
                         <li>
                             <Link
-                                href={route('logout')}
+                                href={route("logout")}
                                 method="post"
                                 as="button"
                                 className="flex items-center text-[13px] py-1.5 px-4 text-gray-600 hover:text-blue-500 hover:bg-gray-50"
