@@ -48,7 +48,7 @@ export default function ValueIndex({ auth, attributes }) {
                 payload: {
                     name: attr.name,
                     newValue: '',
-                    values: attr.valueArray // { ...attr.valueArray } // Ensure it's an object
+                    values: { ...attr.valueArray } // Create a fresh copy
                 }
             });
         } else {
@@ -58,8 +58,7 @@ export default function ValueIndex({ auth, attributes }) {
         }
         setIsOpenModal(true);
     };
-
-
+    
     const handleChange = (e) => {
         dispatch({
             type: 'SET_FIELD',
@@ -67,26 +66,26 @@ export default function ValueIndex({ auth, attributes }) {
             value: e.target.value
         });
     };
+    
     const handleKeyPress = (e) => {
         if (e.key === "Enter" && state.newValue.trim() !== "") {
-            // Get the highest numeric key from state.values, or start from 1 if empty
-            const maxKey = Object.keys(state.values).length > 0
-                ? Math.max(...Object.keys(state.values).map(Number))
-                : 0;
+            // Ensure values exist and find the next unique key
+            const existingKeys = Object.keys(state.values).map(Number);
+            const nextKey = existingKeys.length > 0 ? Math.max(...existingKeys) + 1 : 1;
     
             dispatch({
                 type: "SET_FIELDS",
                 payload: {
                     values: { 
-                        ...state.values, // Keep existing values
-                        [maxKey + 1]: state.newValue.trim(), // Use the next numeric index
+                        ...state.values, 
+                        [nextKey]: state.newValue.trim() // Ensure unique numeric index
                     },
-                    newValue: "", // Reset input
+                    newValue: "" // Reset input field
                 },
             });
         }
     };
-
+    
     const removeAttribute = (id) => {
         dispatch({
             type: "SET_FIELD",
