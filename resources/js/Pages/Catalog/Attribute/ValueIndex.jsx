@@ -70,7 +70,7 @@ export default function ValueIndex({ auth, attributes }) {
     };
     const handleKeyPress = useCallback(
         (e) => {
-            if (e.key === "Enter" && state.newValue.trim() !== "") {
+            if (e.type === "click" || (e.key === "Enter" && state.newValue.trim() !== "")) {
                 const newValue = state.newValue.trim();
 
                 // Collect all existing attribute_ids from oldValue and newValueArray
@@ -102,15 +102,31 @@ export default function ValueIndex({ auth, attributes }) {
         [state.newValue, state.newValueArray, state.oldValue]
     );
 
-    const removeAttribute = (id) => {
-        dispatch({
-            type: "SET_FIELD",
-            field: "newValueArray",
-            value: state.newValueArray.filter(
-                (item) => item.attribute_id !== id
-            ),
-        });
+    const removeAttribute = (e, id, type) => {
+        e.stopPropagation(); // Prevents unintended event bubbling
+        console.log(e, type, id, "removeAttribute");
+
+        if (type === 'new') {
+            dispatch({
+                type: "SET_FIELDS",
+                payload: {
+                    newValueArray: state.newValueArray.filter(
+                        (item) => item.attribute_id !== id
+                    ),
+                },
+            });
+        } else {
+            // dispatch({
+            //     type: "SET_FIELDS",
+            //     payload: {
+            //         oldValue: state.oldValue.filter(
+            //             (item) => item.attribute_id !== id
+            //         ),
+            //     },
+            // });
+        }
     };
+
 
     // Handle the attribute value submission
     const handleAttributeValueSubmit = async (e) => {
@@ -202,13 +218,13 @@ export default function ValueIndex({ auth, attributes }) {
 
             {/* Modal for adding attribute values */}
             <Modal show={isOpenModal} title="Add Attribute Value" onClose={closeModal}>
-                <form onSubmit={handleAttributeValueSubmit} className="p-4">
-
-                    <div className="mb-3">
+                <form onSubmit={handleAttributeValueSubmit} className="">
+                    <span className="w-full p-1 bg-green-600 text-white border border-green-300 rounded flex justify-center gap-2 pb-2 font-bold">{state.name}</span>
+                    <div className="mb-3 pt-6">
                         <label className="block text-gray-700">
                             Old Attribute Values <span className="text-red-600 items-justify-end semi-bold">(x for remove)</span>
                         </label>
-                        <div className="w-full p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-4">
+                        <div className="w-full p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-2">
                             {
                                 Array.isArray(state.oldValue) &&
                                 state.oldValue?.map((attr, index) => (
@@ -218,7 +234,10 @@ export default function ValueIndex({ auth, attributes }) {
                                     >
                                         {attr.value}
                                         <button
-                                            onClick={() => removeAttribute(Number(attr.attribute_id))}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Prevent bubbling
+                                                removeAttribute(e, attr.attribute_id, 'old')
+                                            }}
                                             className="ml-2 bg-red-500 text-white rounded-full px-2 hover:bg-red-700 transition"
                                         >
                                             ✕
@@ -230,7 +249,7 @@ export default function ValueIndex({ auth, attributes }) {
                     </div>
                     <div className="mb-3">
                         <label className="block text-gray-700">New Attribute Values</label>
-                        <div className="w-full p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-4">
+                        <div className="w-full p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-2">
                             {
                                 Array.isArray(state.newValueArray) &&
                                 state.newValueArray?.map((attr, index) => (
@@ -240,7 +259,11 @@ export default function ValueIndex({ auth, attributes }) {
                                     >
                                         {attr.value}
                                         <button
-                                            onClick={() => removeAttribute(Number(attr.attribute_id))}
+                                            // onClick={() => removeAttribute(Number(attr.attribute_id))}
+                                            onClick={(e) => {
+                                                e.stopPropagation(); // Prevent bubbling
+                                                removeAttribute(e, attr.attribute_id, 'new');
+                                            }}
                                             className="ml-2 bg-red-500 text-white rounded-full px-2 hover:bg-red-700 transition"
                                         >
                                             ✕
@@ -251,22 +274,27 @@ export default function ValueIndex({ auth, attributes }) {
                         </div>
                     </div>
                     <div className="mb-3">
-                        <label className="block text-gray-700">Attribute Value <span className="text-red-500">*</span></label>
-                        <input
-                            type="text"
-                            name="newValue"
-                            value={state.newValue}
-                            onChange={handleChange}
-                            onKeyDown={handleKeyPress}
-                            className="w-full p-2 border border-gray-300 rounded"
-                        />
+                        <label className="block text-gray-700 mr-2">
+                            Attribute Value <span className="text-red-500">*</span>
+                        </label>
+                        <div className=" flex items-center">
+                            <input
+                                type="text"
+                                name="newValue"
+                                value={state.newValue}
+                                onChange={handleChange}
+                                onKeyDown={handleKeyPress}
+                                className="w-full p-2 border border-gray-300 rounded mr-2" // Added margin-right
+                            />
+                            <button onClick={handleKeyPress} className="bg-gray-900 text-white p-2 rounded">+</button>
+                        </div>
                     </div>
-                    <div className="flex justify-end">
+                    <div className="flex justify-center">
                         <button
                             type="submit"
                             className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
                         >
-                            Add Value
+                            Save Value
                         </button>
                     </div>
                 </form>
