@@ -8,9 +8,9 @@ import axios from 'axios';
 export default function ValueIndex({ auth, attributes }) {
     const initialState = {
         name: '',
-        value: '',
         newValue: '',
-        values: [],
+        newValueArray: [],
+        oldValueArray: [],
     };
 
     const reducer = (state, action) => {
@@ -28,31 +28,28 @@ export default function ValueIndex({ auth, attributes }) {
 
     const [state, dispatch] = useReducer(reducer, initialState);
     const [isOpenModal, setIsOpenModal] = useState(false);
-    const [isEditMode, setIsEditMode] = useState(false);
     const [currentAttrId, setCurrentAttrId] = useState(null);
     const [attrList, setAttrList] = useState(attributes);
     console.log(state); // Debugging
     const closeModal = () => {
         setIsOpenModal(false);
         dispatch({ type: 'RESET' });
-        setIsEditMode(false);
         setCurrentAttrId(null);
     };
 
     const openModal = (attr = null) => {
         if (attr) {
-            setIsEditMode(true);
             setCurrentAttrId(attr.id);
             dispatch({
                 type: 'SET_FIELDS',
                 payload: {
                     name: attr.name,
                     newValue: '',
-                    values: { ...attr.valueArray } // Create a fresh copy
+                    newValueArray: [],
+                    oldValueArray: { ...attr.valueArray }
                 }
             });
         } else {
-            setIsEditMode(false);
             setCurrentAttrId(null);
             dispatch({ type: 'RESET' });
         }
@@ -66,21 +63,44 @@ export default function ValueIndex({ auth, attributes }) {
             value: e.target.value
         });
     };
-    
+
     const handleKeyPress = (e) => {
         if (e.key === "Enter" && state.newValue.trim() !== "") {
+            const newValue = state.newValue.trim();
+    
+            // Convert oldValueArray into an array of key-value pairs
+            const updatedOldValueArray = Object.entries(state.oldValueArray).filter(
+                ([key, value]) => value !== newValue
+            );
+    
+            // Convert back to an object
+            const newOldValueArray = Object.fromEntries(updatedOldValueArray);
+    
+            dispatch({
+                type: "SET_FIELDS",
+                payload: {
+                    newValueArray: [...state.newValueArray, newValue],
+                    newValue: "",
+                    oldValueArray: newOldValueArray, // Updated oldValueArray
+                },
+            });
+        }
+    };
+    
+    const handleKeyPress_old = (e) => {
+        if (e.key === "Enter" && state.newValue.trim() !== "") {
             // Ensure values exist and find the next unique key
-            const existingKeys = Object.keys(state.values).map(Number);
+            const existingKeys = Object.keys(state.oldValueArray).map(Number);
             const nextKey = existingKeys.length > 0 ? Math.max(...existingKeys) + 1 : 1;
     
             dispatch({
                 type: "SET_FIELDS",
                 payload: {
-                    values: { 
-                        ...state.values, 
-                        [nextKey]: state.newValue.trim() // Ensure unique numeric index
-                    },
-                    newValue: "" // Reset input field
+                    newValueArray: [
+                        ...state.newValueArray,
+                        state.newValue.trim(),
+                    ],
+                    newValue: "", 
                 },
             });
         }
@@ -89,9 +109,9 @@ export default function ValueIndex({ auth, attributes }) {
     const removeAttribute = (id) => {
         dispatch({
             type: "SET_FIELD",
-            field: "values",
+            field: "oldValueArray",
             value: Object.fromEntries(
-                Object.entries(state.values).filter(([key]) => Number(key) !== id)
+                Object.entries(state.oldValueArray).filter(([key]) => Number(key) !== id)
             )
         });
     };
@@ -188,7 +208,7 @@ export default function ValueIndex({ auth, attributes }) {
                 <form onSubmit={handleAttributeValueSubmit} className="p-4">
                     <div className="flex flex-wrap gap-2 pb-4">
                         {
-                            Object.entries(state.values).map(([id, value]) => (
+                            Object.entries(state.oldValueArray).map(([id, value]) => (
                                 <span
                                     key={id}
                                     className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"

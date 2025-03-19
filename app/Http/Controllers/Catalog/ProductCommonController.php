@@ -263,7 +263,15 @@ class ProductCommonController extends Controller
                 'id' => $attribute->id,
                 'name' => $attribute->name,
                 'values' => $attribute->attributeValues->pluck('value')->implode(', '),
-                'valueArray' => $attribute->attributeValues->pluck('value', 'id')->toArray()
+                'valueArray' => $attribute->attributeValues
+                ->where('attribute_id', $attribute->id) // Filter where value is "Black"
+                ->map(function ($attributeValue) {
+                    return [
+                        'attribute_id' => $attributeValue->id,
+                        'value' => $attributeValue->value
+                    ];
+                })
+                ->values() // $attribute->attributeValues->pluck('value', 'id')->toArray()
             ];
         });
         // return $data['attributes'];
