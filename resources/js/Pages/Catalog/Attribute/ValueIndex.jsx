@@ -1,25 +1,26 @@
-import React, { useState, useReducer } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 import SwalAlert from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
+import React, { useState, useReducer, useCallback } from "react";
 
 export default function ValueIndex({ auth, attributes }) {
     const initialState = {
-        name: '',
-        newValue: '',
+        name: "",
+        newValue: "",
+        oldValue: [],
         newValueArray: [],
-        oldValueArray: [],
+        // oldValueArray: [],
     };
 
     const reducer = (state, action) => {
         switch (action.type) {
-            case 'SET_FIELD':
+            case "SET_FIELD":
                 return { ...state, [action.field]: action.value };
-            case 'SET_FIELDS': // New case to handle multiple fields
+            case "SET_FIELDS":
                 return { ...state, ...action.payload };
-            case 'RESET':
+            case "RESET":
                 return initialState;
             default:
                 return state;
@@ -30,89 +31,84 @@ export default function ValueIndex({ auth, attributes }) {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [currentAttrId, setCurrentAttrId] = useState(null);
     const [attrList, setAttrList] = useState(attributes);
+
     console.log(state); // Debugging
+
     const closeModal = () => {
         setIsOpenModal(false);
-        dispatch({ type: 'RESET' });
+        dispatch({ type: "RESET" });
         setCurrentAttrId(null);
     };
 
     const openModal = (attr = null) => {
+        // console.log(attr); // Debugging
         if (attr) {
             setCurrentAttrId(attr.id);
             dispatch({
-                type: 'SET_FIELDS',
+                type: "SET_FIELDS",
                 payload: {
                     name: attr.name,
-                    newValue: '',
+                    newValue: "",
+                    oldValue: attr.valueArray,
                     newValueArray: [],
-                    oldValueArray: [...attr.valueArray]
-                }
+                    // oldValueArray: attr.valueArray,
+                },
             });
         } else {
             setCurrentAttrId(null);
-            dispatch({ type: 'RESET' });
+            dispatch({ type: "RESET" });
         }
         setIsOpenModal(true);
     };
 
     const handleChange = (e) => {
         dispatch({
-            type: 'SET_FIELD',
-            field: 'newValue',
-            value: e.target.value
+            type: "SET_FIELD",
+            field: "newValue",
+            value: e.target.value,
         });
     };
+    const handleKeyPress = useCallback(
+        (e) => {
+            if (e.key === "Enter" && state.newValue.trim() !== "") {
+                const newValue = state.newValue.trim();
 
-    const handleKeyPress = (e) => {
-        if (e.key === "Enter" && state.newValue.trim() !== "") {
-            const newValue = state.newValue.trim();
+                // Collect all existing attribute_ids from oldValue and newValueArray
+                const existingKeys = new Set([
+                    ...state.oldValue.map(item => item.attribute_id),
+                    ...state.newValueArray.map(item => item.attribute_id),
+                ]);
 
-            // // Convert oldValueArray into an array of key-value pairs
-            // const updatedOldValueArray = Object.entries(state.oldValueArray).filter(
-            //     ([key, value]) => value !== newValue
-            // );
+                // Find the smallest available unique attribute_id
+                let nextKey = 1;
+                while (existingKeys.has(nextKey)) {
+                    nextKey++;
+                }
 
-            // // Convert back to an object
-            // const newOldValueArray = Object.fromEntries(updatedOldValueArray);
+                console.log("Updating state with:", newValue, "nextKey", nextKey);
 
-            dispatch({
-                type: "SET_FIELDS",
-                payload: {
-                    newValueArray: [...state.newValueArray, newValue],
-                    newValue: "",
-                    // oldValueArray: [], // Updated oldValueArray
-                },
-            });
-        }
-    };
-
-    const handleKeyPress_old = (e) => {
-        if (e.key === "Enter" && state.newValue.trim() !== "") {
-            // Ensure values exist and find the next unique key
-            const existingKeys = Object.keys(state.oldValueArray).map(Number);
-            const nextKey = existingKeys.length > 0 ? Math.max(...existingKeys) + 1 : 1;
-
-            dispatch({
-                type: "SET_FIELDS",
-                payload: {
-                    newValueArray: [
-                        ...state.newValueArray,
-                        state.newValue.trim(),
-                    ],
-                    newValue: "",
-                },
-            });
-        }
-    };
+                dispatch({
+                    type: "SET_FIELDS",
+                    payload: {
+                        newValueArray: [
+                            ...state.newValueArray,
+                            { attribute_id: nextKey, value: newValue },
+                        ],
+                        newValue: "",
+                    },
+                });
+            }
+        },
+        [state.newValue, state.newValueArray, state.oldValue]
+    );
 
     const removeAttribute = (id) => {
         dispatch({
             type: "SET_FIELD",
-            field: "oldValueArray",
-            value: Object.fromEntries(
-                Object.entries(state.oldValueArray).filter(([key]) => Number(key) !== id)
-            )
+            field: "newValueArray",
+            value: state.newValueArray.filter(
+                (item) => item.attribute_id !== id
+            ),
         });
     };
 
@@ -120,10 +116,11 @@ export default function ValueIndex({ auth, attributes }) {
     const handleAttributeValueSubmit = async (e) => {
         e.preventDefault();
 
-        if (!state.value.trim()) {
-            SwalAlert('warning', 'Attribute value is required.');
-            return;
-        }
+        // if (!state.value.trim()) {
+        //     SwalAlert('warning', 'Attribute value is required.');
+        //     return;
+        // }
+        return false;
 
         try {
             const response = await axios.post('/attribute-value-store', {
@@ -206,10 +203,15 @@ export default function ValueIndex({ auth, attributes }) {
             {/* Modal for adding attribute values */}
             <Modal show={isOpenModal} title="Add Attribute Value" onClose={closeModal}>
                 <form onSubmit={handleAttributeValueSubmit} className="p-4">
-                    <div className="flex flex-wrap gap-2 pb-4">
-                        {
-                            Array.isArray(state.oldValueArray) &&
-                                state.oldValueArray?.map((attr, index) => (
+
+                    <div className="mb-3">
+                        <label className="block text-gray-700">
+                            Old Attribute Values <span className="text-red-600 items-justify-end semi-bold">(x for remove)</span>
+                        </label>
+                        <div className="w-full p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-4">
+                            {
+                                Array.isArray(state.oldValue) &&
+                                state.oldValue?.map((attr, index) => (
                                     <span
                                         key={index}
                                         className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
@@ -223,7 +225,30 @@ export default function ValueIndex({ auth, attributes }) {
                                         </button>
                                     </span>
                                 ))
-                        }
+                            }
+                        </div>
+                    </div>
+                    <div className="mb-3">
+                        <label className="block text-gray-700">New Attribute Values</label>
+                        <div className="w-full p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-4">
+                            {
+                                Array.isArray(state.newValueArray) &&
+                                state.newValueArray?.map((attr, index) => (
+                                    <span
+                                        key={index}
+                                        className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
+                                    >
+                                        {attr.value}
+                                        <button
+                                            onClick={() => removeAttribute(Number(attr.attribute_id))}
+                                            className="ml-2 bg-red-500 text-white rounded-full px-2 hover:bg-red-700 transition"
+                                        >
+                                            ✕
+                                        </button>
+                                    </span>
+                                ))
+                            }
+                        </div>
                     </div>
                     <div className="mb-3">
                         <label className="block text-gray-700">Attribute Value <span className="text-red-500">*</span></label>
@@ -236,7 +261,6 @@ export default function ValueIndex({ auth, attributes }) {
                             className="w-full p-2 border border-gray-300 rounded"
                         />
                     </div>
-
                     <div className="flex justify-end">
                         <button
                             type="submit"
