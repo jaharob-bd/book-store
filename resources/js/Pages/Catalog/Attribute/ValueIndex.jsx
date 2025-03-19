@@ -46,7 +46,7 @@ export default function ValueIndex({ auth, attributes }) {
                     name: attr.name,
                     newValue: '',
                     newValueArray: [],
-                    oldValueArray: { ...attr.valueArray }
+                    oldValueArray: [...attr.valueArray]
                 }
             });
         } else {
@@ -55,7 +55,7 @@ export default function ValueIndex({ auth, attributes }) {
         }
         setIsOpenModal(true);
     };
-    
+
     const handleChange = (e) => {
         dispatch({
             type: 'SET_FIELD',
@@ -67,32 +67,32 @@ export default function ValueIndex({ auth, attributes }) {
     const handleKeyPress = (e) => {
         if (e.key === "Enter" && state.newValue.trim() !== "") {
             const newValue = state.newValue.trim();
-    
-            // Convert oldValueArray into an array of key-value pairs
-            const updatedOldValueArray = Object.entries(state.oldValueArray).filter(
-                ([key, value]) => value !== newValue
-            );
-    
-            // Convert back to an object
-            const newOldValueArray = Object.fromEntries(updatedOldValueArray);
-    
+
+            // // Convert oldValueArray into an array of key-value pairs
+            // const updatedOldValueArray = Object.entries(state.oldValueArray).filter(
+            //     ([key, value]) => value !== newValue
+            // );
+
+            // // Convert back to an object
+            // const newOldValueArray = Object.fromEntries(updatedOldValueArray);
+
             dispatch({
                 type: "SET_FIELDS",
                 payload: {
                     newValueArray: [...state.newValueArray, newValue],
                     newValue: "",
-                    oldValueArray: newOldValueArray, // Updated oldValueArray
+                    // oldValueArray: [], // Updated oldValueArray
                 },
             });
         }
     };
-    
+
     const handleKeyPress_old = (e) => {
         if (e.key === "Enter" && state.newValue.trim() !== "") {
             // Ensure values exist and find the next unique key
             const existingKeys = Object.keys(state.oldValueArray).map(Number);
             const nextKey = existingKeys.length > 0 ? Math.max(...existingKeys) + 1 : 1;
-    
+
             dispatch({
                 type: "SET_FIELDS",
                 payload: {
@@ -100,12 +100,12 @@ export default function ValueIndex({ auth, attributes }) {
                         ...state.newValueArray,
                         state.newValue.trim(),
                     ],
-                    newValue: "", 
+                    newValue: "",
                 },
             });
         }
     };
-    
+
     const removeAttribute = (id) => {
         dispatch({
             type: "SET_FIELD",
@@ -208,20 +208,21 @@ export default function ValueIndex({ auth, attributes }) {
                 <form onSubmit={handleAttributeValueSubmit} className="p-4">
                     <div className="flex flex-wrap gap-2 pb-4">
                         {
-                            Object.entries(state.oldValueArray).map(([id, value]) => (
-                                <span
-                                    key={id}
-                                    className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
-                                >
-                                    {value}
-                                    <button
-                                        onClick={() => removeAttribute(Number(id))}
-                                        className="ml-2 bg-red-500 text-white rounded-full px-2 hover:bg-red-700 transition"
+                            Array.isArray(state.oldValueArray) &&
+                                state.oldValueArray?.map((attr, index) => (
+                                    <span
+                                        key={index}
+                                        className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
                                     >
-                                        ✕
-                                    </button>
-                                </span>
-                            ))
+                                        {attr.value}
+                                        <button
+                                            onClick={() => removeAttribute(Number(attr.attribute_id))}
+                                            className="ml-2 bg-red-500 text-white rounded-full px-2 hover:bg-red-700 transition"
+                                        >
+                                            ✕
+                                        </button>
+                                    </span>
+                                ))
                         }
                     </div>
                     <div className="mb-3">
