@@ -4,9 +4,11 @@ import Modal from '@/Components/Modal';
 import SwalAlert from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
 import React, { useState, useReducer, useCallback } from "react";
+import { useRef } from "react";
 
 export default function ValueIndex({ auth, attributes }) {
     const initialState = {
+        attributeId: "",
         name: "",
         newValue: "",
         oldValue: [],
@@ -27,6 +29,7 @@ export default function ValueIndex({ auth, attributes }) {
         }
     };
 
+    const inputRef = useRef(null); // Step 1: Create ref
     const [state, dispatch] = useReducer(reducer, initialState);
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [currentAttrId, setCurrentAttrId] = useState(null);
@@ -41,17 +44,16 @@ export default function ValueIndex({ auth, attributes }) {
     };
 
     const openModal = (attr = null) => {
-        // console.log(attr); // Debugging
         if (attr) {
             setCurrentAttrId(attr.id);
             dispatch({
                 type: "SET_FIELDS",
                 payload: {
+                    attributeId: attr.attribute_id,
                     name: attr.name,
                     newValue: "",
                     oldValue: attr.valueArray,
                     newValueArray: [],
-                    // oldValueArray: attr.valueArray,
                 },
             });
         } else {
@@ -68,62 +70,63 @@ export default function ValueIndex({ auth, attributes }) {
             value: e.target.value,
         });
     };
-    const handleKeyPress = useCallback(
-        (e) => {
-            if (e.type === "click" || (e.key === "Enter" && state.newValue.trim() !== "")) {
-                const newValue = state.newValue.trim();
 
-                // Collect all existing attribute_ids from oldValue and newValueArray
-                const existingKeys = new Set([
-                    ...state.oldValue.map(item => item.attribute_id),
-                    ...state.newValueArray.map(item => item.attribute_id),
-                ]);
+    const handleAddAttribute = (e) => {
+        e.preventDefault();
+        const newValue = state.newValue.trim();
+        if (!newValue) {
+            SwalAlert('warning', 'Attribute value is required.');
+            return;
+        }
 
-                // Find the smallest available unique attribute_id
-                let nextKey = 1;
-                while (existingKeys.has(nextKey)) {
-                    nextKey++;
-                }
+        // Collect all existing ids from oldValue and newValueArray
+        const existingKeys = new Set([
+            ...state.oldValue.map(item => item.id),
+            ...state.newValueArray.map(item => item.id),
+        ]);
 
-                console.log("Updating state with:", newValue, "nextKey", nextKey);
+        // Find the smallest available unique id
+        let nextKey = 1;
+        while (existingKeys.has(nextKey)) {
+            nextKey++;
+        }
 
-                dispatch({
-                    type: "SET_FIELDS",
-                    payload: {
-                        newValueArray: [
-                            ...state.newValueArray,
-                            { attribute_id: nextKey, value: newValue },
-                        ],
-                        newValue: "",
-                    },
-                });
-            }
-        },
-        [state.newValue, state.newValueArray, state.oldValue]
-    );
+        dispatch({
+            type: "SET_FIELDS",
+            payload: {
+                newValueArray: [...state.newValueArray, {
+                    id: nextKey,
+                    value: newValue,
+                }],
+                newValue: "",
+            },
+        });
+        setTimeout(() => {
+            inputRef.current?.focus(); // Step 3: Refocus input
+        }, 10);
+    };
 
-    const removeAttribute = (e, id, type) => {
-        e.stopPropagation(); // Prevents unintended event bubbling
-        console.log(e, type, id, "removeAttribute");
+    const removeAttribute = (id, type) => {
+        console.log(id, "removeAttribute");
 
         if (type === 'new') {
             dispatch({
                 type: "SET_FIELDS",
                 payload: {
                     newValueArray: state.newValueArray.filter(
-                        (item) => item.attribute_id !== id
+                        (item) => item.id !== id
                     ),
                 },
             });
         } else {
-            // dispatch({
-            //     type: "SET_FIELDS",
-            //     payload: {
-            //         oldValue: state.oldValue.filter(
-            //             (item) => item.attribute_id !== id
-            //         ),
-            //     },
-            // });
+            dispatch({
+                type: "SET_FIELDS",
+                payload: {
+                    oldValue: state.oldValue.filter(
+                        (item) => item.id !== id
+                    ),
+                },
+            });
         }
     };
 
@@ -132,18 +135,16 @@ export default function ValueIndex({ auth, attributes }) {
     const handleAttributeValueSubmit = async (e) => {
         e.preventDefault();
 
-        // if (!state.value.trim()) {
-        //     SwalAlert('warning', 'Attribute value is required.');
-        //     return;
-        // }
-        return false;
-
+        console.log(state);
+        if (state.newValueArray.length === 0) {
+            SwalAlert('warning', 'Please add attribute value.');
+            return;
+        }
         try {
-            const response = await axios.post('/attribute-value-store', {
-                attribute_id: currentAttrId,
-                value: state.value,
-            });
-
+            const url = '/attribute-values-store';
+            const method = axios.post;
+            const response = await method(url, state);
+            // const response = await axios.post('/attribute-value-store', { state });
             if (response.data.status) {
                 SwalAlert('success', 'Attribute value added!');
                 setAttrList((prevList) => {
@@ -220,56 +221,61 @@ export default function ValueIndex({ auth, attributes }) {
             <Modal show={isOpenModal} title="Add Attribute Value" onClose={closeModal}>
                 <form onSubmit={handleAttributeValueSubmit} className="">
                     <span className="w-full p-1 bg-green-600 text-white border border-green-300 rounded flex justify-center gap-2 pb-2 font-bold">{state.name}</span>
-                    <div className="mb-3 pt-6">
-                        <label className="block text-gray-700">
-                            Old Attribute Values <span className="text-red-600 items-justify-end semi-bold">(x for remove)</span>
-                        </label>
-                        <div className="w-full p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-2">
-                            {
-                                Array.isArray(state.oldValue) &&
-                                state.oldValue?.map((attr, index) => (
-                                    <span
-                                        key={index}
-                                        className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
-                                    >
-                                        {attr.value}
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Prevent bubbling
-                                                removeAttribute(e, attr.attribute_id, 'old')
-                                            }}
-                                            className="ml-2 bg-red-500 text-white rounded-full px-2 hover:bg-red-700 transition"
+
+
+                    {
+                        state.oldValue.length > 0 &&
+                        <div className="mb-3 pt-6">
+                            <label className="block text-gray-700">
+                                Old Attribute Values <span className="text-red-600 items-justify-end semi-bold">(x for remove)</span>
+                            </label>
+                            <div className="w-full p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-2">
+                                {
+                                    state.oldValue?.map((attr, index) => (
+                                        <span
+                                            key={index}
+                                            className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
                                         >
-                                            ✕
-                                        </button>
-                                    </span>
-                                ))
-                            }
+                                            {attr.value}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    removeAttribute(attr.id, 'old')
+                                                }}
+                                                className="ml-2 bg-red-500 text-white rounded-full px-2 hover:bg-red-700 transition"
+                                            >
+                                                ✕
+                                            </button>
+                                        </span>
+                                    ))
+                                }
+                            </div>
                         </div>
-                    </div>
+                    }
+
                     <div className="mb-3">
                         <label className="block text-gray-700">New Attribute Values</label>
-                        <div className="w-full p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-2">
+                        <div className="w-full h-13 p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-2">
                             {
-                                Array.isArray(state.newValueArray) &&
-                                state.newValueArray?.map((attr, index) => (
-                                    <span
-                                        key={index}
-                                        className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
-                                    >
-                                        {attr.value}
-                                        <button
-                                            // onClick={() => removeAttribute(Number(attr.attribute_id))}
-                                            onClick={(e) => {
-                                                e.stopPropagation(); // Prevent bubbling
-                                                removeAttribute(e, attr.attribute_id, 'new');
-                                            }}
-                                            className="ml-2 bg-red-500 text-white rounded-full px-2 hover:bg-red-700 transition"
+                                state.newValueArray.length > 0 ?
+                                    state.newValueArray?.map((attr, index) => (
+                                        <span
+                                            key={index}
+                                            className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
                                         >
-                                            ✕
-                                        </button>
-                                    </span>
-                                ))
+                                            {attr.value}
+                                            <button
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Prevent bubbling
+                                                    removeAttribute(attr.id, 'new');
+                                                }}
+                                                className="ml-2 bg-red-500 text-white rounded-full px-2 hover:bg-red-700 transition"
+                                            >
+                                                ✕
+                                            </button>
+                                        </span>
+                                    ))
+                                    : <span className="text-red-600 flex justify-center gap-2 font-bold uppercase">Not add new values</span>
                             }
                         </div>
                     </div>
@@ -279,14 +285,14 @@ export default function ValueIndex({ auth, attributes }) {
                         </label>
                         <div className=" flex items-center">
                             <input
+                                ref={inputRef} // Step 2: Assign ref to input
                                 type="text"
                                 name="newValue"
                                 value={state.newValue}
                                 onChange={handleChange}
-                                onKeyDown={handleKeyPress}
                                 className="w-full p-2 border border-gray-300 rounded mr-2" // Added margin-right
                             />
-                            <button onClick={handleKeyPress} className="bg-gray-900 text-white p-2 rounded">+</button>
+                            <button onClick={handleAddAttribute} className="bg-gray-900 text-white p-2 rounded">+</button>
                         </div>
                     </div>
                     <div className="flex justify-center">

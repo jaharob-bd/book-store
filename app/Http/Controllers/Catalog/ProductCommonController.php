@@ -260,14 +260,14 @@ class ProductCommonController extends Controller
 
         $data['attributes'] = $attributes->map(function ($attribute) {
             return [
-                'id' => $attribute->id,
+                'attribute_id' => $attribute->id,
                 'name' => $attribute->name,
                 'values' => $attribute->attributeValues->pluck('value')->implode(', '),
                 'valueArray' => $attribute->attributeValues
                 ->where('attribute_id', $attribute->id) // Filter where value is "Black"
                 ->map(function ($attributeValue) {
                     return [
-                        'attribute_id' => $attributeValue->id,
+                        'id' => $attributeValue->id,
                         'value' => $attributeValue->value
                     ];
                 })
@@ -276,5 +276,21 @@ class ProductCommonController extends Controller
         });
         // return $data['attributes'];
         return Inertia::render('Catalog/Attribute/ValueIndex', $data);
+    }
+    // attributes values store
+    public function attribute_values_store(Request $request)
+    {
+        // echo 555; exit;
+        $data = $request->all();
+        dd($data);
+        // $request->validate([
+        //     'attribute_id' =>'required|exists:attributes,id',
+        //     'value' =>'required|string|max:255',
+        // ]);
+
+        // $attributeValue = AttributeValue::create([
+        //     'attribute_id' => $request->attribute_id,
+        //     'value' => $request->value,
+        // ]);
     }
 }
