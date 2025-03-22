@@ -46,7 +46,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/attribute-update/{id}', [ProductCommonController::class, 'attribute_update'])->name('attribute-update');
     // Attribute values
     Route::get('/attribute-values', [ProductCommonController::class, 'attribute_values_index'])->name('attribute-values');
-    Route::post('/attribute-values-store', [ProductCommonController::class, 'attribute_values_store'])->name('attribute-values-store');
+    Route::post('/attribute-values-store', [ProductCommonController::class, 'attributeValuesStore'])->name('attribute-values-store');
     Route::put('/attribute-values-update/{id}', [ProductCommonController::class, 'attribute_values_update'])->name('attribute-values-update');
     // specifications
     Route::get('/specifications', [ProductCommonController::class, 'specification_index'])->name('specifications');

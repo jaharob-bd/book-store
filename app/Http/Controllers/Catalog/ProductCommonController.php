@@ -17,6 +17,7 @@ use App\Models\Catalog\Product;
 use App\Models\Catalog\Category;
 use App\Models\Catalog\Tag;
 use App\Models\Catalog\Attribute;
+use App\Models\Catalog\AttributeValue;
 use App\Models\Catalog\Specification;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -264,33 +265,75 @@ class ProductCommonController extends Controller
                 'name' => $attribute->name,
                 'values' => $attribute->attributeValues->pluck('value')->implode(', '),
                 'valueArray' => $attribute->attributeValues
-                ->where('attribute_id', $attribute->id) // Filter where value is "Black"
-                ->map(function ($attributeValue) {
-                    return [
-                        'id' => $attributeValue->id,
-                        'value' => $attributeValue->value
-                    ];
-                })
-                ->values() // $attribute->attributeValues->pluck('value', 'id')->toArray()
+                    ->where('attribute_id', $attribute->id) // Filter where value is "Black"
+                    ->map(function ($attributeValue) {
+                        return [
+                            'id' => $attributeValue->id,
+                            'value' => $attributeValue->value
+                        ];
+                    })
+                    ->values() // $attribute->attributeValues->pluck('value', 'id')->toArray()
             ];
         });
         // return $data['attributes'];
         return Inertia::render('Catalog/Attribute/ValueIndex', $data);
     }
     // attributes values store
-    public function attribute_values_store(Request $request)
+    public function attributeValuesStore(Request $request)
     {
-        // echo 555; exit;
-        $data = $request->all();
-        dd($data);
-        // $request->validate([
-        //     'attribute_id' =>'required|exists:attributes,id',
-        //     'value' =>'required|string|max:255',
-        // ]);
+        $data        = $request->all();
+        try {
+            DB::beginTransaction();
+            $attributeId = $data['attributeId'];
+            $requestNewValues   = $data['newValues'];
+            $requestOldValues   = $data['oldValues'];
+            $currentAttributeValues = AttributeValue::where('attribute_id', $attributeId)->pluck('id')->toArray();
+            $oldValueIds = array_column($requestOldValues, 'id');
+            $deleteIds = array_diff($currentAttributeValues, $oldValueIds);
+            if (!empty($deleteIds)) {
+                AttributeValue::whereIn('id', $deleteIds)->delete();
+            }
+            if (!empty($requestNewValues)) {
+                $newData = array();
+                foreach ($requestNewValues as $newValue) {
+                    $newData[] = [
+                        'attribute_id' => $attributeId,
+                        'value' => $newValue['value']
+                    ];
+                }
+                // insert new values
+                AttributeValue::insert($newData);
+            }
 
-        // $attributeValue = AttributeValue::create([
-        //     'attribute_id' => $request->attribute_id,
-        //     'value' => $request->value,
-        // ]);
+            $attribute = Attribute::with('attributeValues')->where('id', $attributeId)->first();
+
+            if (!$attribute) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Attribute not found',
+                ], 404);
+            }
+
+            $newValues = $attribute->attributeValues->map(function ($attributeValue) {
+                return [
+                    'id' => $attributeValue->id,
+                    'value' => $attributeValue->value,
+                ];
+            });
+            DB::commit();
+            return response()->json([
+                'status' => true,
+                'message' => 'Attribute values updated successfully',
+                'values' => implode(', ', $newValues->pluck('value')->toArray()),
+                'valueArray' => $newValues,
+                'deletedIds' => $deleteIds ?? [],
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'status' => false,
+                'message' => 'Failed to update attribute values: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 }

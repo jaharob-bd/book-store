@@ -3,7 +3,7 @@ import { Head } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
 import SwalAlert from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
-import React, { useState, useReducer, useCallback } from "react";
+import React, { useState, useReducer, useCallback, useEffect } from "react";
 import { useRef } from "react";
 
 export default function ValueIndex({ auth, attributes }) {
@@ -11,9 +11,8 @@ export default function ValueIndex({ auth, attributes }) {
         attributeId: "",
         name: "",
         newValue: "",
-        oldValue: [],
-        newValueArray: [],
-        // oldValueArray: [],
+        oldValues: [],
+        newValues: [],
     };
 
     const reducer = (state, action) => {
@@ -35,8 +34,6 @@ export default function ValueIndex({ auth, attributes }) {
     const [currentAttrId, setCurrentAttrId] = useState(null);
     const [attrList, setAttrList] = useState(attributes);
 
-    console.log(state); // Debugging
-
     const closeModal = () => {
         setIsOpenModal(false);
         dispatch({ type: "RESET" });
@@ -45,15 +42,15 @@ export default function ValueIndex({ auth, attributes }) {
 
     const openModal = (attr = null) => {
         if (attr) {
-            setCurrentAttrId(attr.id);
+            setCurrentAttrId(attr.attribute_id);
             dispatch({
                 type: "SET_FIELDS",
                 payload: {
                     attributeId: attr.attribute_id,
                     name: attr.name,
                     newValue: "",
-                    oldValue: attr.valueArray,
-                    newValueArray: [],
+                    oldValues: attr.valueArray,
+                    newValues: [],
                 },
             });
         } else {
@@ -79,10 +76,19 @@ export default function ValueIndex({ auth, attributes }) {
             return;
         }
 
-        // Collect all existing ids from oldValue and newValueArray
+        // Proper duplicate check in both newValues and oldValues
+        if (
+            state.newValues.some(item => item.value.toLowerCase() === newValue.toLowerCase()) ||
+            state.oldValues.some(item => item.value.toLowerCase() === newValue.toLowerCase())
+        ) {
+            SwalAlert('warning', 'Attribute value already exists.');
+            return;
+        }
+
+        // Collect all existing ids from oldValues and newValues
         const existingKeys = new Set([
-            ...state.oldValue.map(item => item.id),
-            ...state.newValueArray.map(item => item.id),
+            ...state.oldValues.map(item => item.id),
+            ...state.newValues.map(item => item.id),
         ]);
 
         // Find the smallest available unique id
@@ -94,7 +100,7 @@ export default function ValueIndex({ auth, attributes }) {
         dispatch({
             type: "SET_FIELDS",
             payload: {
-                newValueArray: [...state.newValueArray, {
+                newValues: [...state.newValues, {
                     id: nextKey,
                     value: newValue,
                 }],
@@ -107,13 +113,11 @@ export default function ValueIndex({ auth, attributes }) {
     };
 
     const removeAttribute = (id, type) => {
-        console.log(id, "removeAttribute");
-
         if (type === 'new') {
             dispatch({
                 type: "SET_FIELDS",
                 payload: {
-                    newValueArray: state.newValueArray.filter(
+                    newValues: state.newValues.filter(
                         (item) => item.id !== id
                     ),
                 },
@@ -122,7 +126,7 @@ export default function ValueIndex({ auth, attributes }) {
             dispatch({
                 type: "SET_FIELDS",
                 payload: {
-                    oldValue: state.oldValue.filter(
+                    oldValues: state.oldValues.filter(
                         (item) => item.id !== id
                     ),
                 },
@@ -130,31 +134,36 @@ export default function ValueIndex({ auth, attributes }) {
         }
     };
 
-
     // Handle the attribute value submission
     const handleAttributeValueSubmit = async (e) => {
         e.preventDefault();
 
-        console.log(state);
-        if (state.newValueArray.length === 0) {
+        if (state.newValues.length === 0) {
             SwalAlert('warning', 'Please add attribute value.');
             return;
         }
+
         try {
             const url = '/attribute-values-store';
             const method = axios.post;
             const response = await method(url, state);
-            // const response = await axios.post('/attribute-value-store', { state });
-            if (response.data.status) {
-                SwalAlert('success', 'Attribute value added!');
+            if (response.data.status === true) {
                 setAttrList((prevList) => {
-                    return prevList.map((attr) =>
-                        attr.id === currentAttrId
-                            ? { ...attr, values: [...attr.values, response.data.attribute_value] }
-                            : attr
-                    );
+                    const updatedList = prevList.map((attr) => {
+                        return attr.attribute_id === currentAttrId
+                            ? {
+                                ...attr,
+                                values: response.data.values, // Handle empty values case
+                                valueArray: response.data.valueArray, // Ensure valueArray exists
+                            }
+                            : attr;
+                    });
+
+                    return updatedList;
                 });
-                dispatch({ type: 'SET_FIELD', field: 'value', value: '' });
+
+                SwalAlert('success', 'Attribute value added!');
+                closeModal(); // Optionally close modal after successful addition
             } else {
                 SwalAlert('warning', response.data.message || 'Something went wrong!');
             }
@@ -219,19 +228,19 @@ export default function ValueIndex({ auth, attributes }) {
 
             {/* Modal for adding attribute values */}
             <Modal show={isOpenModal} title="Add Attribute Value" onClose={closeModal}>
-                <form onSubmit={handleAttributeValueSubmit} className="">
+                <form className="">
                     <span className="w-full p-1 bg-green-600 text-white border border-green-300 rounded flex justify-center gap-2 pb-2 font-bold">{state.name}</span>
 
 
                     {
-                        state.oldValue.length > 0 &&
+                        state.oldValues.length > 0 &&
                         <div className="mb-3 pt-6">
                             <label className="block text-gray-700">
                                 Old Attribute Values <span className="text-red-600 items-justify-end semi-bold">(x for remove)</span>
                             </label>
                             <div className="w-full p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-2">
                                 {
-                                    state.oldValue?.map((attr, index) => (
+                                    state.oldValues?.map((attr, index) => (
                                         <span
                                             key={index}
                                             className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
@@ -257,8 +266,8 @@ export default function ValueIndex({ auth, attributes }) {
                         <label className="block text-gray-700">New Attribute Values</label>
                         <div className="w-full h-13 p-2 border border-red-300 rounded flex flex-wrap gap-2 pb-2">
                             {
-                                state.newValueArray.length > 0 ?
-                                    state.newValueArray?.map((attr, index) => (
+                                state.newValues.length > 0 ?
+                                    state.newValues?.map((attr, index) => (
                                         <span
                                             key={index}
                                             className="bg-blue-100 text-blue-700 px-3 py-1 rounded flex items-center"
@@ -297,7 +306,7 @@ export default function ValueIndex({ auth, attributes }) {
                     </div>
                     <div className="flex justify-center">
                         <button
-                            type="submit"
+                            onClick={handleAttributeValueSubmit}
                             className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
                         >
                             Save Value
