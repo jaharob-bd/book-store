@@ -1,6 +1,7 @@
-import React from 'react'
+import React from 'react';
 import { Link } from '@inertiajs/react';
 import { useTranslation } from "react-i18next";
+import { route } from 'ziggy-js'; // ✅ Use named import
 
 function Sidebar({ isOpen, subMenuHandler, modules }) {
     const { t } = useTranslation();
@@ -11,35 +12,24 @@ function Sidebar({ isOpen, subMenuHandler, modules }) {
                 <img src="https://placehold.co/32x32" alt="" className="w-12 h12 rounded object-cover" />
             </a>
             <ul className="nav-links mt-4 space-y-2">
-                {/* start dynamic submenu */}
-                {
-                    modules.map((module, idx) => {
-                        if (module.route) {
-                            return (
-                                <li key={idx} className="active hover:bg-cyan-400">
-                                    <Link href={route(`${module.route}`)}>
-                                        <i className={module.menu_icon}></i>
-                                        <span className="link_name">{t(`${module.menu_name}`)}</span>
-                                    </Link>
-                                </li>
-                            )
-                        } else {
-                            return (
-                                <li key={idx} className="active hover:bg-cyan-400">
-                                    <a onClick={() => { subMenuHandler('show', module.submenu) }}>
-                                        <i className={module.menu_icon}></i>
-                                        <span className="link_name">{t(`${module.menu_name}`)}</span>
-                                    </a>
-                                </li>
-                            )
-                        }
-
-                    })
-                }
-                {/* end submenu */}
+                {modules.map((module, idx) => (
+                    <li key={idx} className="active hover:bg-cyan-400">
+                        {module.route ? (
+                            <Link href={route(module.route)}>
+                                <i className={module.menu_icon}></i>
+                                <span className="link_name">{t(module.menu_name)}</span>
+                            </Link>
+                        ) : (
+                            <a onClick={() => subMenuHandler('show', module.submenu)}>
+                                <i className={module.menu_icon}></i>
+                                <span className="link_name">{t(module.menu_name)}</span>
+                            </a>
+                        )}
+                    </li>
+                ))}
             </ul>
         </div>
-    )
+    );
 }
 
-export default Sidebar
+export default Sidebar;
