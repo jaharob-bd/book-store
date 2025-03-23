@@ -299,9 +299,9 @@ export default function ValueIndex({ auth, attributes }) {
                                 name="newValue"
                                 value={state.newValue}
                                 onChange={handleChange}
-                                className="w-full p-2 border border-gray-300 rounded mr-2" // Added margin-right
+                                className="w-[70%] p-2 border border-gray-300 rounded mr-2" // Added margin-right
                             />
-                            <button onClick={handleAddAttribute} className="bg-gray-900 text-white p-2 rounded">+</button>
+                            <button onClick={handleAddAttribute} className="bg-gray-900 text-white p-2 w-[30%] rounded">+ Add Value</button>
                         </div>
                     </div>
                     <div className="flex justify-center">
@@ -309,7 +309,7 @@ export default function ValueIndex({ auth, attributes }) {
                             onClick={handleAttributeValueSubmit}
                             className="px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
                         >
-                            Save Value
+                            Save
                         </button>
                     </div>
                 </form>
