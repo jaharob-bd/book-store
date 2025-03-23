@@ -19,6 +19,7 @@ export const resources = {
             "employee": "Employee",
             "HRM": "HRM",
             "position": "Position",
+            "ecommerce": "Ecommerce",
         }
     },
     "ar": {
@@ -41,6 +42,7 @@ export const resources = {
             "employee": "تسجيل",
             "HRM": "الإلكت",
             "position": "الإلكتروني",
+            "ecommerce":"لإلكتروني",
         }
     },
     "ms": {
