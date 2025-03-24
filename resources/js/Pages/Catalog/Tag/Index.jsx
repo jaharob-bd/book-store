@@ -2,7 +2,7 @@ import React, { useState, useReducer } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import Modal from '@/Components/Modal';
-import SwalAlert from '@/Components/Alert/SwalAlert';
+import { SwalAlert }  from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
 
 export default function Index({ auth, tags }) {

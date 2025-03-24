@@ -11,7 +11,7 @@ import { calculateDiscount } from '@/Utils/PriceCalculation';
 import { calculateVAT } from '@/Utils/PriceCalculation';
 import { calculateGrandTotal } from '@/Utils/PriceCalculation';
 import { OrderStatus } from './OrderStatus';
-import SwalAlert from '@/Components/Alert/SwalAlert'
+import { SwalAlert }  from '@/Components/Alert/SwalAlert'
 import { pdf } from '@react-pdf/renderer';
 import OrderInvoiceDownload from './OrderInvoiceDownload';
 

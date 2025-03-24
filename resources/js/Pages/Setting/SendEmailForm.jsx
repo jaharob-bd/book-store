@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import SwalAlert from '@/Components/Alert/SwalAlert';
+import { SwalAlert }  from '@/Components/Alert/SwalAlert';
 // import layout
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import Select from 'react-select';

@@ -3,31 +3,29 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { useTranslation } from "react-i18next";
 import Modal from '@/Components/Modal';
-import { useForm } from '@inertiajs/react';
-import Swal from 'sweetalert2';
 import { EmployeeList } from './Components/EmployeeList';
+import EmployeeForm from './Components/EmployeeForm';
 
-function Employee({ auth }) {
+function EmployeeCreate({ auth, employs }) {
     const { t } = useTranslation();
     const [isOpenModal, setIsOpenModal] = useState(false);
-    const [products, setProducts] = useState([]);
+    const [employees, setEmployees] = useState(employs);
     const closeModal = () => {
         setIsOpenModal(false);
-        reset();
     };
     const openModal = () => {
         setIsOpenModal(true);
     };
+
     return (
-        <AuthenticatedLayout user={auth.user} header={'Product List'}>
+        <AuthenticatedLayout user={auth.user} header={'Employee List'}>
             <Head title="Empoyee" />
-            <EmployeeList openModal={openModal} products={products} />
-            <Modal show={isOpenModal} title='Create New Product' maxWidth='4xl' onClose={closeModal}>
-                <h1>Employee Page</h1>
-                <p>Welcome to the Employee Page!</p>
+            <EmployeeList {...{ openModal, employees }} />
+            <Modal {...{ show: isOpenModal, title: 'Create New Employee', maxWidth: '4xl', onClose: closeModal }} >
+                <EmployeeForm {...{ employees, setEmployees }} />
             </Modal>
         </AuthenticatedLayout>
     )
 }
 
-export default Employee
+export default EmployeeCreate

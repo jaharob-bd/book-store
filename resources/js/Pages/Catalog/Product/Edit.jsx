@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, router, useForm } from '@inertiajs/react';
-import SwalAlert from '@/Components/Alert/SwalAlert';
+import { SwalAlert }  from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
 import ProductAttribute from '../Components/ProductAttribute';
 import ProductTag from '../Components/ProductTag';

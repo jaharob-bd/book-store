@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SwalAlert from '@/Components/Alert/SwalAlert';
+import { SwalAlert }  from '@/Components/Alert/SwalAlert';
 const ProductSpecification = ({ specifications, formData, setFormData }) => {
     const [spec, setSpec] = useState('');
     const [specInput, setSpecInput] = useState('');

@@ -73,55 +73,53 @@ export default function Index({ auth, products }) {
             <Head title="Product" />
             <List openModal={openModal} products={products} />
             <Modal show={isOpenModal} title='Create New Product' maxWidth='2xl' onClose={closeModal}>
-                <div>
-                    <form onSubmit={handleSubmit} className="p-2 mx-auto dark:bg-gray-800">
-                        <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
-                            <div>
-                                <label className="dark:text-gray-200" htmlFor="name">Name <span className="text-red-600">*</span></label>
-                                <input
-                                    name="name"
-                                    type="text"
-                                    className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                                    value={data.name}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div>
-                                <label className="dark:text-gray-200" htmlFor="product_url">URL Key <span className="text-red-600">* {data.product_url}</span></label>
-                                <input
-                                    name="product_url"
-                                    type="text"
-                                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                                    value={data.product_url}
-                                    onChange={handleChange}
-                                />
-                            </div>
-                            <div>
-                                <label className="dark:text-gray-200" htmlFor="sku">SKU <span className="text-red-600">*</span></label>
-                                <input
-                                    name="sku"
-                                    type="text"
-                                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                                    value={data.sku}
-                                    onChange={handleChange} />
-                            </div>
-                            <div>
-                                <label className="dark:text-gray-200" htmlFor="product_code">Product Code <span className="text-red-600">*</span></label>
-                                <input
-                                    name="product_code"
-                                    type="text"
-                                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
-                                    value={data.product_code}
-                                    onChange={handleChange} />
-                            </div>
+                <form onSubmit={handleSubmit} className="p-2 mx-auto dark:bg-gray-800">
+                    <div className="grid grid-cols-1 gap-1 sm:grid-cols-2">
+                        <div>
+                            <label className="dark:text-gray-200" htmlFor="name">Name <span className="text-red-600">*</span></label>
+                            <input
+                                name="name"
+                                type="text"
+                                className="block w-full px-3 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                                value={data.name}
+                                onChange={handleChange}
+                            />
                         </div>
-                        <div className="flex justify-end mt-6">
-                            <button className="px-6 py-2 leading-5 transition-colors duration-200 transform  bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br">
-                                Save Product
-                            </button>
+                        <div>
+                            <label className="dark:text-gray-200" htmlFor="product_url">URL Key <span className="text-red-600">* {data.product_url}</span></label>
+                            <input
+                                name="product_url"
+                                type="text"
+                                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                                value={data.product_url}
+                                onChange={handleChange}
+                            />
                         </div>
-                    </form>
-                </div>
+                        <div>
+                            <label className="dark:text-gray-200" htmlFor="sku">SKU <span className="text-red-600">*</span></label>
+                            <input
+                                name="sku"
+                                type="text"
+                                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                                value={data.sku}
+                                onChange={handleChange} />
+                        </div>
+                        <div>
+                            <label className="dark:text-gray-200" htmlFor="product_code">Product Code <span className="text-red-600">*</span></label>
+                            <input
+                                name="product_code"
+                                type="text"
+                                className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-500 dark:focus:border-blue-500 focus:outline-none focus:ring"
+                                value={data.product_code}
+                                onChange={handleChange} />
+                        </div>
+                    </div>
+                    <div className="flex justify-end mt-6">
+                        <button className="px-6 py-2 leading-5 transition-colors duration-200 transform  bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br">
+                            Save Product
+                        </button>
+                    </div>
+                </form>
             </Modal>
         </AuthenticatedLayout>
     );

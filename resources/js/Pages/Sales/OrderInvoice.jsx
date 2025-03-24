@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router, useForm, Link } from '@inertiajs/react';
 import Select from 'react-select';
-import SwalAlert from '@/Components/Alert/SwalAlert';
+import { SwalAlert }  from '@/Components/Alert/SwalAlert';
 import OrderPrint from './OrderPrint';
 import OrderLayout from '@/Layouts/InvoiceLayout';
 const logo = 'assets/images/company-logo.svg'

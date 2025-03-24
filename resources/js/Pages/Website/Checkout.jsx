@@ -3,7 +3,7 @@ import { useState, useEffect, useMemo } from 'react';
 import WebLayout from './Layout/WebLayout';
 import Breadcrumb from './Components/Breadcrumb';
 import { Head, router, useForm } from '@inertiajs/react';
-import SwalAlert from '@/Components/Alert/SwalAlert';
+import { SwalAlert }  from '@/Components/Alert/SwalAlert';
 import { useContext } from 'react';
 import { CartContext } from './context/CartContext';
 

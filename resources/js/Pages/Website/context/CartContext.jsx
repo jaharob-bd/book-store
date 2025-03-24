@@ -1,5 +1,5 @@
 // context/CartContext.js
-import SwalAlert from '@/Components/Alert/SwalAlert';
+import { SwalAlert }  from '@/Components/Alert/SwalAlert';
 import React, { createContext, useState, useEffect } from 'react';
 import secureLocalStorage from 'react-secure-storage';
 // Create Cart Context

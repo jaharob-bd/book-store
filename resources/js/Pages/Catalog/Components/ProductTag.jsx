@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import SwalAlert from "@/Components/Alert/SwalAlert";
+import { SwalAlert }  from "@/Components/Alert/SwalAlert";
 
 const ProductTag = ({ tags, formData, setFormData }) => {
     const [newTag, setNewTag] = useState("");

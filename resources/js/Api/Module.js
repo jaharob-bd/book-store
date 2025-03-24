@@ -196,7 +196,7 @@ export const modules = [
                 parent_id: 6,
                 menu_name: "Department",
                 controller_name: "",
-                route: "positions"
+                route: "departments"
             },
             {
                 id: 3,
@@ -204,6 +204,13 @@ export const modules = [
                 menu_name: "Position",
                 controller_name: "",
                 route: "positions"
+            },
+            {
+                id: 4,
+                parent_id: 6,
+                menu_name: "Job-title",
+                controller_name: "",
+                route: "job-titles"
             }
         ]
     },

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Select from "react-select";
-import SwalAlert from "@/Components/Alert/SwalAlert";
+import { SwalAlert }  from "@/Components/Alert/SwalAlert";
 
 const ProductAttribute = ({ formData, setFormData }) => {
   const [selectedAttribute, setSelectedAttribute] = useState(null);

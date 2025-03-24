@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import SwalAlert from '@/Components/Alert/SwalAlert';
+import { SwalAlert }  from '@/Components/Alert/SwalAlert';
 import axios from 'axios';
 
 const ProductCategory = ({ categories, setCategories, formData, setFormData }) => {

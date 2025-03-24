@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Catalog\Product;
 use App\Models\Consumer\Customer;
+use App\Models\HRM\Employee;
 use App\Models\Inventory\Stock\Stock;
 use App\Models\Inventory\Stock\StockChd;
 use App\Models\Inventory\Stock\StockMst;
@@ -25,9 +26,34 @@ class HRMController extends Controller
 {
     function index()
     {
-        $data['orders'] = Order::with(['customer', 'orderDetails'])->orderby('id', 'DESC')->get();
-        return Inertia::render('HRM/Employee', $data);
+        $data['employs'] = Employee::orderby('id', 'DESC')->get();
+        return Inertia::render('HRM/EmployeeCreate', $data);
     }
+    // store employee information
+    public function storeEmployee(Request $request)
+    {
+        $data = $request->all();
+        $validatedData = $request->validate([
+            'full_name'     => 'required|string|max:255',
+            'email'         => 'nullable|string|email|max:255|unique:hr_employees',
+            'mobile_number' => 'required|string|max:15|unique:hr_employees',
+            'date_of_birth' => 'required|date',
+        ]);
+        $validatedData['status'] = 1;
+        $insertedData = Employee::create($validatedData);
+        return response()->json([
+            'status'  => true,
+            'message' => 'Employee add successfully',
+            'data'    => $insertedData,
+        ], 200);
+    }
+
+    function editEmployee($id)
+    {
+        $data['employs'] = Employee::findOrFail($id);
+        return Inertia::render('HRM/EmployeeEdit', $data);
+    }
+
     function departments()
     {
         $data['orders'] = Order::with(['customer', 'orderDetails'])->orderby('id', 'DESC')->get();

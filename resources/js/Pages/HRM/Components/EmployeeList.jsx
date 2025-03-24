@@ -1,51 +1,6 @@
 import { Link } from '@inertiajs/react'
 import React from 'react'
-
-const employees = [
-    {
-        id: 1,
-        name: "John Doe",
-        position: "Software Engineer",
-        department: "IT",
-        email: "johndoe@example.com",
-        phone: "+1234567890",
-        salary: 60000,
-        status: "Active",
-    },
-    {
-        id: 2,
-        name: "Jane Smith",
-        position: "HR Manager",
-        department: "Human Resources",
-        email: "janesmith@example.com",
-        phone: "+1987654321",
-        salary: 55000,
-        status: "Active",
-    },
-    {
-        id: 3,
-        name: "Alice Johnson",
-        position: "Accountant",
-        department: "Finance",
-        email: "alicejohnson@example.com",
-        phone: "+1122334455",
-        salary: 50000,
-        status: "Inactive",
-    },
-    {
-        id: 4,
-        name: "Bob Williams",
-        position: "Sales Executive",
-        department: "Sales",
-        email: "bobwilliams@example.com",
-        phone: "+2233445566",
-        salary: 48000,
-        status: "Active",
-    }
-];
-
-
-export const EmployeeList = ({ openModal, products }) => {
+export const EmployeeList = ({ openModal, employees }) => {
     return (
         <div className="mx-auto sm:px-2">
             <div className="flex gap-2 justify-between items-center max-sm:flex-wrap">
@@ -77,12 +32,13 @@ export const EmployeeList = ({ openModal, products }) => {
                                 </th>
                                 <th className="p-2 text-center">ID</th>
                                 <th className="p-2 text-center">Name</th>
-                                <th className="p-2 text-center">Position</th>
-                                <th className="p-2 text-center">Department</th>
                                 <th className="p-2 text-center">Email</th>
                                 <th className="p-2 text-center">Phone</th>
-                                <th className="p-2 text-center">Salary</th>
+                                <th className="p-2 text-center">DOB</th>
+                                <th className="p-2 text-center">Position</th>
+                                <th className="p-2 text-center">Department</th>
                                 <th className="p-2 text-center">Status</th>
+                                <th className="p-2 text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -92,13 +48,17 @@ export const EmployeeList = ({ openModal, products }) => {
                                         <input type="checkbox" className="from-control" />
                                     </td>
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.id}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.name}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.position}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.department}</td>
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.full_name}</td>
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.email}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.phone}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">${employee.salary.toLocaleString()}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.status}</td>
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.mobile_number}</td>
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.date_of_birth}</td>
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.position_id}</td>
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.department_id}</td>
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.status ? 'Active': 'Inactive'}</td>
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
+                                        <Link href={`/employee-edit/${employee.id}`}>Edit</Link>
+                                        <a href="#" className="ml-2">Delete</a>
+                                    </td>
                                 </tr>
                             ))}
                         </tbody>
