@@ -54,6 +54,75 @@ class HRMController extends Controller
         return Inertia::render('HRM/EmployeeEdit', $data);
     }
 
+
+    public function updateEmployee(Request $request)
+{
+    // Get the data from the request
+    $data = $request->all();
+
+    // Find the employee by their ID
+    $employee = Employee::find($data['id']);
+
+    // If the employee is not found, return an error response
+    if (!$employee) {
+        return response()->json([
+            'status'  => false,
+            'message' => 'Employee not found',
+        ], 404);
+    }
+
+    // Update the employee's data
+    $employee->full_name = $data['full_name'];
+    $employee->mobile_number = $data['mobile_number'];
+    $employee->email = $data['email'];
+    $employee->date_of_birth = $data['date_of_birth'];
+    $employee->nationality = $data['nationality'];
+    $employee->department_id = $data['department_id'];
+    $employee->position_id = $data['position_id'];
+    $employee->gender = $data['gender'];
+    $employee->blood_group = $data['blood_group'];
+    $employee->marital_status = $data['marital_status'];
+    $employee->date_of_joining = $data['date_of_joining'];
+
+    // Save the updated employee data
+    $employee->save();
+
+    // Return the updated employee data
+    return response()->json([
+        'status'  => true,
+        'message' => 'Employee updated successfully',
+        'data'    => $employee,
+    ], 200);
+}
+
+
+
+
+    public function updateEmployee_old(Request $request)
+    {
+        $data = $request->all();
+        
+        $insertedData = Employee::find($data['id']);
+        $insertedData = $request->full_name = $data['full_name'];
+        $insertedData = $request->mobile_number = $data['mobile_number'];
+        $insertedData = $request->email = $data['email'];
+        $insertedData = $request->date_of_birth = $data['date_of_birth'];
+        $insertedData = $request->nationality = $data['nationality'];
+        $insertedData = $request->department_id = $data['department_id'];
+        $insertedData = $request->position_id = $data['position_id'];
+        $insertedData = $request->gender = $data['gender'];
+        $insertedData = $request->blood_group = $data['blood_group'];
+        $insertedData = $request->marital_status = $data['marital_status'];
+        $insertedData = $request->date_of_joining = $data['date_of_joining'];
+        $insertedData = update();
+        // 
+        return response()->json([
+            'status'  => true,
+            'message' => 'Employee update successfully',
+            'data'    => $insertedData,
+        ], 200);
+    }
+
     function departments()
     {
         $data['orders'] = Order::with(['customer', 'orderDetails'])->orderby('id', 'DESC')->get();

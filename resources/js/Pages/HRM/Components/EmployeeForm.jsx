@@ -4,13 +4,6 @@ import { SwalAlert, SwalConfirm } from '@/Components/Alert/SwalAlert';
 import { Inertia } from '@inertiajs/inertia';  // Correct import for Inertia
 
 
-const initialState = {
-    full_name: "",
-    mobile_number: "",
-    email: "",
-    date_of_birth: "",
-};
-
 const reducer = (state, action) => {
     switch (action.type) {
         case "SET_FIELD":
@@ -24,8 +17,14 @@ const reducer = (state, action) => {
     }
 };
 
-function EmployeeForm({ employees, setEmployees }) {
+function EmployeeForm({ employee, setEmployee }) {
     const inputRef = useRef(null); // Reference for auto-focusing input
+    const initialState = {
+        full_name:"",
+        mobile_number: "",
+        email: "",
+        date_of_birth: "",
+    };
     const [state, dispatch] = useReducer(reducer, initialState);
     const [loading, setLoading] = useState(false);
 
@@ -49,7 +48,7 @@ function EmployeeForm({ employees, setEmployees }) {
             const response = await axios.post("/employee-store", state);
             console.log(response.errors);
             if (response.data.status) {
-                setEmployees([response.data.data, ...employees]);
+                setEmployee([response.data.data, ...employee]);
                 dispatch({ type: "RESET" });
                 inputRef.current.focus();
                 // Use useNavigate() for redirection
@@ -135,8 +134,11 @@ function EmployeeForm({ employees, setEmployees }) {
                         className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:ring"
                     />
                 </div>
-            </div>
 
+
+
+
+            </div>
             <div className="flex justify-end mt-6">
                 <button
                     type="submit"
