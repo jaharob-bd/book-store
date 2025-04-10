@@ -8,7 +8,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/employees', [HRMController::class, 'index'])->name('employees');
     Route::post('/employee-store', [HRMController::class, 'storeEmployee'])->name('employee-store');
     Route::get('/employee-edit/{id}', [HRMController::class, 'editEmployee'])->name('employee.edit');
-    Route::patch('/employee-update/{id}', [HRMController::class, 'updateEmployee'])->name('employee.update');
+    Route::post('/employee-update', [HRMController::class, 'updateEmployee'])->name('employee.update');
     Route::get('/employee-delete/{id}', [HRMController::class, 'deleteEmployee'])->name('employee.delete');
     // department
     Route::get('/departments', [HRMController::class, 'departments'])->name('departments');

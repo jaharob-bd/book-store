@@ -20,7 +20,7 @@ const reducer = (state, action) => {
 function EmployeeForm({ employee, setEmployee }) {
     const inputRef = useRef(null); // Reference for auto-focusing input
     const initialState = {
-        full_name:"",
+        full_name: "",
         mobile_number: "",
         email: "",
         date_of_birth: "",

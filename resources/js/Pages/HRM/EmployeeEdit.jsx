@@ -4,14 +4,14 @@ import { Head } from '@inertiajs/react';
 import { useTranslation } from "react-i18next";
 import EmployeeEditForm from './Components/EmployeeEditForm';
 
-function EmployeeEdit({ auth, employs }) {
+function EmployeeEdit({ auth, departments, positions, jobTitles, employs }) {
     const { t } = useTranslation();
     const [employee, setEmployee] = useState(employs);
 
     return (
         <AuthenticatedLayout user={auth.user} header={'Employee List'}>
             <Head title="Employee" />
-            <EmployeeEditForm {...{ employee, setEmployee }} />            
+            <EmployeeEditForm {...{ employee, setEmployee, departments, positions, jobTitles }} />            
         </AuthenticatedLayout>
     )
 }

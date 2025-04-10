@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Inventory\HRM;
+namespace App\Models\HRM;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

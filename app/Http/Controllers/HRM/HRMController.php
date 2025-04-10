@@ -8,6 +8,9 @@ use Inertia\Inertia;
 use App\Models\Catalog\Product;
 use App\Models\Consumer\Customer;
 use App\Models\HRM\Employee;
+use App\Models\HRM\Department;
+use App\Models\HRM\JobTitle;
+use App\Models\HRM\Position;
 use App\Models\Inventory\Stock\Stock;
 use App\Models\Inventory\Stock\StockChd;
 use App\Models\Inventory\Stock\StockMst;
@@ -19,6 +22,7 @@ use App\Models\Supplier\Supplier;
 use App\Models\Sales\SaleMst;
 use App\Models\Sales\SaleChd;
 use Carbon\Carbon;
+use Dflydev\DotAccessData\Data;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
@@ -26,7 +30,8 @@ class HRMController extends Controller
 {
     function index()
     {
-        $data['employs'] = Employee::orderby('id', 'DESC')->get();
+
+        $data['employs'] = Employee::with(['department', 'position', 'jobTitle'])->orderby('id', 'DESC')->get();
         return Inertia::render('HRM/EmployeeCreate', $data);
     }
     // store employee information
@@ -50,58 +55,57 @@ class HRMController extends Controller
 
     function editEmployee($id)
     {
-        $data['employs'] = Employee::findOrFail($id);
+        $data['departments'] = Department::get();
+        $data['positions']   = Position::get();
+        $data['jobTitles']   = JobTitle::get();
+        $data['employs']     = Employee::findOrFail($id);
         return Inertia::render('HRM/EmployeeEdit', $data);
     }
 
 
     public function updateEmployee(Request $request)
-{
-    // Get the data from the request
-    $data = $request->all();
+    {
+        $data = $request->all();
+        // Find the employee by their ID
+        $employee = Employee::find($data['id']);
 
-    // Find the employee by their ID
-    $employee = Employee::find($data['id']);
+        // If the employee is not found, return an error response
+        if (!$employee) {
+            return response()->json([
+                'status'  => false,
+                'message' => 'Employee not found',
+            ], 404);
+        }
 
-    // If the employee is not found, return an error response
-    if (!$employee) {
+        // Update the employee's data
+        $employee->full_name       = $data['full_name'];
+        $employee->mobile_number   = $data['mobile_number'];
+        $employee->email           = $data['email'];
+        $employee->date_of_birth   = $data['date_of_birth'];
+        $employee->nationality     = $data['nationality'];
+        $employee->department_id   = $data['department_id'];
+        $employee->job_title_id    = $data['job_title_id'];
+        $employee->position_id     = $data['position_id'];
+        $employee->gender          = $data['gender'];
+        $employee->blood_group     = $data['blood_group'];
+        $employee->marital_status  = $data['marital_status'];
+        $employee->date_of_joining = $data['date_of_joining'];
+
+        // Save the updated employee data
+        $employee->save();
+
+        // Return the updated employee data
         return response()->json([
-            'status'  => false,
-            'message' => 'Employee not found',
-        ], 404);
+            'status'  => true,
+            'message' => 'Employee updated successfully',
+            'data'    => $employee,
+        ], 200);
     }
-
-    // Update the employee's data
-    $employee->full_name = $data['full_name'];
-    $employee->mobile_number = $data['mobile_number'];
-    $employee->email = $data['email'];
-    $employee->date_of_birth = $data['date_of_birth'];
-    $employee->nationality = $data['nationality'];
-    $employee->department_id = $data['department_id'];
-    $employee->position_id = $data['position_id'];
-    $employee->gender = $data['gender'];
-    $employee->blood_group = $data['blood_group'];
-    $employee->marital_status = $data['marital_status'];
-    $employee->date_of_joining = $data['date_of_joining'];
-
-    // Save the updated employee data
-    $employee->save();
-
-    // Return the updated employee data
-    return response()->json([
-        'status'  => true,
-        'message' => 'Employee updated successfully',
-        'data'    => $employee,
-    ], 200);
-}
-
-
-
 
     public function updateEmployee_old(Request $request)
     {
         $data = $request->all();
-        
+
         $insertedData = Employee::find($data['id']);
         $insertedData = $request->full_name = $data['full_name'];
         $insertedData = $request->mobile_number = $data['mobile_number'];

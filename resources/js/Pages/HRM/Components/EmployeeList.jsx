@@ -52,8 +52,8 @@ export const EmployeeList = ({ openModal, employees }) => {
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.email}</td>
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.mobile_number}</td>
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.date_of_birth}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.position_id}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.department_id}</td>
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.position?.name}</td>
+                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.department?.name}</td>
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{employee.status ? 'Active': 'Inactive'}</td>
                                     <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
                                         <Link href={`/employee-edit/${employee.id}`}>Edit</Link>

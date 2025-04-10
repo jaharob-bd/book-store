@@ -9,7 +9,8 @@ import EmployeeForm from './Components/EmployeeForm';
 function EmployeeCreate({ auth, employs }) {
     const { t } = useTranslation();
     const [isOpenModal, setIsOpenModal] = useState(false);
-    const [employees, setEmployees] = useState(employs);
+    // const [employees, setEmployees] = useState(employs);
+    const [employees, setEmployees] = useState(Array.isArray(employs) ? employs : []);
     const closeModal = () => {
         setIsOpenModal(false);
     };
