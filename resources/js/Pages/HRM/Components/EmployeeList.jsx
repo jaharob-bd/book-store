@@ -9,11 +9,11 @@ export const EmployeeList = ({ openModal, employees }) => {
                     <div>
                         <div>
                             <div>
-                                <button
+                                <Link href="hrm"
                                     className="text-gray-900 text-gray-900 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-1 text-center me-2 mb-2 hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
                                     <i className="ri-export-fill"></i>
                                     Export
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </div>
