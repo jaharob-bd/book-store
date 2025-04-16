@@ -4,5 +4,6 @@
     "Sale": true,
     "Setting": true,
     "Website": true,
-    "Catalog": true
+    "Catalog": true,
+    "People": true
 }
