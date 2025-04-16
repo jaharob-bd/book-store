@@ -3,5 +3,6 @@
     "Purchase": true,
     "Sale": true,
     "Setting": true,
-    "Website": true
+    "Website": true,
+    "Catalog": true
 }
