@@ -10,7 +10,7 @@ function EmployeeCreate({ auth, employs }) {
     const { t } = useTranslation();
     const [isOpenModal, setIsOpenModal] = useState(false);
     // const [employees, setEmployees] = useState(employs);
-    const [employees, setEmployees] = useState(Array.isArray(employs) ? employs : []);
+    const [employees, setEmployees] = useState(employs ? employs : []);
     const closeModal = () => {
         setIsOpenModal(false);
     };
@@ -20,7 +20,7 @@ function EmployeeCreate({ auth, employs }) {
 
     return (
         <AuthenticatedLayout user={auth.user} header={'Employee List'}>
-            <Head title="Empoyee" />
+            <Head title="Employee" />
             <EmployeeList {...{ openModal, employees }} />
             <Modal {...{ show: isOpenModal, title: 'Create New Employee', maxWidth: '4xl', onClose: closeModal }} >
                 <EmployeeForm {...{ employees, setEmployees }} />

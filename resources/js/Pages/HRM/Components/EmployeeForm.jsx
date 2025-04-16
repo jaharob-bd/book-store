@@ -3,6 +3,12 @@ import axios from "axios";
 import { SwalAlert, SwalConfirm } from '@/Components/Alert/SwalAlert';
 import { Inertia } from '@inertiajs/inertia';  // Correct import for Inertia
 
+const initialState = {
+    full_name: "",
+    mobile_number: "",
+    email: "",
+    date_of_birth: "",
+};
 
 const reducer = (state, action) => {
     switch (action.type) {
@@ -17,14 +23,8 @@ const reducer = (state, action) => {
     }
 };
 
-function EmployeeForm({ employee, setEmployee }) {
+function EmployeeForm({ employees, setEmployees }) {
     const inputRef = useRef(null); // Reference for auto-focusing input
-    const initialState = {
-        full_name: "",
-        mobile_number: "",
-        email: "",
-        date_of_birth: "",
-    };
     const [state, dispatch] = useReducer(reducer, initialState);
     const [loading, setLoading] = useState(false);
 
@@ -36,44 +36,54 @@ function EmployeeForm({ employee, setEmployee }) {
         });
     };
 
-    const handleSubmit = async (e) => {
+    const validation = (field, title) => {
+        if (!field) {
+          SwalAlert("warning", `Please fill in ${title} !`);
+          return false; // Return false if validation fails
+        }
+        return true; // Return true if validation passes
+      };
+      
+      const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!state.full_name || !state.mobile_number || !state.date_of_birth) {
-            SwalAlert("warning", "Please fill in all required fields!");
-            return;
+      
+        if (!validation(state.full_name, 'Full Name')) {
+          return; // Stop submission if validation fails
+        }
+      
+        if (!validation(state.mobile_number, 'Mobile Number')) {
+          return; // Stop submission if validation fails
+        }
+      
+        if (!validation(state.date_of_birth, 'Birth Date')) {
+          return; // Stop submission if validation fails
         }
 
         try {
             setLoading(true);
             const response = await axios.post("/employee-store", state);
-            console.log(response.errors);
+            console.log(response.data.status);
             if (response.data.status) {
-                setEmployee([response.data.data, ...employee]);
+                setEmployees([response.data.data, ...employees]);
                 dispatch({ type: "RESET" });
                 inputRef.current.focus();
-                // Use useNavigate() for redirection
+                // validation id
                 if (!response.data.data.id) {
                     SwalAlert("warning", "Employee ID not found!", "center");
                     return;
                 }
-
+                // Use useNavigate() for redirection   
                 SwalConfirm("Are you sure?", "Do you want to proceed?", "warning", () => {
-                    console.log("User confirmed! Proceeding...");
-                    // Redirect to the edit page
-                    // Inertia.visit(`/employee-edit/${response.data.id}`);
                     const editUrl = `/employee-edit/${response.data.data.id}`;
-                    console.log("Navigating to:", editUrl);
                     Inertia.visit(editUrl);
-                    // window open loaction editUrl 
-                    window.location.href = editUrl;  // Redirect to the URL in the same tab
-
+                    window.location.href = editUrl;
                 });
             } else {
                 SwalAlert("warning", response.data.message, "center");
                 setLoading(false);
             }
         } catch (error) {
-            let errorMessage = "Something went wrong!";
+            let errorMessage = "Something went wrong !";
 
             // Check if response exists and has errors
             if (error.response?.data?.errors) {
@@ -134,10 +144,7 @@ function EmployeeForm({ employee, setEmployee }) {
                         className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border border-gray-300 rounded-md focus:ring"
                     />
                 </div>
-
-
-
-
+                {/* add more field */}
             </div>
             <div className="flex justify-end mt-6">
                 <button
