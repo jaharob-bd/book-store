@@ -1,5 +1,6 @@
 {
     "HRM": true,
     "Purchase": true,
-    "Sale": true
+    "Sale": true,
+    "Setting": true
 }
