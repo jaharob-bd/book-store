@@ -5,12 +5,13 @@ import { useTranslation } from "react-i18next";
 import Modal from '@/Components/Modal';
 import { useForm } from '@inertiajs/react';
 import Swal from 'sweetalert2';
-import { EmployeeList } from './Components/EmployeeList';
+import { DepartmentList } from './Components/DepartmentList';
 
-function Department({ auth }) {
+function Department({ auth, departments }) {
     const { t } = useTranslation();
     const [isOpenModal, setIsOpenModal] = useState(false);
-    const [products, setProducts] = useState([]);
+    console.log(departments);
+    // const [departments, setDepartments] = useState([]);
     const closeModal = () => {
         setIsOpenModal(false);
         reset();
@@ -21,7 +22,7 @@ function Department({ auth }) {
     return (
         <AuthenticatedLayout user={auth.user} header={'Department'}>
             <Head title="Department" />
-            <EmployeeList openModal={openModal} products={products} />
+            <DepartmentList openModal={openModal} departments={departments} />
             <Modal show={isOpenModal} title='Create New Product' maxWidth='4xl' onClose={closeModal}>
                 <h1>Employee Page</h1>
                 <p>Welcome to the Employee Page!</p>

@@ -1,15 +1,14 @@
 <?php
-
-namespace App\Models\HRM;
+namespace Modules\HRM\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use App\Models\HRM\Department;
-use App\Models\HRM\JobTitle;
-use App\Models\HRM\Position;
+use Modules\HRM\Models\Department;
+use Modules\HRM\Models\JobTitle;
+use Modules\HRM\Models\Position;
 
 class Employee extends Model
 {

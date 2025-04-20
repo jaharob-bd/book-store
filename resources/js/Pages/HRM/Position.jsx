@@ -5,12 +5,11 @@ import { useTranslation } from "react-i18next";
 import Modal from '@/Components/Modal';
 import { useForm } from '@inertiajs/react';
 import Swal from 'sweetalert2';
-import { EmployeeList } from './Components/EmployeeList';
+import { PositionList } from './Components/PositionList';
 
-function Position({ auth }) {
+function Position({ auth, positions}) {
     const { t } = useTranslation();
     const [isOpenModal, setIsOpenModal] = useState(false);
-    const [products, setProducts] = useState([]);
     const closeModal = () => {
         setIsOpenModal(false);
         reset();
@@ -21,7 +20,7 @@ function Position({ auth }) {
     return (
         <AuthenticatedLayout user={auth.user} header={'Product List'}>
             <Head title="Empoyee" />
-            <EmployeeList openModal={openModal} products={products} />
+            <PositionList openModal={openModal} positions={positions} />
             <Modal show={isOpenModal} title='Create New Product' maxWidth='4xl' onClose={closeModal}>
                 <h1>Employee Page</h1>
                 <p>Welcome to the Employee Page!</p>

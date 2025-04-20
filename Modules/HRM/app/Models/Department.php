@@ -1,19 +1,17 @@
 <?php
-
-namespace App\Models\HRM;
+namespace Modules\HRM\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-// position 
 
-
-class Position extends Model
+class Department extends Model
 {
     use HasFactory;
 
-    protected $table = 'hr_positions';
+    protected $table = 'hr_departments';
     protected $fillable = ['name', 'created_by', 'updated_by'];
 
 }
