@@ -4,18 +4,14 @@ export const PositionList = ({ openModal, positions }) => {
     return (
         <div className="mx-auto sm:px-2">
             <div className="flex gap-2 justify-between items-center max-sm:flex-wrap">
-                <p className="text-xl text-gray-800 dark:text-white font-bold"> List </p>
+                <p className="text-xl text-gray-800 dark:text-white font-bold"> Position List </p>
                 <div className="flex gap-x-2.5 items-center">
                     <div>
-                        <div>
-                            <div>
-                                <Link href="hrm"
-                                    className="text-gray-900 text-gray-900 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-1 text-center me-2 mb-2 hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
-                                    <i className="ri-export-fill"></i>
-                                    Export
-                                </Link>
-                            </div>
-                        </div>
+                        <Link href="hrm"
+                            className="text-gray-900 text-gray-900 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-1 text-center me-2 mb-2 hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none">
+                            <i className="ri-export-fill"></i>
+                            Export
+                        </Link>
                     </div>
                     <div>
                         <button type="button" className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-1 text-center me-2 mb-2" onClick={openModal}> Create Product </button>

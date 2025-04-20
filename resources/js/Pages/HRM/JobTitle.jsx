@@ -5,9 +5,9 @@ import { useTranslation } from "react-i18next";
 import Modal from '@/Components/Modal';
 import { useForm } from '@inertiajs/react';
 import Swal from 'sweetalert2';
-import { PositionList } from './Components/PositionList';
+import { JobTitleList } from './Components/JobTitleList';
 
-function Position({ auth, positions}) {
+function JobTitle({ auth, jobTitles }) {
     const { t } = useTranslation();
     const [isOpenModal, setIsOpenModal] = useState(false);
     const closeModal = () => {
@@ -18,9 +18,9 @@ function Position({ auth, positions}) {
         setIsOpenModal(true);
     };
     return (
-        <AuthenticatedLayout user={auth.user} header={'Position List'}>
+        <AuthenticatedLayout user={auth.user} header={'Job Title List'}>
             <Head title="Empoyee" />
-            <PositionList openModal={openModal} positions={positions} />
+            <JobTitleList openModal={openModal} jobTitles={jobTitles} />
             <Modal show={isOpenModal} title='Create New Position' maxWidth='4xl' onClose={closeModal}>
                 <h1>Employee Page</h1>
                 <p>Welcome to the Employee Page!</p>
@@ -29,4 +29,4 @@ function Position({ auth, positions}) {
     )
 }
 
-export default Position
+export default JobTitle

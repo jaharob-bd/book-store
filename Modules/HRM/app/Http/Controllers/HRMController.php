@@ -29,7 +29,6 @@ class HRMController extends Controller
      */
     function index()
     {
-
         $data['employs'] = Employee::with(['department', 'position', 'jobTitle'])->orderby('id', 'DESC')->get();
         return Inertia::render('HRM/EmployeeCreate', $data);
     }
@@ -101,31 +100,6 @@ class HRMController extends Controller
         ], 200);
     }
 
-    public function updateEmployee_old(Request $request)
-    {
-        $data = $request->all();
-
-        $insertedData = Employee::find($data['id']);
-        $insertedData = $request->full_name = $data['full_name'];
-        $insertedData = $request->mobile_number = $data['mobile_number'];
-        $insertedData = $request->email = $data['email'];
-        $insertedData = $request->date_of_birth = $data['date_of_birth'];
-        $insertedData = $request->nationality = $data['nationality'];
-        $insertedData = $request->department_id = $data['department_id'];
-        $insertedData = $request->position_id = $data['position_id'];
-        $insertedData = $request->gender = $data['gender'];
-        $insertedData = $request->blood_group = $data['blood_group'];
-        $insertedData = $request->marital_status = $data['marital_status'];
-        $insertedData = $request->date_of_joining = $data['date_of_joining'];
-        $insertedData = update();
-        // 
-        return response()->json([
-            'status'  => true,
-            'message' => 'Employee update successfully',
-            'data'    => $insertedData,
-        ], 200);
-    }
-
     function departments()
     {
         // echo 'hello'; exit;
@@ -136,6 +110,12 @@ class HRMController extends Controller
     {
         $data['positions'] = Position::orderby('id', 'ASC')->get();
         return Inertia::render('HRM/Position', $data);
+    }
+    function jobTitle()
+    {
+        // echo "hello"; exit;
+        $data['jobTitles'] = JobTitle::orderby('id', 'ASC')->get();
+        return Inertia::render('HRM/JobTitle', $data);
     }
 
     function statusUpdate(Request $request)

@@ -1,10 +1,10 @@
 import { Link } from '@inertiajs/react'
 import React from 'react'
-export const DepartmentList = ({ openModal, departments }) => {
+export const JobTitleList = ({ openModal, jobTitles }) => {
     return (
         <div className="mx-auto sm:px-2">
             <div className="flex gap-2 justify-between items-center max-sm:flex-wrap">
-                <p className="text-xl text-gray-800 dark:text-white font-bold"> Department List </p>
+                <p className="text-xl text-gray-800 dark:text-white font-bold"> Job Title List </p>
                 <div className="flex gap-x-2.5 items-center">
                     <div>
                         <Link href="hrm"
@@ -32,19 +32,20 @@ export const DepartmentList = ({ openModal, departments }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {departments.map((department) => (
-                                <tr key={department.id}>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center w-10">
-                                        <input type="checkbox" className="from-control" />
-                                    </td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{department.id}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-left">{department.name}</td>
-                                    <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
-                                        <Link href={`/department-edit/${department.id}`}>Edit</Link>
-                                        <a href="#" className="ml-2">Delete</a>
-                                    </td>
-                                </tr>
-                            ))}
+                            {
+                                jobTitles.map((jobTitle) => (
+                                    <tr key={jobTitle.id}>
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center w-10">
+                                            <input type="checkbox" className="from-control" />
+                                        </td>
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">{jobTitle.id}</td>
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-left">{jobTitle.title}</td>
+                                        <td className="p-2 border-l border-r border-b border-indigo-500 text-center">
+                                            <Link href={`/job-title-edit/${jobTitle.id}`}>Edit</Link>
+                                            <a href="#" className="ml-2">Delete</a>
+                                        </td>
+                                    </tr>
+                                ))}
                         </tbody>
                     </table>
                 </div>
@@ -53,5 +54,4 @@ export const DepartmentList = ({ openModal, departments }) => {
     )
 }
 
-
-export default DepartmentList
+export default JobTitleList
