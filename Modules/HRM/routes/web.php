@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\HRM\Http\Controllers\HRMController;
 
-Route::middleware(['auth', 'admin'])->group(function () {
+Route::prefix('hrm')->middleware(['auth', 'admin'])->group(function () {
     // employees
     Route::get('/employees', [HRMController::class, 'index'])->name('employees');
     Route::post('/employee-store', [HRMController::class, 'storeEmployee'])->name('employee-store');
@@ -19,12 +19,18 @@ Route::middleware(['auth', 'admin'])->group(function () {
     // position
     Route::get('/positions', [HRMController::class, 'positions'])->name('positions');
     Route::post('/position-store', [HRMController::class, 'storePosition'])->name('position-store');
+    Route::get('/position-edit/{id}', [HRMController::class, 'editPosition'])->name('position.edit');
+    Route::patch('/position-update/{id}', [HRMController::class, 'updatePosition'])->name('position.update');
+    Route::get('/position-delete/{id}', [HRMController::class, 'deletePosition'])->name('position.delete');
     // job title
-    Route::get('/job-titles', [HRMController::class, 'index'])->name('job-titles');
-    // Route::post('/job-title-store', [HRMController::class, 'storeJobTitle'])->name('job-title-store');
-    // Route::get('/job-title-edit/{id}', [HRMController::class, 'editJobTitle'])->name('job-title.edit');
-    // Route::patch('/job-title-update/{id}', [HRMController::class, 'updateJobTitle'])->name('job-title.update');
-    // Route::get('/job-title-delete/{id}', [HRMController::class, 'deleteJobTitle'])->name('job-title.delete');
-    // Route::get('/leave-requests', [HRMController::class, 'leaveRequests'])->name('leave-requests');
-   
+    Route::get('/job-titles', [HRMController::class, 'jobTitle'])->name('job-titles');
+    Route::post('/job-title-store', [HRMController::class, 'storeJobTitle'])->name('job-title-store');
+    Route::get('/job-title-edit/{id}', [HRMController::class, 'editJobTitle'])->name('job-title.edit');
+    Route::patch('/job-title-update/{id}', [HRMController::class, 'updateJobTitle'])->name('job-title.update');
+    Route::get('/job-title-delete/{id}', [HRMController::class, 'deleteJobTitle'])->name('job-title.delete');
 });
+
+// must be ziggy generate; it use for prefix.
+// php artisan ziggy:generate
+// php artisan route:cache
+// php artisan config:cache
