@@ -25,8 +25,13 @@ class PurchaseController extends Controller
 {
     public function index()
     {
+        $data['purchases'] = PurchaseMst::all();
+        return Inertia::render('Purchase/List', $data);
+    }
+    
+    public function create()
+    {
         $data['products'] = Product::with('variantPrices')->get();
-        // return $data['products'];
         $data['suppliers'] = Supplier::all();
         return Inertia::render('Purchase/Index', $data);
     }
@@ -219,7 +224,7 @@ class PurchaseController extends Controller
                     'updated_by' => $chd->updated_by,
                     'created_at' => $chd->created_at,
                     'updated_at' => $chd->updated_at,
-                    
+
                 ];
             }),
             'payment_details' => $purchase->purPayDetails

@@ -36,6 +36,13 @@ class SalesController extends Controller
         // return $data;
         return Inertia::render('Sales/OrderLists', $data);
     }
+    function create()
+    {
+        $data['lastOrderNo'] = Order::orderBy('created_at','desc')->get()->value('order_no');
+        $data['products'] = Product::get();
+        $data['customers'] = Customer::all();
+        return Inertia::render('Sales/OrderCreate', $data);
+    }
 
     function statusUpdate(Request $request)
     {
@@ -76,14 +83,6 @@ class SalesController extends Controller
     }
 
     // order status update
-    function create()
-    {
-        // dd(Auth::user());
-        $data['lastOrderNo'] = Order::orderBy('created_at','desc')->get()->value('order_no');
-        $data['products'] = Product::get();
-        $data['customers'] = Customer::all();
-        return Inertia::render('Sales/OrderCreate', $data);
-    }
     public function store(Request $request)
     {
         // request data from server

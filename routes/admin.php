@@ -75,11 +75,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::post('/supplier-store', [SupplierController::class, 'store'])->name('supplier-store');
     Route::post('/supplier-update/{id}', [SupplierController::class, 'update'])->name('supplier-update');
 
-    // Purchase
-    Route::get('/purchases', [PurchaseController::class, 'index'])->name('purchases');
-    Route::post('/purchase-store', [PurchaseController::class, 'store'])->name('purchase-store');
-    Route::get('/purchase-lists', [PurchaseController::class, 'list'])->name('purchase-lists');
-    Route::get('/purchase-list/{id}', [PurchaseController::class, 'view'])->name('purchase-list');
+    
     Route::get('/test', [PurchaseController::class, 'test'])->name('test');
     // inventory
     Route::get('/stocks', [StockController::class, 'index'])->name('stocks');

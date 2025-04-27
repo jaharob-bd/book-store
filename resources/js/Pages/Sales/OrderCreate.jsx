@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router, useForm, Link } from '@inertiajs/react';
 import Select from 'react-select';
-import { SwalAlert }  from '@/Components/Alert/SwalAlert';
+import { SwalAlert } from '@/Components/Alert/SwalAlert';
 import OrderPrint from './OrderPrint';
 import OrderLayout from '@/Layouts/InvoiceLayout';
 const logo = 'assets/images/company-logo.svg'
@@ -253,6 +253,14 @@ const OrderCreate = (props) => {
                     </div>
                     {/* notification icon with button */}
                     <div className="text-sm">
+                        <Link
+                            href={route('dashboard')}
+                            as="button"
+                            className="bg-red-500 text-white rounded-sm m-1 p-2 text-sm"
+                            title="Logout"
+                        >
+                            <i class="ri-home-3-fill"></i> Home
+                        </Link>
                         <button
                             className="bg-gray-400 rounded-sm m-1 p-2 text-sm"
                             title="Logout">
