@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Catalog\Product;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Consumer\Customer;
+use App\Models\Order\Order;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Session;
 use App\Models\Purchase\PurchaseMst;
@@ -24,10 +26,20 @@ class PurchaseController extends Controller
      */
     public function index()
     {
-        $data['products'] = Product::with('variantPrices')->get();
-        // return $data['products'];
-        $data['suppliers'] = Supplier::all();
-        return Inertia::render('Purchase/Index', $data);
+        return 555; exit;
+        $data['purchases'] = PurchaseMst::all();
+        return Inertia::render('Purchase/PurchaseLists', $data);
+    }
+
+    public function create()
+    {
+        // return 555; exit;
+        $data['lastOrderNo'] = Order::orderBy('created_at','desc')->get()->value('order_no');
+        $data['products'] = Product::get();
+        $data['customers'] = Customer::all();
+        // 
+        $data['supplierLists'] = Supplier::all();
+        return Inertia::render('Purchase/PurchaseCreate', $data);
     }
 
     public function store(Request $request)
@@ -224,7 +236,6 @@ class PurchaseController extends Controller
             'payment_details' => $purchase->purPayDetails
         ];
         return Inertia::render('Purchase/View', $data);
-        // return response()->json($data['purchases']);
     }
     public function edit($id)
     {

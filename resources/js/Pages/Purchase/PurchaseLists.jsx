@@ -6,7 +6,7 @@ import Modal from '@/Components/Modal';
 import ReactToPrint from 'react-to-print';
 import PrintComponent from '@/Components/PrintComponent';
 
-export default function List({ auth, purchases }) {
+export default function PurchaseLists({ auth, purchases }) {
     const componentRef = useRef();
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [purchaseLists, setPurchaseLists] = useState(purchases);

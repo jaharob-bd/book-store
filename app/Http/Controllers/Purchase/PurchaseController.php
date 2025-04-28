@@ -28,11 +28,11 @@ class PurchaseController extends Controller
         $data['purchases'] = PurchaseMst::all();
         return Inertia::render('Purchase/List', $data);
     }
-    
+
     public function create()
     {
         $data['products'] = Product::with('variantPrices')->get();
-        $data['suppliers'] = Supplier::all();
+        $data['supplierLists'] = Supplier::all();
         return Inertia::render('Purchase/Index', $data);
     }
 
