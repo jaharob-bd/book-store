@@ -102,14 +102,14 @@ export const modules = [
                 parent_id: 4,
                 menu_name: "purchases",
                 controller_name: "",
-                route: "purchases"
+                route: "purchase.create"
             },
             {
                 id: 2,
                 parent_id: 4,
                 menu_name: "purchase lists",
                 controller_name: "",
-                route: "purchase-lists"
+                route: "purchase.create"
             }
         ]
     },
