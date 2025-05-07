@@ -11,7 +11,7 @@ import axios from 'axios';
 const PurchaseCreate = (props) => {
     const auth                                  = props?.auth;
     const supplierLists                         = props?.supplierLists;
-    const [lastOrderNo, setLastOrderNo]         = useState(props.lastOrderNo);
+    const [lastOrderNo, setLastPurchaseNo]         = useState(props.lastOrderNo);
     const [cart, setCart]                       = useState([]);
     const [subtotal, setSubtotal]               = useState(0);                                // Initialize subtotal
     const [discount, setDiscount]               = useState(0);
@@ -27,16 +27,16 @@ const PurchaseCreate = (props) => {
     const [selectedProduct, setSelectedProduct] = useState("");
     // console.log(cart);
     const initial = {
-        discountAmount: discount,
-        vatAmount     : VAT,
-        subAmount     : subtotal,
-        totalAmount   : grandTotal,
-        changeAmount  : changeAmount,
-        dueAmount     : dueAmount,
-        orderDetails  : cart,
-        paymentMethod : payments,
-        supplier,
-        date,
+        discountAmount : discount,
+        vatAmount      : VAT,
+        subAmount      : subtotal,
+        totalAmount    : grandTotal,
+        changeAmount   : changeAmount,
+        dueAmount      : dueAmount,
+        purchaseDetails: cart,
+        paymentMethods : payments,
+        supplierId     : supplier,
+        purchaseDate   : date
     };
 
     const [data, setData] = useState(initial);
@@ -56,16 +56,16 @@ const PurchaseCreate = (props) => {
 
         // Update data state
         setData({
-            discountAmount    : discount,
-            vatAmount         : vat,
-            subAmount         : subtotal,
-            totalAmount       : total,
-            changeAmount      : change,
-            dueAmount         : due,
-            orderDetails      : cart,
-            paydatementMethods: payments,
-            supplier,
-            date
+            discountAmount : discount,
+            vatAmount      : vat,
+            subAmount      : subtotal,
+            totalAmount    : total,
+            changeAmount   : change,
+            dueAmount      : due,
+            purchaseDetails: cart,
+            paymentMethods : payments,
+            supplierId     : supplier,
+            purchaseDate   : date
         });
         console.log(data);
     }, [cart, discount, payments, supplier]);
@@ -176,14 +176,14 @@ const PurchaseCreate = (props) => {
             }
             // console.log(data);
             // return false;
-            // const response = axios.post('/purchase/store', data);
             const response = await axios.post('/purchase/store', data, { withCredentials: true });
             // console.log(response)
             if (response.data.status) {
-                setLastOrderNo(response.data.orderNo);
+                setLastPurchaseNo(response.data.purchaseNo);
                 SwalAlert('success', response.data.message, 'center');
-                setIsPrint(true);
+                // setIsPrint(true);
                 // setCart([]);
+                clearCart();
                 // setPayments({ Cash: 0, Card: 0, Mobile: 0 });
             } else {
                 SwalAlert('warning', 'Add failed', 'center');

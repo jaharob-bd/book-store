@@ -32,7 +32,7 @@ const OrderCreate = (props) => {
         changeAmount: changeAmount,
         dueAmount: dueAmount,
         orderDetails: cart,
-        paymentMethod: payments,
+        paymentMethods: payments,
         customer,
         shippingAddress: {
             district: '',

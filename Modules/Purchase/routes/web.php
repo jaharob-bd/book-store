@@ -14,3 +14,4 @@ Route::prefix('purchase')->middleware(['auth', 'admin'])->group(function () {
     // delete
     Route::get('/delete/{id}', [PurchaseController::class, 'delete'])->name('purchase-delete'); // delete purchase
 });
+// Route::post('/purchase-store', [PurchaseController::class, 'store'])->name('purchase-store');

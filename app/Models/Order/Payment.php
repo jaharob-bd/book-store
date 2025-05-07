@@ -16,6 +16,7 @@ class Payment extends Model
     protected $fillable = [
         'transaction_id',
         'order_id',
+        'purchase_id',
         'payment_date',
         'payment_method',
         'amount',
@@ -94,19 +95,24 @@ class Payment extends Model
         return $updateOrder ? true : false;
     }
 
-    public static function savePayment(array $paymentMethods, int $order_id): bool
+    public static function savePayment(array $paymentMethods, $orderId = null, $purchaseId = null): bool
     {
         try {
             DB::beginTransaction();
-
+    
+            if (is_null($orderId) && is_null($purchaseId)) {
+                throw new \Exception('Either order_id or purchase_id must be provided.');
+            }
+    
             $totalPaidAmount = array_sum($paymentMethods);
             $paymentsData = [];
-
+    
             foreach ($paymentMethods as $method => $amount) {
                 if ($amount > 0) {
                     $paymentsData[] = [
-                        'order_id'       => $order_id,
-                        'payment_date'   => Carbon::now(),
+                        'order_id'       => $orderId,
+                        'purchase_id'    => $purchaseId,
+                        'payment_date'   => now(),
                         'transaction_id' => now()->format('YmdHis'),
                         'payment_method' => ucfirst($method),
                         'amount'         => $amount,
@@ -117,12 +123,18 @@ class Payment extends Model
                     ];
                 }
             }
-            // paymentsData aray greather than 1
+    
             if (count($paymentsData) > 0) {
-                Payment::insert($paymentsData); // branches inerted data.
-                Order::where('id', $order_id)->update(['paid_amount' => $totalPaidAmount]);
+                Payment::insert($paymentsData);
+    
+                if ($order_id) {
+                    Order::where('id', $order_id)->increment('paid_amount', $totalPaidAmount);
+                } elseif ($purchase_id) {
+                    Purchase::where('id', $purchase_id)->increment('paid_amount', $totalPaidAmount);
+                }
             }
-            DB::commit(); // if no payment i will confirm order.
+    
+            DB::commit();
             return true;
         } catch (\Exception $e) {
             DB::rollBack();
@@ -130,4 +142,5 @@ class Payment extends Model
             return false;
         }
     }
+    
 }

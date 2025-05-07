@@ -6,7 +6,6 @@ use App\Http\Controllers\Catalog\ProductCommonController;
 use App\Http\Controllers\Consumer\CustomerController;
 use App\Http\Controllers\Consumer\CustomerCommonController;
 use App\Http\Controllers\HRM\HRMController;
-use App\Http\Controllers\Purchase\PurchaseController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Supplier\SupplierController;
 use App\Http\Controllers\Inventory\StockController;
@@ -74,9 +73,6 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers');
     Route::post('/supplier-store', [SupplierController::class, 'store'])->name('supplier-store');
     Route::post('/supplier-update/{id}', [SupplierController::class, 'update'])->name('supplier-update');
-
-    
-    Route::get('/test', [PurchaseController::class, 'test'])->name('test');
     // inventory
     Route::get('/stocks', [StockController::class, 'index'])->name('stocks');
     Route::get('/get-stocks', [StockController::class, 'getStock'])->name('get-stocks');
@@ -91,9 +87,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/sales/order/shipments', [SalesController::class,'shipments'])->name('order.shipments');
     Route::post('/status-update', [SalesController::class, 'statusUpdate'])->name('order.status-update');
 
-   
-
-    // Route::post('/order-store', [SalesController::class, 'store'])->name('order-store');
+    Route::post('/order-store', [SalesController::class, 'store'])->name('order-store');
     // Route::post('/invoice-store', [ProfileController::class, 'store'])->name('invoice-store');
 });
 // HRM MODULATION

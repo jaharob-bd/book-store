@@ -60,7 +60,11 @@ class OrderController extends Controller
                     $stockMovement = ($stockDecrement) ? StockMovement::saveStockMovement($detail, $order->id) : '';
                 }
                 // payment method
-                ($panel && isset($data['paymentMethods'])) ? Payment::savePayment($data['paymentMethods'], $order->id) : '';
+                if ($panel && isset($data['paymentMethods'])) {
+                    if (isset($order)) {
+                        Payment::savePayment($data['paymentMethods'], orderId: $order->id);
+                    }
+                }
             }
             // Commit transaction
             DB::commit();
