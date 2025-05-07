@@ -735,7 +735,7 @@ const Ziggy = {
       "methods": ["GET", "HEAD"]
     },
     "purchase.store": {
-      "uri": "purchase",
+      "uri": "purchase\/store",
       "methods": ["POST"]
     },
     "purchase.show": {

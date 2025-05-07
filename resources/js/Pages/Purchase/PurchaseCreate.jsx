@@ -9,42 +9,45 @@ const logo = 'assets/images/company-logo.svg'
 import axios from 'axios';
 
 const PurchaseCreate = (props) => {
-    const auth = props?.auth;
-    const supplierLists = props?.supplierLists;
-    const [lastOrderNo, setLastOrderNo] = useState(props.lastOrderNo);
-    const [cart, setCart] = useState([]);
-    const [subtotal, setSubtotal] = useState(0);                                // Initialize subtotal
-    const [discount, setDiscount] = useState(0);
-    const [VAT, setVAT] = useState(0);
-    const [grandTotal, setGrandTotal] = useState(0);
-    const [changeAmount, setChangeAmount] = useState(0);
-    const [dueAmount, setDueAmount] = useState(0);
-    const [payments, setPayments] = useState({ Cash: 0, Card: 0, Mobile: 0 });
-    const [supplier, setSupplier] = useState([]);
-    const [isPrint, setIsPrint] = useState(false);
-    const [barcode, setBarcode] = useState("");
+    const auth                                  = props?.auth;
+    const supplierLists                         = props?.supplierLists;
+    const [lastOrderNo, setLastOrderNo]         = useState(props.lastOrderNo);
+    const [cart, setCart]                       = useState([]);
+    const [subtotal, setSubtotal]               = useState(0);                                // Initialize subtotal
+    const [discount, setDiscount]               = useState(0);
+    const [VAT, setVAT]                         = useState(0);
+    const [grandTotal, setGrandTotal]           = useState(0);
+    const [changeAmount, setChangeAmount]       = useState(0);
+    const [dueAmount, setDueAmount]             = useState(0);
+    const [payments, setPayments]               = useState({ Cash: 0, Card: 0, Mobile: 0 });
+    const [isPrint, setIsPrint]                 = useState(false);
+    const [barcode, setBarcode]                 = useState("");
+    const [supplier, setSupplier]               = useState("");
+    const [date, setDate]                       = useState("");
+    const [selectedProduct, setSelectedProduct] = useState("");
     // console.log(cart);
     const initial = {
         discountAmount: discount,
-        vatAmount: VAT,
-        subAmount: subtotal,
-        totalAmount: grandTotal,
-        changeAmount: changeAmount,
-        dueAmount: dueAmount,
-        orderDetails: cart,
-        paymentMethod: payments,
-        supplier
+        vatAmount     : VAT,
+        subAmount     : subtotal,
+        totalAmount   : grandTotal,
+        changeAmount  : changeAmount,
+        dueAmount     : dueAmount,
+        orderDetails  : cart,
+        paymentMethod : payments,
+        supplier,
+        date,
     };
 
     const [data, setData] = useState(initial);
     const [products, setProducts] = useState(props.products);
     useEffect(() => {
-        const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
-        const vat = subtotal * 0.05;
-        const total = subtotal + vat - discount;
+        const subtotal  = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        const vat       = parseFloat(subtotal || 0) * 0.05;
+        const total     = subtotal + vat - discount;
         const totalPaid = payments.Cash + payments.Card + payments.Mobile;
-        const due = Math.max(0, total - totalPaid);
-        const change = Math.max(0, totalPaid - total);
+        const due       = Math.max(0, total - totalPaid);
+        const change    = Math.max(0, totalPaid - total);
         setSubtotal(subtotal);
         setVAT(vat);
         setGrandTotal(total);
@@ -53,16 +56,18 @@ const PurchaseCreate = (props) => {
 
         // Update data state
         setData({
-            discountAmount: discount,
-            vatAmount: vat,
-            subAmount: subtotal,
-            totalAmount: total,
-            changeAmount: change,
-            dueAmount: due,
-            orderDetails: cart,
-            paymentMethods: payments,
+            discountAmount    : discount,
+            vatAmount         : vat,
+            subAmount         : subtotal,
+            totalAmount       : total,
+            changeAmount      : change,
+            dueAmount         : due,
+            orderDetails      : cart,
+            paydatementMethods: payments,
             supplier,
+            date
         });
+        console.log(data);
     }, [cart, discount, payments, supplier]);
 
     const removeFromCart = (id) => {
@@ -77,23 +82,10 @@ const PurchaseCreate = (props) => {
         setDueAmount(0);
         setChangeAmount(0);
         setBarcode('');
+        setSupplier('');
+        setDate('');
     };
 
-    const handleCustomerChange = async (event) => {
-        try {
-            const phone = event.target.value;
-            const response = await axios.get(`/get-customer-data/${phone}`);
-
-            if (response.data.id) {
-                setCustomer({ id: response.data.id, name: response.data.name, phone });
-            } else {
-                setCustomer({ id: '', phone });
-            }
-
-        } catch (error) {
-            console.error('Error fetching data:', error);
-        }
-    }
     const handleInputChange = (event) => {
         setBarcode(event.target.value.trim());
     };
@@ -115,9 +107,9 @@ const PurchaseCreate = (props) => {
             return false;
         }
 
-        const { id, name, sale_price } = product; // Correct way to extract values
-        const stringId = String(id, 10); // Ensure id is always an String
-        const price = parseFloat(sale_price);
+        const { id, name, sale_price } = product;                 // Correct way to extract values
+        const stringId                 = String(id, 10);          // Ensure id is always an String
+        const price                    = parseFloat(sale_price);
 
         setCart((prevCart) => {
             const existingItem = prevCart.find(item => item.id === stringId);
@@ -129,8 +121,6 @@ const PurchaseCreate = (props) => {
             return [...prevCart, { id: stringId, name, price: price, quantity: 1 }];
         });
     };
-
-    const [selectedProduct, setSelectedProduct] = useState("");
 
     const handleSelectChange = (event) => {
         setSelectedProduct(event.target.value);
@@ -175,7 +165,19 @@ const PurchaseCreate = (props) => {
                 SwalAlert('warning', 'Please add to cart product', 'center');
                 return;
             }
-            const response = await axios.post('/order-store', data, { withCredentials: true });
+            if (date === '') {
+                SwalAlert('warning', 'Please select date', 'center');
+                return;
+            }
+            if (supplier === '') {
+                SwalAlert('warning', 'Please select supplier', 'center');
+                return;
+                
+            }
+            // console.log(data);
+            // return false;
+            // const response = axios.post('/purchase/store', data);
+            const response = await axios.post('/purchase/store', data, { withCredentials: true });
             // console.log(response)
             if (response.data.status) {
                 setLastOrderNo(response.data.orderNo);
@@ -193,38 +195,6 @@ const PurchaseCreate = (props) => {
         }
     };
 
-    const submitRouter = () => {
-        try {
-            if (cart.length === 0) {
-                SwalAlert('warning', 'Please add to cart product', 'center');
-                return;
-            }
-            // if (customer.phone === '') {
-            //     SwalAlert('warning', 'Please add to customer', 'center');
-            //     return;
-            // }
-
-            router.post('/order-store', data, {
-                preserveScroll: true,
-                onSuccess: ({ props }) => {
-                    if (props.flash.success) {
-                        SwalAlert('success', props.flash.success, 'center');
-                        setIsPrint(true);
-                        // setCart([]);
-                        // setPayments({ Cash: 0, Card: 0, Mobile: 0 });
-                    } else if (props.flash.failed) {
-                        SwalAlert('warning', props.flash.failed, 'center');
-                    }
-                },
-                onError: (errors) => {
-                    console.error('Failed to place order:', errors);
-                    SwalAlert('error', 'Failed to place order. Please try again.', 'center');
-                },
-            });
-        } catch (error) {
-            console.error('An unexpected error occurred:', error);
-        }
-    };
     return (
         <PurchaseLayout user={auth.user} header={'Purchases Invoice'}>
             <Head title="Purchase Invoice" />
@@ -357,18 +327,21 @@ const PurchaseCreate = (props) => {
                         </div>
                         <input
                             type="date"
+                            name="date"
+                            value={date}
                             className="border p-1 w-full mb-3"
-                            onChange={handleCustomerChange}
+                            onChange={(e) => setDate(e.target.value)}
                         />
+
                         <select
-                            type="text"
-                            placeholder="Phone Number"
+                            name="supplier"
+                            value={supplier}
                             className="border p-1 w-full mb-3"
-                            onChange={handleCustomerChange}
+                            onChange={(e) => setSupplier(e.target.value)}
                         >
                             <option value="">Select Supplier</option>
                             {supplierLists.map((supplier) => (
-                                <option key={supplier.id} value={supplier.phone}>
+                                <option key={supplier.id} value={supplier.id}>
                                     {supplier.name}
                                 </option>
                             ))}

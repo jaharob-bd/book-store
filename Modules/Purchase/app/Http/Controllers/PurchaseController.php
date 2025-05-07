@@ -45,8 +45,8 @@ class PurchaseController extends Controller
     public function store(Request $request)
     {
         // request data from server
-        $data = $request->all()[0];
-        // dd($data);
+        $data = $request->all();
+        dd($data);
         // db transaction
         try {
             // Start transaction

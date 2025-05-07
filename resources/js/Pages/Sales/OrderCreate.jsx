@@ -155,6 +155,11 @@ const OrderCreate = (props) => {
 
     const addToCart = (event) => {
         const [id, name, price] = event.target.value.split(",");
+        if (!price || price === "null" || parseFloat(price) === 0.00) {
+            SwalAlert('warning', 'Product price not assigned', 'center');
+            return;
+        }
+
         setCart((prevCart) => {
             const existingItem = prevCart.find(item => item.id === id);
             if (existingItem) {
