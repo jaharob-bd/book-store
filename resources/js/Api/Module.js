@@ -1,5 +1,4 @@
-export const modules = [
-    {
+export const modules = [{
         id: 1,
         menu_icon: "ri-home-2-line",
         menu_name: "dashboard",
@@ -10,8 +9,7 @@ export const modules = [
         menu_icon: "ri-flashlight-line",
         menu_name: "catalog",
         route: null,
-        submenu: [
-            {
+        submenu: [{
                 id: 1,
                 parent_id: 2,
                 menu_name: "products",
@@ -63,11 +61,24 @@ export const modules = [
         ]
     },
     {
-        id: 3,
+        id: 4,
         menu_icon: "ri-flashlight-line",
-        menu_name: "peoples",
+        menu_name: "purchase",
         route: null,
-        submenu: [
+        submenu: [{
+                id: 1,
+                parent_id: 4,
+                menu_name: "purchases",
+                controller_name: "",
+                route: "purchase.create"
+            },
+            {
+                id: 2,
+                parent_id: 4,
+                menu_name: "purchase lists",
+                controller_name: "",
+                route: "purchase.create"
+            },
             {
                 id: 1,
                 parent_id: 3,
@@ -82,35 +93,6 @@ export const modules = [
                 controller_name: "",
                 route: "customer-groups"
             },
-            {
-                id: 3,
-                parent_id: 3,
-                menu_name: "suppliers",
-                controller_name: "",
-                route: "suppliers"
-            }
-        ]
-    },
-    {
-        id: 4,
-        menu_icon: "ri-flashlight-line",
-        menu_name: "purchase",
-        route: null,
-        submenu: [
-            {
-                id: 1,
-                parent_id: 4,
-                menu_name: "purchases",
-                controller_name: "",
-                route: "purchase.create"
-            },
-            {
-                id: 2,
-                parent_id: 4,
-                menu_name: "purchase lists",
-                controller_name: "",
-                route: "purchase.create"
-            }
         ]
     },
     {
@@ -118,8 +100,7 @@ export const modules = [
         menu_icon: "ri-instance-line",
         menu_name: "sales",
         route: null,
-        submenu: [
-            {
+        submenu: [{
                 id: 1,
                 parent_id: 5,
                 menu_name: "order lists",
@@ -153,6 +134,13 @@ export const modules = [
                 menu_name: "transactions",
                 controller_name: "",
                 route: "order.create"
+            },
+            {
+                id: 3,
+                parent_id: 3,
+                menu_name: "suppliers",
+                controller_name: "",
+                route: "suppliers"
             }
         ]
     },
@@ -161,8 +149,7 @@ export const modules = [
         menu_icon: "ri-store-line",
         menu_name: "inventory",
         route: null,
-        submenu: [
-            {
+        submenu: [{
                 id: 1,
                 parent_id: 6,
                 menu_name: "stock",
@@ -183,8 +170,7 @@ export const modules = [
         menu_icon: "ri-user-line",
         menu_name: "HRM",
         route: null,
-        submenu: [
-            {
+        submenu: [{
                 id: 1,
                 parent_id: 6,
                 menu_name: "employee",
