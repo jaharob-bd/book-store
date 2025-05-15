@@ -5,10 +5,10 @@ import { dateFormat } from '../Utils/helper'
 import ReceiptModal from '@/Components/ReceiptModal'
 import RightSidebar from '@/Components/RightSidebar'
 import ProductMode from './ProductMode'
-import { ProductsDatas } from "@/Api/ProductsDatas";
+// import { ProductsDatas } from "@/Api/ProductsDatas";
 
 export default function Dashboard({ auth }) {
-    const [cartItems, setCartItems] = useState(ProductsDatas)
+    const [cartItems, setCartItems] = useState([])
     const [cash, setCash] = useState(0)
     const [change, setChange] = useState(0)
     const [showReceiptModal, setShowReceiptModal] = useState(false)

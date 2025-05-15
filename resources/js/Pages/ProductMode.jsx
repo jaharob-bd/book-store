@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { priceFormat } from '../Utils/helper'
-import { ProductsDatas } from "@/Api/ProductsDatas";
+// import { ProductsDatas } from "@/Api/ProductsDatas";
 
 const ProductMode = (props) => {
-    const [items, setItems] = useState(ProductsDatas);
+    const [items, setItems] = useState([]);
     const [products, setProducts] = useState([]);
     const [search, setSearch] = useState(null)
     const [isLoading, setIsLoading] = useState(true)
