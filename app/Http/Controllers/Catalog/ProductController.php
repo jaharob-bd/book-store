@@ -80,9 +80,9 @@ class ProductController extends Controller
                 'taxStatus'    => $product->tax_status ?? '',
                 'taxClass'     => $product->tax_class ?? '',
                 'taxIncluded'  => $product->tax_included ?? '',
-                'expiryDate'   => (empty($product->expiry_date) || $product->expiry_date == '1970-01-01') 
-                ? date('Y-m-d', strtotime('+1 year')) 
-                : $product->expiry_date,
+                'expiryDate'   => (empty($product->expiry_date) || $product->expiry_date == '1970-01-01')
+                    ? date('Y-m-d', strtotime('+1 year'))
+                    : $product->expiry_date,
             ],
             'inventory' => [
                 'sku'           => $product->sku ?? '',
@@ -164,6 +164,7 @@ class ProductController extends Controller
     {
         $data             = $request->all();
         $productId       = (int) $data['productId'];
+        DB::beginTransaction();
         try {
             $updateProduct = Product::updateProduct($data, $productId);
             if ($updateProduct['status']) {
@@ -181,7 +182,9 @@ class ProductController extends Controller
             //     'success' => true,
             //     'message' => 'Product updated successfully!'
             // ]);
+            DB::commit();
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'message' => 'Something went wrong!',
